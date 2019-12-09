@@ -71,7 +71,9 @@ class FileHandler extends AbstractController
             $pathOrigin = $this->kernel->getProjectDir().'/public'.$pathOrigin;
             $newPath = explode('/', $pathOrigin);
             $newPath[sizeof($newPath)-1] = $form->get('name')->getData();
-            $this->fs->rename($pathOrigin,implode('/', $newPath));
+            if ( !($this->fs->exists(implode('/', $newPath))) ) {
+                $this->fs->rename($pathOrigin,implode('/', $newPath));
+            }
 
             $pathOrigin = $form->getData()->getFile();
             $newPath = explode('/', $pathOrigin);

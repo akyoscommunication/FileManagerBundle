@@ -31,6 +31,7 @@ class FileExtension extends AbstractExtension
     {
         return [
             new TwigFunction('getImagePathById', [$this, 'getImagePathById']),
+            new TwigFunction('getImageAltById', [$this, 'getImageAltById']),
         ];
     }
 
@@ -38,6 +39,12 @@ class FileExtension extends AbstractExtension
     {
         $file = $this->em->getRepository(File::class)->find($id);
         return $file ? $file->getFile() : false;
+    }
+
+    public function getImageAltById($id)
+    {
+        $file = $this->em->getRepository(File::class)->find($id);
+        return $file ? $file->getAlt() : false;
     }
 
     function formatBytes($bytes, $precision = 2)
