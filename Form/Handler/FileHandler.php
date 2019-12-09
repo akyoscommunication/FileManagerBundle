@@ -3,10 +3,9 @@
 namespace Akyos\FileManagerBundle\Form\Handler;
 
 use Akyos\FileManagerBundle\Entity\File;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -17,7 +16,7 @@ class FileHandler extends AbstractController
     private $fs;
     private $kernel;
 
-    public function __construct(ObjectManager $em, KernelInterface $kernel, Filesystem $filesystem)
+    public function __construct(EntityManagerInterface $em, KernelInterface $kernel, Filesystem $filesystem)
     {
         $this->em = $em;
         $this->fs = $filesystem;
