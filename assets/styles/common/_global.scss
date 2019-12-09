@@ -1,0 +1,18 @@
+form[name=upload] {
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+
+    #upload {
+        > .form-group {
+            margin-bottom: 0;
+        }
+        .custom-file {
+            &-label {
+                &:after {
+                    content: "Parcourir les fichiers";
+                }
+            }
+        }
+    }
+}

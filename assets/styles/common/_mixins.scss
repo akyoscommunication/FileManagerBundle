@@ -1,0 +1,30 @@
+@import
+"_variables.scss"
+;
+
+// FLEX
+@mixin flex($direction, $wrap, $justify-content, $align-items) {
+    display: flex;
+    flex-direction: $direction;
+    flex-wrap: $wrap;
+    justify-content: $justify-content;
+    align-items: $align-items;
+}
+
+// Object Fit
+@mixin objectFit($object-fit, $object-position, $height, $width) {
+    object-fit: $object-fit;
+    object-position: $object-position;
+    height: $height;
+    width: $width;
+}
+
+// CSS4 COLOR
+@function color($color-name) {
+    @return var(--color-#{$color-name});
+}
+
+// CSS4 DYNAMIC COLOR
+@mixin dynamic-color($color) {
+    --color-dynamic: #{$color};
+}

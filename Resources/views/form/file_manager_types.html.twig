@@ -1,0 +1,90 @@
+{#{% block file_manager_row %}#}
+{#{% endblock %}#}
+
+{% block file_manager_widget %}
+    {% spaceless %}
+        {% with {'form': form, 'collection': false, 'id': form.vars.id} only %}
+            {{ block('render_file') }}
+        {% endwith %}
+    {% endspaceless %}
+    {% include '@AkyosFileManager/form/_modal.html.twig' %}
+{% endblock %}
+
+{% block file_manager_collection_widget %}
+
+    {% if prototype is defined %}
+        {% set data_prototype  %}
+            {% with {'form': prototype, 'collection': true, 'id': form.vars.id} only %}
+                {{ block('render_file') }}
+            {% endwith %}
+        {% endset %}
+        {% set attr = attr|merge({'data-prototype': data_prototype}) %}
+        {% set attr = attr|merge({'data-prototype-name': prototype.vars.name}) %}
+    {% endif %}
+    {% set attr = attr|merge({'data-allow-add': allow_add ? 1 : 0}) %}
+    {% set attr = attr|merge({'data-max': data_max ? data_max : 100}) %}
+    {% set attr = attr|merge({'data-min': data_min ? data_min : 0}) %}
+    {% set attr = attr|merge({'data-init-with-n-elements': data_init_with_n_elements ? data_init_with_n_elements : 1}) %}
+    {% set attr = attr|merge({'data-add-at-the-end': data_add_at_the_end ? data_add_at_the_end : false}) %}
+    {% set attr = attr|merge({'data-allow-remove': allow_delete ? 1 : 0 }) %}
+    {% set attr = attr|merge({'data-name-prefix': full_name}) %}
+
+    <div id="{{ form.vars.id }}" class="aky-file-collection" {% for k, v in attr %} {{ k }}="{{ v|e }}"{% endfor %}>
+    {% for file in form %}
+        {% with {'form': file, 'collection': true, 'id': form.vars.id, 'valueInput' : form.vars.value } only %}
+            {{ block('render_file') }}
+        {% endwith %}
+    {% endfor %}
+    </div>
+
+    {% include '@AkyosFileManager/form/_modal.html.twig' %}
+{% endblock %}
+
+{% block render_file %}
+    {% spaceless %}
+            <div class="aky-file-container {% if form.vars.errors|length > 0 %}error{% endif %}">
+                <div class="aky-file">
+                    {% if collection %}
+                        <div class="aky-file-direction">
+                            <div class="aky-file-direction-left table-sort-up">
+                                <a href="#" class="collection-up btn btn-light btn-sm"><span class="fas fa-chevron-left"></span></a>
+                            </div>
+                            <div class="aky-file-direction-right table-sort-down">
+                                <a href="#" class="collection-down btn btn-light btn-sm"><span class="fas fa-chevron-right"></span></a>
+                            </div>
+                        </div>
+                    {% endif %}
+                    <div class="aky-file-preview">
+                        {% if form.vars.value != '' %}
+                            <img src="{{ asset(getImagePathById(form.vars.value)) }}" alt="" width="100%">
+                        {% endif %}
+                    </div>
+                    <div class="hidden aky-file-input">
+                        {% block aky_field %}
+                            <input type="text" class="form-control" id="{{ form.vars.id }}" name="{{ form.vars.full_name }}"
+                                   {% if form.vars.required %}required="required"{% endif %} value="{{ form.vars.value }}" {{ form.vars.readonly|default ? 'readonly="readonly"' }}>
+                        {% endblock %}
+                    </div>
+                    <div class="aky-file-btnmanager">
+                        <div class="btn-group" role="group">
+                            {% block aky_file_buttons_collection %}
+                                {% include '@AkyosFileManager/form/_btn_manager.html.twig' with {'id' : id, 'form' : form} only %}
+                            {% endblock %}
+                        </div>
+                    </div>
+                    {% if collection %}
+                            <a href="#" class="js-remove-collection aky-file-collection-remove btn btn-sm btn-danger collection-remove collection-action">
+                                <span class="fas fa-times"></span>
+                            </a>
+                    {% endif %}
+
+                    {% if collection and form.vars.errors|length > 0 %}
+                        <div class="m-2 text-danger">
+                            <b> {{ form_errors(form) }}</b>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+    {% endspaceless %}
+{% endblock %}

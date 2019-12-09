@@ -1,0 +1,96 @@
+.aky-file {
+    @include flex(column, nowrap, center, center);
+    position: relative;
+    height: 150px;
+    width: 150px;
+    border-radius: 4px;
+    background-color: color(lightgray);
+    box-shadow: 0 14px 28px rgba(0,0,0,0.1), 0 10px 10px rgba(0,0,0,0.1);
+    overflow: hidden;
+
+    &--folder {
+        box-shadow: none;
+        border: 1px solid lightgrey;
+    }
+
+    &-container {
+
+    }
+
+    &-collection {
+        @include flex(row, wrap, flex-start, stretch);
+
+        &-remove {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+        }
+
+        .aky-file {
+            &-container {
+                padding-right: 10px;
+                padding-bottom: 10px;
+                margin-bottom: 10px;
+            }
+
+            &-add {
+                @include flex(row, wrap, center, center);
+                height: 50px;
+                width: 50px;
+                background-color: color(grey);
+                box-shadow: none;
+                transition: ease .3s;
+                border-radius: 100%;
+
+                &:hover {
+                    text-decoration: none;
+                    box-shadow: 0 14px 28px rgba(0,0,0,0.1), 0 10px 10px rgba(0,0,0,0.1);
+                }
+            }
+        }
+    }
+
+    &-direction {
+        @include flex(row, wrap, center, center);
+        position: absolute;
+        left: 0;
+        top: 0;
+        padding: 5px;
+
+        &-left {
+            margin-right: 2px;
+        }
+    }
+
+    &-preview {
+        @include flex(row, wrap, center, center);
+        height: 100%;
+        width: 100%;
+        font-size: 3rem;
+
+        &:hover {
+            text-decoration: none;
+        }
+
+        img {
+            @include objectFit(cover, center, 100%, 100%);
+        }
+    }
+
+    &-input {
+        display: none;
+    }
+
+    &-btnmanager {
+        position: absolute;
+        bottom: 5px;
+        right: 5px;
+        border: 1px solid white;
+    }
+
+    &-infos {
+        @include flex(row, wrap, space-between, center);
+        font-size: 10px;
+        padding: 5px;
+    }
+}

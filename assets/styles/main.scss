@@ -1,0 +1,16 @@
+@import "common/variables";
+
+@import "~bootstrap/scss/bootstrap";
+@import "~@uppy/core/dist/style.css";
+@import "~@uppy/dashboard/dist/style.css";
+@import "~@uppy/file-input/dist/style.css";
+
+@import "common/mixins";
+
+#mainFileManagerBundle {
+    /** Import theme styles */
+    @import "common/fonts";
+    @import "common/global";
+}
+
+@import "common/components";

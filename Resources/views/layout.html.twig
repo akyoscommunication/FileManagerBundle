@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+ {% block body %}
+     <div class="wrapper">
+         <div id="mainFileManagerBundle">
+             {% block page_content %}{% endblock %}
+         </div>
+     </div>
+ {% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset('bundles/akyosfilemanager/main.js') }}"></script>
+{% endblock %}
+
+ {% block stylesheets %}
+     <link rel="stylesheet" href="{{ asset('bundles/akyosfilemanager/main.css') }}">
+ {% endblock %}
