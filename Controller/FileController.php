@@ -53,7 +53,7 @@ class FileController extends AbstractController
         ));
 
         if ($fileHandler->uploadFile($uploadFileForm, $request)) {
-            return $this->redirectToRoute('file_index');
+            return $this->redirectToRoute('file_index', ['path' => $relativePath.'/'.$nameFolderFormType->get('name')->getData()]);
         }
 
         if ($fileHandler->manageFolder($nameFolderFormType, $request)) {
