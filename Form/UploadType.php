@@ -15,8 +15,11 @@ class UploadType extends AbstractType
         $builder
             ->add('file', FileType::class, [
                 'label' => false,
+                'multiple' => true,
                 'attr' => [
-                    'class' => 'uppyInit'
+                    'is' => 'drop-files',
+                    'label' => 'Déposer vos fichiers ici',
+                    'help' => 'ou cliquer pour ouvrir le gestionnaire de fichiers',
                 ]
             ])
         ;
@@ -25,7 +28,6 @@ class UploadType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => File::class,
         ]);
     }
 }

@@ -27,36 +27,37 @@ class FileHandler extends AbstractController
     {
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $file = new File();
-            $fileUploaded = $form['file']->getData();
-            $relativePath = $request->get('path');
-            if ($relativePath) {
-                $relativePath = '/'.$relativePath;
-            }
-
-            if ($fileUploaded) {
-                $originalFilename = pathinfo($fileUploaded->getClientOriginalName(), PATHINFO_FILENAME);
-                // this is needed to safely include the file name as part of the URL
-                $safeFilename = transliterator_transliterate('Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()', $originalFilename);
-                $newFilename = $safeFilename.'.'.$fileUploaded->guessExtension();
-
-                // Move the file to the directory where brochures are stored
-                try {
-                    $fileUploaded->move(
-                        $this->kernel->getProjectDir().'/public'.$this->getParameter('web_dir').$relativePath,
-                        $newFilename
-                    );
-                } catch (FileException $e) {
-                    // ... handle exception if something happens during file upload
+            foreach ($form['file']->getData() as $fileUploaded) {
+                $file = new File();
+                $relativePath = $request->get('path');
+                if ($relativePath) {
+                    $relativePath = '/'.$relativePath;
                 }
 
-                // updates the 'brochureFilename' property to store the PDF file name
-                // instead of its contents
-                $file->setName($newFilename);
-                $file->setFile($this->getParameter('web_dir').'/'.$newFilename);
-            }
+                if ($fileUploaded) {
+                    $originalFilename = pathinfo($fileUploaded->getClientOriginalName(), PATHINFO_FILENAME);
+                    // this is needed to safely include the file name as part of the URL
+                    $safeFilename = transliterator_transliterate('Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()', $originalFilename);
+                    $newFilename = $safeFilename.'.'.$fileUploaded->guessExtension();
 
-            $this->em->persist($file);
+                    // Move the file to the directory where brochures are stored
+                    try {
+                        $fileUploaded->move(
+                            $this->kernel->getProjectDir().'/public'.$this->getParameter('web_dir').$relativePath,
+                            $newFilename
+                        );
+                    } catch (FileException $e) {
+                        // ... handle exception if something happens during file upload
+                    }
+
+                    // updates the 'brochureFilename' property to store the PDF file name
+                    // instead of its contents
+                    $file->setName($newFilename);
+                    $file->setFile($this->getParameter('web_dir').'/'.$newFilename);
+                }
+
+                $this->em->persist($file);
+            }
             $this->em->flush();
 
             return true;

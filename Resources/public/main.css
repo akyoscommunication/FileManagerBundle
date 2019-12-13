@@ -15436,12 +15436,16 @@ a.text-white:focus {
   overflow: hidden;
 }
 
-#mainFileManagerBundle form[name=upload] #upload > .form-group {
-  margin-bottom: 0;
+#mainFileManagerBundle form[name=upload] #upload {
+  padding: 1rem 2rem;
 }
 
-#mainFileManagerBundle form[name=upload] #upload .custom-file-label:after {
-  content: "Parcourir les fichiers";
+#mainFileManagerBundle form[name=upload] #upload .custom-file {
+  height: 100%;
+}
+
+#mainFileManagerBundle form[name=upload] #upload .custom-file-label {
+  display: none;
 }
 
 .aky-file {
@@ -15597,10 +15601,6 @@ a.text-white:focus {
      object-position: center;
   height: 100%;
   width: 100%;
-}
-
-.aky-file-input {
-  display: none;
 }
 
 .aky-file-btnmanager {

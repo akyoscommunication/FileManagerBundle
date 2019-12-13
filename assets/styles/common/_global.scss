@@ -4,14 +4,11 @@ form[name=upload] {
     overflow: hidden;
 
     #upload {
-        > .form-group {
-            margin-bottom: 0;
-        }
+        padding: 1rem 2rem;
         .custom-file {
+            height: 100%;
             &-label {
-                &:after {
-                    content: "Parcourir les fichiers";
-                }
+                display: none;
             }
         }
     }

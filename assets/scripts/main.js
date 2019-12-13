@@ -6,6 +6,8 @@ import manageFolder from "./modules/manageFolder";
 import moveManager from "./modules/moveManager";
 import utils from "./common/utils";
 
+import '@grafikart/drop-files-element';
+
 import 'symfony-collection';
 import initCollectionType from "../../../CoreBundle/assets/scripts/modules/collectionType";
 import AkyUppyInit from "./modules/_uppy";

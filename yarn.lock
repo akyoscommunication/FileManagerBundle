@@ -138,6 +138,11 @@
     lodash "^4.17.13"
     to-fast-properties "^2.0.0"
 
+"@grafikart/drop-files-element@^1.0.7":
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/@grafikart/drop-files-element/-/drop-files-element-1.0.7.tgz#322ee4275c631523ac04053032447ae61502ea2d"
+  integrity sha512-/JJ1jziwMf52i2CAaDBCcVVH/fVOtsTbGR+hM8q2U01AHPFM1K94yWxozC5HPEaCYciLifrK6+RaYYp1iHKtcg==
+
 "@types/q@^1.5.1":
   version "1.5.2"
   resolved "https://registry.yarnpkg.com/@types/q/-/q-1.5.2.tgz#690a1475b84f2a884fd07cd797c00f5f31356ea8"

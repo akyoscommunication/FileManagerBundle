@@ -1,16 +1,13 @@
-{#{% if not form.vars.required %}#}
-    <button type="button" class="btn btn-danger aky-filemanager-delete btn-sm" data-input="#{{ form.vars.id }}">
-        <span class="fas fa-eraser"></span>
+{% if config == 'full' %}
+    <button type="button" class="btn btn-secondary aky-filemanager-externaly btn-sm" data-toggle="modal" data-target="#aky-filemanager-modal-input-{{ id }}" data-input="#{{ form.vars.id }}">
+        <i class="fas fa-link"></i>
     </button>
-{#{% endif %}#}
+{% endif %}
 
-{#<span class="btn btn-light fileinput-button">#}
-{#    <span class="fas fa-plus text-success"></span>#}
-{#    <input class="fileupload {{ collection is defined ? 'alone' }}" type="file" data-url="{{ path('file_manager_upload', {conf:conf}) }}" name="files[]" multiple="">#}
-{#</span>#}
+<button type="button" class="btn btn-danger aky-filemanager-delete btn-sm" data-input="#{{ form.vars.id }}">
+    <span class="fas fa-eraser"></span>
+</button>
 
-{#{% if form.vars.display_file_manager %}#}
-    <button type="button" class="btn btn-primary aky-filemanager-open btn-sm" data-toggle="modal" data-target="#aky-filemanager-modal-{{ id }}" data-input="#{{ form.vars.id }}">
-        <span class="far fa-folder-open"></span>
-    </button>
-{#{% endif %}#}
+<button type="button" class="btn btn-primary aky-filemanager-open btn-sm" data-toggle="modal" data-target="#aky-filemanager-modal-{{ id }}" data-input="#{{ form.vars.id }}">
+    <span class="far fa-folder-open"></span>
+</button>
