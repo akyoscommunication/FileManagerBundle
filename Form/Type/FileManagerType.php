@@ -14,7 +14,8 @@ class FileManagerType extends AbstractType
     {
         $resolver->setDefaults([
             'label' => '',
-            'config' => 'restrict'
+            'config' => 'restrict',
+            'required' => false
         ]);
     }
 
