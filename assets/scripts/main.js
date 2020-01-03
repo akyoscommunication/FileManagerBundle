@@ -22,7 +22,11 @@ class FileManager {
         moveManager.init();
         // initCollectionType.initDataPrototype('.aky-file-collection', '.aky-file');
         // AkyUppyInit.init();
-
+        
+        this.initFileCollection();
+    }
+    
+    static initFileCollection() {
         if($('.aky-file-collection').length) {
             $('.aky-file-collection').each(function () {
                 const $this = $(this);
@@ -46,6 +50,8 @@ class FileManager {
         }
     }
 }
+
+export default FileManager;
 
 jQuery(document).ready(function () {
    FileManager.init();

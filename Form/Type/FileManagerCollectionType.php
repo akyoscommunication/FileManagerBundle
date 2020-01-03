@@ -28,7 +28,7 @@ class FileManagerCollectionType extends AbstractType implements DataTransformerI
             'prototype_data' => null,
             'prototype_name' => '__name__',
             'entry_type' => FileManagerType::class,
-            'entry_options' => [],
+            'entry_options' => ['config' => 'restrict'],
             'delete_empty' => false,
             'by_reference' => false,
             'required' => false,
