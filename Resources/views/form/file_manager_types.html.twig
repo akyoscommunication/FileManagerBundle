@@ -2,11 +2,11 @@
 {#{% endblock %}#}
 
 {% block file_manager_widget %}
-    {% spaceless %}
+    {% apply spaceless %}
         {% with {'form': form, 'collection': false, 'id': form.vars.id} only %}
             {{ block('render_file') }}
         {% endwith %}
-    {% endspaceless %}
+    {% endapply %}
     {% include '@AkyosFileManager/form/_modal.html.twig' %}
 {% endblock %}
 
@@ -41,7 +41,7 @@
 {% endblock %}
 
 {% block render_file %}
-    {% spaceless %}
+    {% apply spaceless %}
             <div class="aky-file-container {% if form.vars.errors|length > 0 %}error{% endif %}">
                 <div class="aky-file">
                     {% if collection %}
@@ -101,5 +101,5 @@
                 </div>
             </div>
 
-    {% endspaceless %}
+    {% endapply %}
 {% endblock %}
