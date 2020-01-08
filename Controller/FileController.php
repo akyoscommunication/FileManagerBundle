@@ -47,6 +47,7 @@ class FileController extends AbstractController
 
         $uploadFileForm = $this->createForm(UploadType::class);
         $nameFolderFormType = $this->createForm(NameFolderFormType::class);
+
         $moveFormType = $this->createForm(MoveType::class, null, array(
             'directories' => $finder->files()->in($this->kernel->getProjectDir().'/public'.$this->getParameter('web_dir'))->directories(),
             'racine' => $this->kernel->getProjectDir().'/public'.$this->getParameter('web_dir')

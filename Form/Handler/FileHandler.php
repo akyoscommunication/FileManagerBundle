@@ -151,10 +151,10 @@ class FileHandler extends AbstractController
                 $this->em->flush();
             } else if($type === 'FOLDER') {
                 $initPathFile = explode('/public', $initPathFile);
-                $initPathFile = $initPathFile[sizeof($initPathFile)-1];
+                $initPathFile = $initPathFile[count($initPathFile)-1];
 
                 $folderName = explode('/', $initPathFile);
-                $folderName = $folderName[sizeof($folderName)-2].'/';
+                $folderName = $folderName[count($folderName)-2].'/';
 
                 $this->fs->mirror($publicFolder.$initPathFile, $destination.$folderName);
                 $this->fs->remove([$publicFolder.$initPathFile, '*']);

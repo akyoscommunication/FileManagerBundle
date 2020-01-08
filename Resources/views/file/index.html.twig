@@ -19,34 +19,36 @@
     <section class="my-4">
         <h2>Dossiers</h2>
         <div class="aky-file-collection">
-            {% for directory in directories if directories != null %}
-                <div class="aky-file-container">
-                    <div class="aky-file aky-file--folder">
-                        <a class="aky-file-preview aky-file-updateiframe-btn" href="{{ path('file_index', { path : app.request.get('path')~'/'~directory.name }) }}">
-                            <i class="fas fa-folder"></i>
-                        </a>
-                        <div class="aky-file-btnmanager">
-                            <div class="btn-group" role="group">
-                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#aky-filemanager-modal-manage-folder" data-action="EDIT" data-folder="{{ app.request.get('path')~'/'~directory.name }}">
-                                    <i class="fas fa-pen"></i>
-                                </button>
-                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#aky-filemanager-modal-move-manager" data-file="{{ directory.absolutePath }}" data-type="FOLDER">
-                                    <i class="fas fa-hand-point-right"></i>
-                                </button>
+            {% if directories != null %}
+                {% for directory in directories %}
+                    <div class="aky-file-container">
+                        <div class="aky-file aky-file--folder">
+                            <a class="aky-file-preview aky-file-updateiframe-btn" href="{{ path('file_index', { path : app.request.get('path')~'/'~directory.name }) }}">
+                                <i class="fas fa-folder"></i>
+                            </a>
+                            <div class="aky-file-btnmanager">
+                                <div class="btn-group" role="group">
+                                    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#aky-filemanager-modal-manage-folder" data-action="EDIT" data-folder="{{ app.request.get('path')~'/'~directory.name }}">
+                                        <i class="fas fa-pen"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#aky-filemanager-modal-move-manager" data-file="{{ directory.absolutePath }}" data-type="FOLDER">
+                                        <i class="fas fa-hand-point-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="aky-file-collection-remove">
+                                <a class="btn btn-danger btn-sm" href="{{ path('file_remove_folder', { folder : app.request.get('path')~'/'~directory.name }) }}"><i class="fas fa-times"></i></a>
                             </div>
                         </div>
-                        <div class="aky-file-collection-remove">
-                            <a class="btn btn-danger btn-sm" href="{{ path('file_remove_folder', { folder : app.request.get('path')~'/'~directory.name }) }}"><i class="fas fa-times"></i></a>
+                        <div class="aky-file-infos">
+                            <div class="aky-file-infos__name">{{ directory.name|slice(0, 10) }}</div>
+                            <div class="aky-file-infos__size">{{ directory.size|format_bytes }}</div>
                         </div>
                     </div>
-                    <div class="aky-file-infos">
-                        <div class="aky-file-infos__name">{{ directory.name|slice(0, 10) }}</div>
-                        <div class="aky-file-infos__size">{{ directory.size|format_bytes }}</div>
-                    </div>
-                </div>
-            {% else %}
-                <i><small>Pas de dossiers</small></i>
-            {% endfor %}
+                {% else %}
+                    <i><small>Pas de dossiers</small></i>
+                {% endfor %}
+            {% endif %}
         </div>
     </section>
 
