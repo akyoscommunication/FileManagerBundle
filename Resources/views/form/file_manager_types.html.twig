@@ -56,7 +56,7 @@
                     {% endif %}
                     <div class="aky-file-preview">
                         {% if form.vars.value != '' %}
-                            <img src="{{ asset(getImagePathById(form.vars.value)) }}" alt="" width="100%">
+                            {{ renderFileManager(form.vars.value) | raw }}
                         {% endif %}
                     </div>
                     <div class="modal fade aky-filemanager-modal" id="aky-filemanager-modal-input-{{ form.vars.id }}" tabindex="-1" role="dialog">

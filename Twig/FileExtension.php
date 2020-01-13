@@ -54,6 +54,7 @@ class FileExtension extends AbstractExtension
         $ytPattern = '%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i';
         $urlPattern = '#((https?|ftp)://(\S*?\.\S*?))([\s)\[\]{},;"\':<]|\.\s|$)#i';
         $intPattern = '/^\d+$/';
+        $pathPattern = "/^\/uploads\//";
         $file = null;
 
         if (preg_match($intPattern, $value)) {
@@ -65,6 +66,8 @@ class FileExtension extends AbstractExtension
         if (preg_match($ytPattern, $value)) {
             $result = '<iframe width="100%" height="100%" src="'.$value.'" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
         } elseif (preg_match($urlPattern, $value)) {
+            $result = '<img class="aky-img" src="'.$value.'" alt=""/>';
+        } elseif (preg_match($pathPattern, $value)) {
             $result = '<img class="aky-img" src="'.$value.'" alt=""/>';
         } elseif($file) {
             $result = '<img class="aky-img" src="'.$file->getFile().'" alt="'.$file->getAlt().'"/>';
