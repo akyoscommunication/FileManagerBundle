@@ -14,7 +14,11 @@
                     {% set pathString = pathString ~ '/' ~ pathDirs[i]  %}
                 {% endfor %}
                 {% if value %}
-                    / <a href="{{ path('file_index', { path : pathString }) }}">{{ value }}</a>
+                    {% if i < (pathDirs|length - 1) %}
+                        / <a href="{{ path('file_index', { path : pathString }) }}">{{ value }}</a>
+                    {% else %}
+                        / <span>{{ value }}</span>
+                    {% endif %}
                 {% endif %}
             {% endfor %}
         </h4>
