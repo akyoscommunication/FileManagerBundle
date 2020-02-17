@@ -68,9 +68,17 @@ class FileExtension extends AbstractExtension
         } elseif (preg_match($urlPattern, $value)) {
             $result = '<img class="aky-img" src="'.$value.'" alt=""/>';
         } elseif (preg_match($pathPattern, $value)) {
-            $result = '<img class="aky-img" src="'.$value.'" alt=""/>';
+            if(explode( "/", mime_content_type(__DIR__.'/../../../public'.$value))[0] == 'image' ){
+                $result = '<img class="aky-img" src="'.$value.'" alt=""/>';
+            }else{
+                $result = '<embed src="'.$value.'" width="1000" height="1000" type="'.mime_content_type(__DIR__.'/../../../public'.$value).'"">';
+            }
         } elseif($file) {
-            $result = '<img class="aky-img" src="'.$file->getFile().'" alt="'.$file->getAlt().'"/>';
+            if(explode( "/", mime_content_type(__DIR__.'/../../../public'.$file->getFile()))[0] == 'image' ){
+                $result = '<img class="aky-img" src="'.$file->getFile().'" alt="'.$file->getAlt().'"/>';
+            }else{
+                $result = '<embed src="'.$file->getFile().'" type="'.mime_content_type(__DIR__.'/../../../public'.$file->getFile()).'"">';
+            }
         }
 
         return $result;
@@ -81,6 +89,7 @@ class FileExtension extends AbstractExtension
         $ytPattern = '~^(?:https?://)?(?:www[.])?(?:youtube[.]com/watch[?]v=|youtu[.]be/)([^&]{11})~x';
         $urlPattern = '#((https?|ftp)://(\S*?\.\S*?))([\s)\[\]{},;"\':<]|\.\s|$)#i';
         $intPattern = '/^\d+$/';
+        $pathPattern = "/^\/uploads\//";
         $file = null;
 
         if (preg_match($intPattern, $value)) {
@@ -93,10 +102,11 @@ class FileExtension extends AbstractExtension
             $result = '';
         } elseif (preg_match($urlPattern, $value)) {
             $result = $value;
-        } elseif($file) {
+        } elseif (preg_match($pathPattern, $value)) {
+            $result = $value;
+        }elseif($file) {
             $result = $file->getFile();
         }
-
         return $result;
     }
 
