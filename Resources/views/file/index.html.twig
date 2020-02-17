@@ -14,7 +14,7 @@
                     {% set pathString = pathString ~ '/' ~ pathDirs[i]  %}
                 {% endfor %}
                 {% if value %}
-                    {% if i < (pathDirs|length - 1) %}
+                    {% if key < (pathDirs|length - 1) %}
                         / <a href="{{ path('file_index', { path : pathString }) }}">{{ value }}</a>
                     {% else %}
                         / <span>{{ value }}</span>
