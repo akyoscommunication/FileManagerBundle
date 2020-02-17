@@ -20,7 +20,8 @@ class MoveType extends AbstractType
 
         $builder
             ->add('tree', ChoiceType::class, [
-                'choices' => $tree
+                'choices' => $tree,
+                'label' => 'Dossier cible'
             ])
             ->add('file', HiddenType::class)
             ->add('type', HiddenType::class)

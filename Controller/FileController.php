@@ -35,8 +35,11 @@ class FileController extends AbstractController
 
     /**
      * @Route("/", name="index", methods={"GET","POST"})
+     * @param FileHandler $fileHandler
+     * @param Request $request
+     * @return Response
      */
-    public function index(FileRepository $fileRepository, FileHandler $fileHandler, Request $request): Response
+    public function index(FileHandler $fileHandler, Request $request): Response
     {
         $files = null;
         $directories = null;
@@ -96,6 +99,7 @@ class FileController extends AbstractController
             'uploadForm' => $uploadFileForm->createView(),
             'nameFolderFormType' => $nameFolderFormType->createView(),
             'moveFormType' => $moveFormType->createView(),
+            'currentPath' => $relativePath
         ]);
     }
 
@@ -104,6 +108,7 @@ class FileController extends AbstractController
      * @param Request $request
      * @param FileHandler $fileHandler
      *
+     * @param FileRepository $fileRepository
      * @return Response
      */
     public function edit(Request $request, FileHandler $fileHandler, FileRepository $fileRepository): Response
@@ -134,6 +139,10 @@ class FileController extends AbstractController
 
     /**
      * @Route("/", name="delete", methods={"DELETE"})
+     * @param Request $request
+     * @param FileRepository $fileRepository
+     * @param FileHandler $fileHandler
+     * @return Response
      */
     public function delete(Request $request, FileRepository $fileRepository, FileHandler $fileHandler): Response
     {
@@ -147,6 +156,9 @@ class FileController extends AbstractController
 
     /**
      * @Route("/delete", name="remove_folder")
+     * @param Request $request
+     * @param FileRepository $fileRepository
+     * @return Response
      */
     public function removeFolder(Request $request, FileRepository $fileRepository): Response
     {
@@ -168,9 +180,7 @@ class FileController extends AbstractController
     /**
      * @Route("/get-file-id", name="get_file_id", methods={"GET"}, options={"expose"=true})
      * @param Request $request
-     *
      * @param FileRepository $fileRepository
-     *
      * @return JsonResponse
      */
     public function getFileIdByPath(Request $request, FileRepository $fileRepository): JsonResponse

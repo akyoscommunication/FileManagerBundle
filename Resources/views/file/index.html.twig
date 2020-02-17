@@ -4,6 +4,17 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block page_content %}
+    <section class="current-dir">
+        {% set pathDirs = currentPath|split('/') %}
+        {% for key, value in pathDirs %}
+            {% set pathString = "" %}
+            {% for i in 0..key %}
+                {% set pathString = pathString ~ '/' ~ pathDirs[i]  %}
+            {% endfor %}
+            <a href="{{ path('file_index', { path : pathString }) }}">{{ value }}</a>(key < pathDirs|length ? ' / '){{ (key < pathDirs|length ? ' / ') }}
+        {% endfor %}
+    </section>
+
     <div class="aky-header-page d-flex align-items-center">
         <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#aky-filemanager-modal-manage-folder" data-action="CREATE">
             <i class="fas fa-folder-plus"></i>
@@ -48,6 +59,8 @@
                 {% else %}
                     <i><small>Pas de dossiers</small></i>
                 {% endfor %}
+            {% else %}
+                <i><small>Pas de dossiers</small></i>
             {% endif %}
         </div>
     </section>
