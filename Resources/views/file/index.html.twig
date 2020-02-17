@@ -13,7 +13,9 @@
                 {% for i in 1..(pathDirs|length - 1) %}
                     {% set pathString = pathString ~ '/' ~ pathDirs[i]  %}
                 {% endfor %}
-                / <a href="{{ path('file_index', { path : pathString }) }}">{{ value }}</a>
+                {% if value %}
+                    / <a href="{{ path('file_index', { path : pathString }) }}">{{ value }}</a>
+                {% endif %}
             {% endfor %}
         </h4>
     </section>
