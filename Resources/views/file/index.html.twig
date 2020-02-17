@@ -7,13 +7,13 @@
     <section class="current-dir my-4">
         <h4>
             {% set pathDirs = currentPath|split('/') %}
-            <a href="{{ path('file_index', { path : '/' }) }}">Uploads</a> /
-            {% for key, value in pathDirs %}
+            <a href="{{ path('file_index', { path : '/' }) }}">Uploads </a>
+            {% for key, value in pathDirs|filter((v, k) => k > 0) %}
                 {% set pathString = "" %}
-                {% for i in 1..key %}
+                {% for i in 1..(pathDirs|length - 1) %}
                     {% set pathString = pathString ~ '/' ~ pathDirs[i]  %}
                 {% endfor %}
-                <a href="{{ path('file_index', { path : pathString }) }}">{{ value }}</a>{{ (key < pathDirs|length ? ' / ') }}
+                / <a href="{{ path('file_index', { path : pathString }) }}">{{ value }}</a>
             {% endfor %}
         </h4>
     </section>
