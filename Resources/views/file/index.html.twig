@@ -11,7 +11,7 @@
             {% for i in 0..key %}
                 {% set pathString = pathString ~ '/' ~ pathDirs[i]  %}
             {% endfor %}
-            <a href="{{ path('file_index', { path : pathString }) }}">{{ value }}</a>(key < pathDirs|length ? ' / '){{ (key < pathDirs|length ? ' / ') }}
+            <a href="{{ path('file_index', { path : pathString }) }}">{{ value }}</a>{{ (key < pathDirs|length ? ' / ') }}
         {% endfor %}
     </section>
 
