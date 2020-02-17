@@ -10,7 +10,7 @@
             <a href="{{ path('file_index', { path : '/' }) }}">Uploads </a>
             {% for key, value in pathDirs|filter((v, k) => k > 0) %}
                 {% set pathString = "" %}
-                {% for i in 1..(pathDirs|length - 1) %}
+                {% for i in 1..key %}
                     {% set pathString = pathString ~ '/' ~ pathDirs[i]  %}
                 {% endfor %}
                 {% if value %}
