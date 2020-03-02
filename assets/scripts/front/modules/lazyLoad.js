@@ -1,6 +1,7 @@
 class LazyLoad {
 	
 	constructor() {
+		console.log('changed');
 	}
 	
 	init() {
