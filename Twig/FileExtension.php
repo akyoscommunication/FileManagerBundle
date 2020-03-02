@@ -66,16 +66,16 @@ class FileExtension extends AbstractExtension
         if (preg_match($ytPattern, $value)) {
             $result = '<iframe width="100%" height="100%" src="'.$value.'" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
         } elseif (preg_match($urlPattern, $value)) {
-            $result = '<img class="lazy-load not-loaded aky-img" src="'.$value.'" data-src="'.$value.'" alt=""/>';
+            $result = '<img class="lazy-load not-loaded aky-img" src="" data-src="'.$value.'" alt=""/>';
         } elseif (preg_match($pathPattern, $value)) {
             if(explode( "/", mime_content_type(__DIR__.'/../../../public'.$value))[0] == 'image' ){
-                $result = '<img class="lazy-load not-loaded aky-img" src="'.$value.'" data-src="'.$value.'" alt=""/>';
+                $result = '<img class="lazy-load not-loaded aky-img" src="" data-src="'.$value.'" alt=""/>';
             }else{
                 $result = '<embed src="'.$value.'" width="1000" height="1000" type="'.mime_content_type(__DIR__.'/../../../public'.$value).'"">';
             }
         } elseif($file) {
             if(explode( "/", mime_content_type(__DIR__.'/../../../public'.$file->getFile()))[0] == 'image' ){
-                $result = '<img class="lazy-load not-loaded aky-img" src="'.$file->getFile().'" data-src="'.$file->getFile().'" alt="'.$file->getAlt().'"/>';
+                $result = '<img class="lazy-load not-loaded aky-img" src="" data-src="'.$file->getFile().'" alt="'.$file->getAlt().'"/>';
             }else{
                 $result = '<embed src="'.$file->getFile().'" type="'.mime_content_type(__DIR__.'/../../../public'.$file->getFile()).'"">';
             }
