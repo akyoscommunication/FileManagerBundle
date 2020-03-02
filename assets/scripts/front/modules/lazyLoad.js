@@ -1,7 +1,7 @@
 class LazyLoad {
 	
 	static init() {
-		const lazyLoadImages = document.querySelectorAll('.lazy-load .not-loaded');
+		const lazyLoadImages = document.querySelectorAll('.lazy-load.not-loaded');
 		window.addEventListener('scroll', function() {
 			lazyLoadImages.forEach(function(image) {
 				if (image.classList.contains('not-loaded')) {
