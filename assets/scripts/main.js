@@ -4,6 +4,7 @@ import removeFile from "./modules/removeFile";
 import editFile from "./modules/editFile";
 import manageFolder from "./modules/manageFolder";
 import moveManager from "./modules/moveManager";
+import LazyLoad from "./modules/lazyLoad";
 import utils from "./common/utils";
 
 import '@grafikart/drop-files-element';
@@ -14,6 +15,7 @@ import AkyUppyInit from "./modules/_uppy";
 
 class FileManager {
     static init() {
+        LazyLoad.init();
         new IframeAdd();
         loadPreview.init();
         removeFile.init();
