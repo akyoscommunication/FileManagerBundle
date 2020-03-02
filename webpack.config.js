@@ -141,20 +141,20 @@ let webpackConfig = {
         // new ManifestPlugin()
     ]
 };
-
-if (process.env.NODE_ENV === 'production') {
-    let prod = {
-        plugins: [
-            new UglifyJsPlugin({
-                cache: true,
-                parallel: true,
-                sourceMap: false
-            }),
-            new ExtractTextPlugin("main.css"),
-            new OptimizeCssAssetsPlugin()
-        ]
-    };
-    webpackConfig = merge(webpackConfig, prod);
-}
+//
+// if (process.env.NODE_ENV === 'production') {
+//     let prod = {
+//         plugins: [
+//             new UglifyJsPlugin({
+//                 cache: true,
+//                 parallel: true,
+//                 sourceMap: false
+//             }),
+//             new ExtractTextPlugin("main.css"),
+//             new OptimizeCssAssetsPlugin()
+//         ]
+//     };
+//     webpackConfig = merge(webpackConfig, prod);
+// }
 
 module.exports = webpackConfig;

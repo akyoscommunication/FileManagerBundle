@@ -19,7 +19,7 @@ const config = {
         ]
     },
     manifest: {},
-    minify: (process.env.NODE_ENV === 'production')
+    minify: false
 };
 
 module.exports = config;
