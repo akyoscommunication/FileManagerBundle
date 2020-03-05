@@ -1,7 +1,7 @@
 // import external dependencies
 import 'jquery';
 
-import LazyLoad from "./modules/LazyLoad";
+import LazyLoad from "./modules/lazyLoad";
 
 class Front {
 	static init() {

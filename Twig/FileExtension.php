@@ -74,10 +74,14 @@ class FileExtension extends AbstractExtension
                 $result = '<embed src="'.$value.'" width="1000" height="1000" type="'.mime_content_type(__DIR__.'/../../../public'.$value).'"">';
             }
         } elseif($file) {
-            if(explode( "/", mime_content_type(__DIR__.'/../../../public'.$file->getFile()))[0] === 'image' ){
+            if (file_exists(__DIR__.'/../../../public'.$file->getFile())) {
+                if(explode( "/", mime_content_type(__DIR__.'/../../../public'.$file->getFile()))[0] === 'image' ){
+                    $result = '<img class="lazy-load not-loaded aky-img" src="" data-src="'.$file->getFile().'" alt="'.$file->getAlt().'"/>';
+                }else{
+                    $result = '<embed src="'.$file->getFile().'" type="'.mime_content_type(__DIR__.'/../../../public'.$file->getFile()).'"">';
+                }
+            } else {
                 $result = '<img class="lazy-load not-loaded aky-img" src="" data-src="'.$file->getFile().'" alt="'.$file->getAlt().'"/>';
-            }else{
-                $result = '<embed src="'.$file->getFile().'" type="'.mime_content_type(__DIR__.'/../../../public'.$file->getFile()).'"">';
             }
         }
 
