@@ -33,6 +33,7 @@ class FileExtension extends AbstractExtension
             new TwigFunction('getImagePathById', [$this, 'getImagePathById']),
             new TwigFunction('getImageAltById', [$this, 'getImageAltById']),
             new TwigFunction('renderFileManager', [$this, 'renderFileManager']),
+            new TwigFunction('renderFileManagerNotLazy', [$this, 'renderFileManagerNotLazy']),
             new TwigFunction('renderFileManagerUrl', [$this, 'renderFileManagerUrl']),
         ];
     }
@@ -47,6 +48,45 @@ class FileExtension extends AbstractExtension
     {
         $file = $this->em->getRepository(File::class)->find($id);
         return $file ? $file->getAlt() : false;
+    }
+
+    public function renderFileManagerNotLazy($value, $height = null, $width = null)
+    {
+        $ytPattern = '%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i';
+        $urlPattern = '#((https?|ftp)://(\S*?\.\S*?))([\s)\[\]{},;"\':<]|\.\s|$)#i';
+        $intPattern = '/^\d+$/';
+        $pathPattern = "/^\/uploads\//";
+        $file = null;
+
+        if (preg_match($intPattern, $value)) {
+            $file = $this->em->getRepository(File::class)->find($value);
+        }
+
+        $result = '';
+
+        if (preg_match($ytPattern, $value)) {
+            $result = '<iframe width="100%" height="100%" src="'.$value.'" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
+        } elseif (preg_match($urlPattern, $value)) {
+            $result = '<img class="aky-img" src="" data-src="'.$value.'" alt=""/>';
+        } elseif (preg_match($pathPattern, $value)) {
+            if(explode( "/", mime_content_type(__DIR__.'/../../../public'.$value))[0] === 'image' ){
+                $result = '<img class="aky-img" src="" data-src="'.$value.'" alt=""/>';
+            }else{
+                $result = '<embed src="'.$value.'" width="1000" height="1000" type="'.mime_content_type(__DIR__.'/../../../public'.$value).'"">';
+            }
+        } elseif($file) {
+            if (file_exists(__DIR__.'/../../../public'.$file->getFile())) {
+                if(explode( "/", mime_content_type(__DIR__.'/../../../public'.$file->getFile()))[0] === 'image' ){
+                    $result = '<img class="aky-img" src="" data-src="'.$file->getFile().'" alt="'.$file->getAlt().'"/>';
+                }else{
+                    $result = '<embed src="'.$file->getFile().'" type="'.mime_content_type(__DIR__.'/../../../public'.$file->getFile()).'"">';
+                }
+            } else {
+                $result = '<img class="aky-img" src="" data-src="'.$file->getFile().'" alt="'.$file->getAlt().'"/>';
+            }
+        }
+
+        return $result;
     }
 
     public function renderFileManager($value, $height = null, $width = null)
