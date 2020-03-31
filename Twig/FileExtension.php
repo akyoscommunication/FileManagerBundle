@@ -69,10 +69,12 @@ class FileExtension extends AbstractExtension
         } elseif (preg_match($urlPattern, $value)) {
             $result = '<img class="aky-img" src="'.$value.'" alt=""/>';
         } elseif (preg_match($pathPattern, $value)) {
-            if(explode( "/", mime_content_type(__DIR__.'/../../../public'.$value))[0] === 'image' ){
-                $result = '<img class="aky-img" src="'.$value.'" alt=""/>';
-            }else{
-                $result = '<embed src="'.$value.'" width="1000" height="1000" type="'.mime_content_type(__DIR__.'/../../../public'.$value).'"">';
+            if (file_exists(__DIR__.'/../../../public'.$value)) {
+                if(explode( "/", mime_content_type(__DIR__.'/../../../public'.$value))[0] === 'image' ){
+                    $result = '<img class="aky-img" src="'.$value.'" alt=""/>';
+                }else{
+                    $result = '<embed src="'.$value.'" width="1000" height="1000" type="'.mime_content_type(__DIR__.'/../../../public'.$value).'"">';
+                }
             }
         } elseif($file) {
             if (file_exists(__DIR__.'/../../../public'.$file->getFile())) {
@@ -108,10 +110,12 @@ class FileExtension extends AbstractExtension
         } elseif (preg_match($urlPattern, $value)) {
             $result = '<img class="lazy-load not-loaded aky-img" src="" data-src="'.$value.'" alt=""/>';
         } elseif (preg_match($pathPattern, $value)) {
-            if(explode( "/", mime_content_type(__DIR__.'/../../../public'.$value))[0] === 'image' ){
-                $result = '<img class="lazy-load not-loaded aky-img" src="" data-src="'.$value.'" alt=""/>';
-            }else{
-                $result = '<embed src="'.$value.'" width="1000" height="1000" type="'.mime_content_type(__DIR__.'/../../../public'.$value).'"">';
+            if (file_exists(__DIR__.'/../../../public'.$value)) {
+                if (explode("/", mime_content_type(__DIR__ . '/../../../public' . $value))[0] === 'image') {
+                    $result = '<img class="lazy-load not-loaded aky-img" src="" data-src="' . $value . '" alt=""/>';
+                } else {
+                    $result = '<embed src="' . $value . '" width="1000" height="1000" type="' . mime_content_type(__DIR__ . '/../../../public' . $value) . '"">';
+                }
             }
         } elseif($file) {
             if (file_exists(__DIR__.'/../../../public'.$file->getFile())) {
