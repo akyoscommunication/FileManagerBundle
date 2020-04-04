@@ -73,7 +73,8 @@
         }
 
         img {
-            @include objectFit(cover, center, 100%, 100%);
+            @include objectFit(contain, center, 100%, 100%);
+            background-color: rgba(0,0,0,0.1);
         }
     }
 

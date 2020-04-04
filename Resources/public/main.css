@@ -15595,12 +15595,13 @@ a.text-white:focus {
 }
 
 .aky-file-preview img {
-  -o-object-fit: cover;
-     object-fit: cover;
+  -o-object-fit: contain;
+     object-fit: contain;
   -o-object-position: center;
      object-position: center;
   height: 100%;
   width: 100%;
+  background-color: rgba(0, 0, 0, 0.1);
 }
 
 .aky-file-btnmanager {
