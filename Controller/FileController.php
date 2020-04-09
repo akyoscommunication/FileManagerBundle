@@ -20,7 +20,7 @@ use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/admin/file", name="file_")
+ * @Route("/file-manager", name="file_")
  */
 class FileController extends AbstractController
 {
