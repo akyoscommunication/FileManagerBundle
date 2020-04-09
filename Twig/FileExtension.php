@@ -60,7 +60,9 @@ class FileExtension extends AbstractExtension
 
         if (preg_match($intPattern, $value)) {
             $file = $this->em->getRepository(File::class)->find($value);
+            $pathToFile = __DIR__.'/../../../public'.$file->getFile();
         }
+
 
         $result = '';
 
@@ -77,8 +79,17 @@ class FileExtension extends AbstractExtension
                 }
             }
         } elseif($file) {
-            if (file_exists(__DIR__.'/../../../public'.$file->getFile())) {
-                if(explode( "/", mime_content_type(__DIR__.'/../../../public'.$file->getFile()))[0] === 'image' ){
+            if (file_exists($pathToFile)) {
+                if (mime_content_type($pathToFile) === 'image/svg'){
+                    $svg_file = file_get_contents($pathToFile);
+
+                    $find_string   = '<svg';
+                    $position = strpos($svg_file, $find_string);
+
+                    $svg_file_new = substr($svg_file, $position);
+                    $result = "<div style='width:100%; height:100%;' >" . $svg_file_new . "</div>";
+                }
+                elseif(explode( "/", mime_content_type(__DIR__.'/../../../public'.$file->getFile()))[0] === 'image' ){
                     $result = '<img class="aky-img" src="'.$file->getFile().'" alt="'.$file->getAlt().'"/>';
                 }else{
                     $result = '<embed src="'.$file->getFile().'" type="'.mime_content_type(__DIR__.'/../../../public'.$file->getFile()).'"">';
@@ -101,6 +112,7 @@ class FileExtension extends AbstractExtension
 
         if (preg_match($intPattern, $value)) {
             $file = $this->em->getRepository(File::class)->find($value);
+            $pathToFile = __DIR__.'/../../../public'.$file->getFile();
         }
 
         $result = '';
@@ -118,8 +130,17 @@ class FileExtension extends AbstractExtension
                 }
             }
         } elseif($file) {
-            if (file_exists(__DIR__.'/../../../public'.$file->getFile())) {
-                if(explode( "/", mime_content_type(__DIR__.'/../../../public'.$file->getFile()))[0] === 'image' ){
+            if (file_exists($pathToFile)) {
+                if (mime_content_type($pathToFile) === 'image/svg'){
+                    $svg_file = file_get_contents($pathToFile);
+
+                    $find_string   = '<svg';
+                    $position = strpos($svg_file, $find_string);
+
+                    $svg_file_new = substr($svg_file, $position);
+                    $result = "<div style='width:100%; height:100%;' >" . $svg_file_new . "</div>";
+                }
+                elseif(explode( "/", mime_content_type(__DIR__.'/../../../public'.$file->getFile()))[0] === 'image' ){
                     $result = '<img class="lazy-load not-loaded aky-img" src="" data-src="'.$file->getFile().'" alt="'.$file->getAlt().'"/>';
                 }else{
                     $result = '<embed src="'.$file->getFile().'" type="'.mime_content_type(__DIR__.'/../../../public'.$file->getFile()).'"">';

@@ -33,9 +33,13 @@ class IframeAdd {
         iframe.on('load', function () {
             const iframeContent = $(iframe).contents();
 
-            iframeContent.on('click', '.aky-file-addto-btn', function () {
+            iframeContent.on('click', '.aky-file-addto-btn', function (e) {
+                e.preventDefault();
+                $('<div id="Loader" style="position: fixed;top: 0;left: 0;right: 0;bottom: 0;display: flex;justify-content: center;align-content: center;background-color: rgba(0,0,0,0.75);"><spinning-dots style="margin: auto;width:50px;height:50px;stroke-width:10px;color: #dee2e6;" dots="8"></spinning-dots></div>').insertAfter($(this).parents('.aky-file-collection'));
                 const pathFile = $(this).data('path');
-                _this.changeValueOfInput(pathFile);
+                const url = $(this).data('urlToGet');
+
+                _this.changeValueOfInput(pathFile, url, iframeContent);
             });
             iframeContent.on('click', '.aky-file-updateiframe-btn', function () {
                 _this.clickButton(iframe);
@@ -43,17 +47,18 @@ class IframeAdd {
         });
     }
 
-    changeValueOfInput(pathFile) {
+    changeValueOfInput(pathFile, url, iframeContent) {
         const input = $(this.akyOpenFolder).parents('.aky-file').find('.aky-file-input').children('input');
         const target = this.akyTarget;
 
         $.ajax({
             method: 'GET',
-            url: '/admin/file/get-file-id/',
+            url: url,
             data: {
                 path : pathFile
             },
             success: function (res) {
+                iframeContent.find('#Loader').remove();
                 $(input).val(res);
                 $(target).modal('hide');
                 $('.modal-backdrop').remove();

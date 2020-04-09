@@ -4,8 +4,9 @@ class EditFile {
     static init() {
         $(document).on('click', '.aky-filemanager-modal-edit-file-btn', function () {
             const path = $(this).data('path');
+            const url = $(this).data('url');
 
-            fetch('/admin/file/edit?path='+encodeURI(path))
+            fetch(url)
                 .then(function (res) {
                     return res.text()
                         .then(function (response) {
@@ -19,7 +20,7 @@ class EditFile {
 
                                 $.ajax({
                                     method: 'POST',
-                                    url: '/admin/file/edit?path='+encodeURI(path),
+                                    url: url,
                                     data: $(this).serialize(),
                                     success: function (res) {
                                         window.location.reload();

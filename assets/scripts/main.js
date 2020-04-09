@@ -7,10 +7,12 @@ import moveManager from "./modules/moveManager";
 import utils from "./common/utils";
 
 import '@grafikart/drop-files-element';
+import '@grafikart/spinning-dots-element';
 
 import 'symfony-collection';
 import initCollectionType from "../../../CoreBundle/assets/scripts/modules/collectionType";
 import AkyUppyInit from "./modules/_uppy";
+import SpinningDots from "@grafikart/spinning-dots-element";
 
 class FileManager {
     static init() {
@@ -54,6 +56,7 @@ class FileManager {
 export default FileManager;
 
 jQuery(document).ready(function () {
-   FileManager.init();
-   utils.init();
+    new SpinningDots();
+    FileManager.init();
+    utils.init();
 });

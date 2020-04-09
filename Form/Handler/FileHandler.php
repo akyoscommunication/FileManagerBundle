@@ -38,7 +38,11 @@ class FileHandler extends AbstractController
                     $originalFilename = pathinfo($fileUploaded->getClientOriginalName(), PATHINFO_FILENAME);
                     // this is needed to safely include the file name as part of the URL
                     $safeFilename = transliterator_transliterate('Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()', $originalFilename);
-                    $newFilename = $safeFilename.'.'.$fileUploaded->guessExtension();
+                    $extension = $fileUploaded->guessExtension();
+                    if ($fileUploaded->getMimeType() === 'image/svg') {
+                        $extension = 'svg';
+                    }
+                    $newFilename = $safeFilename.'.'.$extension;
 
                     // Move the file to the directory where brochures are stored
                     try {
@@ -47,7 +51,7 @@ class FileHandler extends AbstractController
                             $newFilename
                         );
                     } catch (FileException $e) {
-                        // ... handle exception if something happens during file upload
+                        dd($e);
                     }
 
                     // updates the 'brochureFilename' property to store the PDF file name

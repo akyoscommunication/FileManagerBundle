@@ -143,6 +143,11 @@
   resolved "https://registry.yarnpkg.com/@grafikart/drop-files-element/-/drop-files-element-1.0.7.tgz#322ee4275c631523ac04053032447ae61502ea2d"
   integrity sha512-/JJ1jziwMf52i2CAaDBCcVVH/fVOtsTbGR+hM8q2U01AHPFM1K94yWxozC5HPEaCYciLifrK6+RaYYp1iHKtcg==
 
+"@grafikart/spinning-dots-element@^0.0.3":
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/@grafikart/spinning-dots-element/-/spinning-dots-element-0.0.3.tgz#024d3634918d97b51999af4daa81f5c7000cb4d7"
+  integrity sha512-u3bu1UTO5+VZCxJGSrUVUF7c8c82kSxkybRpC6eq+RrzBkOY81dchlJlAINmreV/6l2LfK8KkOVrbYQbscgSpw==
+
 "@types/q@^1.5.1":
   version "1.5.2"
   resolved "https://registry.yarnpkg.com/@types/q/-/q-1.5.2.tgz#690a1475b84f2a884fd07cd797c00f5f31356ea8"
