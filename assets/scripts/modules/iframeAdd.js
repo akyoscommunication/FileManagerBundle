@@ -37,7 +37,7 @@ class IframeAdd {
                 e.preventDefault();
                 $('<div id="Loader" style="position: fixed;top: 0;left: 0;right: 0;bottom: 0;display: flex;justify-content: center;align-content: center;background-color: rgba(0,0,0,0.75);"><spinning-dots style="margin: auto;width:50px;height:50px;stroke-width:10px;color: #dee2e6;" dots="8"></spinning-dots></div>').insertAfter($(this).parents('.aky-file-collection'));
                 const pathFile = $(this).data('path');
-                const url = $(this).data('urlToGet');
+                const url = $(this).data('urltoget');
 
                 _this.changeValueOfInput(pathFile, url, iframeContent);
             });
