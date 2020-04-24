@@ -60,6 +60,9 @@ class FileExtension extends AbstractExtension
 
         if (preg_match($intPattern, $value)) {
             $file = $this->em->getRepository(File::class)->find($value);
+            if(!$file) {
+                return false;
+            }
             $pathToFile = __DIR__.'/../../../public'.$file->getFile();
         }
 
