@@ -179,7 +179,7 @@ class FileExtension extends AbstractExtension
         }elseif($file) {
             $result = $file->getFile();
         }
-        return urlencode($result);
+        return $result;
     }
 
     function formatBytes($bytes, $precision = 2)
