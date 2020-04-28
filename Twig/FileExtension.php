@@ -179,7 +179,7 @@ class FileExtension extends AbstractExtension
         }elseif($file) {
             $result = $file->getFile();
         }
-        return $result;
+        return str_replace(' ', '%20', $result);
     }
 
     function formatBytes($bytes, $precision = 2)
