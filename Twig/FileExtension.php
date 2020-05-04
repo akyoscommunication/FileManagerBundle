@@ -52,6 +52,9 @@ class FileExtension extends AbstractExtension
 
     public function renderFileManagerNotLazy($value, $height = null, $width = null)
     {
+        if (!is_string($value)) {
+            return false;
+        }
         $ytPattern = '%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i';
         $urlPattern = '#((https?|ftp)://(\S*?\.\S*?))([\s)\[\]{},;"\':<]|\.\s|$)#i';
         $intPattern = '/^\d+$/';
@@ -107,6 +110,9 @@ class FileExtension extends AbstractExtension
 
     public function renderFileManager($value, $height = null, $width = null)
     {
+        if (!is_string($value)) {
+            return false;
+        }
         $ytPattern = '%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i';
         $urlPattern = '#((https?|ftp)://(\S*?\.\S*?))([\s)\[\]{},;"\':<]|\.\s|$)#i';
         $intPattern = '/^\d+$/';
@@ -158,6 +164,9 @@ class FileExtension extends AbstractExtension
 
     public function renderFileManagerUrl($value)
     {
+        if (!is_string($value)) {
+            return false;
+        }
         $ytPattern = '~^(?:https?://)?(?:www[.])?(?:youtube[.]com/watch[?]v=|youtu[.]be/)([^&]{11})~x';
         $urlPattern = '#((https?|ftp)://(\S*?\.\S*?))([\s)\[\]{},;"\':<]|\.\s|$)#i';
         $intPattern = '/^\d+$/';
