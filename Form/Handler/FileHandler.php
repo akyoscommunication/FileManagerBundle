@@ -37,6 +37,7 @@ class FileHandler extends AbstractController
                 if ($fileUploaded) {
                     $originalFilename = pathinfo($fileUploaded->getClientOriginalName(), PATHINFO_FILENAME);
                     // this is needed to safely include the file name as part of the URL
+					$originalFilename = str_replace(' ', '-', $originalFilename);
                     $safeFilename = transliterator_transliterate('Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()', $originalFilename);
                     $extension = $fileUploaded->guessExtension();
                     if ($fileUploaded->getMimeType() === 'image/svg') {
