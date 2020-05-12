@@ -52,7 +52,7 @@ class FileExtension extends AbstractExtension
 
     public function renderFileManagerNotLazy($value, $height = null, $width = null)
     {
-        if (!is_string($value)) {
+        if (!is_string($value) and !is_int($value)) {
             return false;
         }
         $ytPattern = '%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i';
@@ -110,7 +110,7 @@ class FileExtension extends AbstractExtension
 
     public function renderFileManager($value, $height = null, $width = null)
     {
-        if (!is_string($value)) {
+        if (!is_string($value) and !is_int($value)) {
             return false;
         }
         $ytPattern = '%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i';
