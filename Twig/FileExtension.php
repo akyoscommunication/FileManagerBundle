@@ -164,7 +164,7 @@ class FileExtension extends AbstractExtension
 
     public function renderFileManagerUrl($value)
     {
-        if (!is_string($value) or is_int($value)) {
+        if (!is_string($value) or !is_int($value)) {
             return false;
         }
         $ytPattern = '~^(?:https?://)?(?:www[.])?(?:youtube[.]com/watch[?]v=|youtu[.]be/)([^&]{11})~x';
