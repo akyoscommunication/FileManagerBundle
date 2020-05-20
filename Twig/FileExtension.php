@@ -50,6 +50,9 @@ class FileExtension extends AbstractExtension
         return $file ? $file->getAlt() : false;
     }
 
+    /*
+     * @Deprecated use renderFileManager() instead with second parameter to false, to disable lazy load
+     */
     public function renderFileManagerNotLazy($value, $height = null, $width = null)
     {
         if (!is_string($value) and !is_int($value)) {
@@ -108,7 +111,7 @@ class FileExtension extends AbstractExtension
         return $result;
     }
 
-    public function renderFileManager($value, $height = null, $width = null)
+    public function renderFileManager($value, $lazy = true)
     {
         if (!is_string($value) and !is_int($value)) {
             return false;
@@ -129,13 +132,19 @@ class FileExtension extends AbstractExtension
         if (preg_match($ytPattern, $value)) {
             $result = '<iframe width="100%" height="100%" src="'.$value.'" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
         } elseif (preg_match($urlPattern, $value)) {
-            $result = '<img class="lazy-load not-loaded aky-img" src="" data-src="'.$value.'" alt=""/>';
+            $result = '<img class="'.($lazy ? 'lazy-load not-loaded' : '' ).' aky-img" src="'.($lazy ? '' : $value ).'" '.($lazy ? 'data-src="' . $value . '"' : '' ).' alt=""/>';
         } elseif (preg_match($pathPattern, $value)) {
             if (file_exists(__DIR__.'/../../../public'.$value)) {
                 if (explode("/", mime_content_type(__DIR__ . '/../../../public' . $value))[0] === 'image') {
-                    $result = '<img class="lazy-load not-loaded aky-img" src="" data-src="' . $value . '" alt=""/>';
+                    $result = '<img class="'.($lazy ? 'lazy-load not-loaded' : '' ).' aky-img" src="'.($lazy ? '' : $value ).'" '.($lazy ? 'data-src="' . $value . '"' : '' ).' alt=""/>';
                 } else {
-                    $result = '<embed src="' . $value . '" width="1000" height="1000" type="' . mime_content_type(__DIR__ . '/../../../public' . $value) . '"">';
+                    if (substr( $value, 0, 5 ) === "video") {
+                        $result = '<video controls width="100%">
+                                        <source src="'.$value.'" type="'.mime_content_type(__DIR__.'/../../../public'.$value).'">
+                                   </video>';
+                    } else {
+                        $result = '<embed src="' . $value . '" width="100%" height="100%" type="' . mime_content_type(__DIR__ . '/../../../public' . $value) . '""><style type="text/css">video {width: 100%; height: 100%}</style></embed>';
+                    }
                 }
             }
         } elseif($file) {
@@ -150,12 +159,18 @@ class FileExtension extends AbstractExtension
                     $result = "<div style='width:100%; height:100%;' >" . $svg_file_new . "</div>";
                 }
                 elseif(explode( "/", mime_content_type(__DIR__.'/../../../public'.$file->getFile()))[0] === 'image' ){
-                    $result = '<img class="lazy-load not-loaded aky-img" src="" data-src="'.$file->getFile().'" alt="'.$file->getAlt().'"/>';
+                    $result = '<img class="'.($lazy ? 'lazy-load not-loaded' : '' ).' aky-img" src="'.($lazy ? '' : $file->getFile() ).'" '.($lazy ? 'data-src="' . $file->getFile() . '"' : '' ).' alt="'.$file->getAlt().'"/>';
                 }else{
-                    $result = '<embed src="'.$file->getFile().'" type="'.mime_content_type(__DIR__.'/../../../public'.$file->getFile()).'"">';
+                    if (substr( mime_content_type(__DIR__.'/../../../public'.$file->getFile()), 0, 5 ) === "video") {
+                        $result = '<video controls width="100%">
+                                        <source src="'.$file->getFile().'" type="'.mime_content_type(__DIR__.'/../../../public'.$file->getFile()).'">
+                                   </video>';
+                    } else {
+                        $result = '<embed width="100%" height="100%" src="'.$file->getFile().'" type="'.mime_content_type(__DIR__.'/../../../public'.$file->getFile()).'""><style type="text/css">video {width: 100%; height: 100%}</style></embed>';
+                    }
                 }
             } else {
-                $result = '<img class="lazy-load not-loaded aky-img" src="" data-src="'.$file->getFile().'" alt="'.$file->getAlt().'"/>';
+                $result = '<img class="'.($lazy ? 'lazy-load not-loaded' : '' ).' aky-img" src="'.($lazy ? '' : $file->getFile() ).'" '.($lazy ? 'data-src="' . $file->getFile() . '"' : '' ).' alt="'.$file->getAlt().'"/>';
             }
         }
 
