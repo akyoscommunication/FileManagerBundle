@@ -1,4 +1,6 @@
+{% form_theme editFileForm 'bootstrap_4_layout.html.twig' %}
+
 {{ form_start(editFileForm) }}
     {{ form_widget(editFileForm) }}
-<button class="btn btn-outline-success">{{ button_label|default('Enregistrer') }}</button>
+    <input type="submit" id="aky-filemanager-modal-edit-file-submit" class="d-none"/>
 {{ form_end(editFileForm) }}

@@ -15426,18 +15426,32 @@ a.text-white:focus {
   font-weight: 600;
 }
 
+#mainFileManagerBundle .current-dir {
+  margin-top: 0 !important;
+}
+
 #mainFileManagerBundle form[name=upload] {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -ms-flex-wrap: nowrap;
+      flex-wrap: nowrap;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+  -webkit-box-align: end;
+      -ms-flex-align: end;
+          align-items: flex-end;
   overflow: hidden;
 }
 
 #mainFileManagerBundle form[name=upload] #upload {
-  padding: 1rem 2rem;
+  padding: 1rem 0;
+  width: 100%;
 }
 
 #mainFileManagerBundle form[name=upload] #upload .custom-file {
@@ -15446,6 +15460,10 @@ a.text-white:focus {
 
 #mainFileManagerBundle form[name=upload] #upload .custom-file-label {
   display: none;
+}
+
+#mainFileManagerBundle .button-label {
+  cursor: pointer !important;
 }
 
 .aky-file {
@@ -15472,12 +15490,6 @@ a.text-white:focus {
   -webkit-box-shadow: 0 14px 28px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(0, 0, 0, 0.1);
           box-shadow: 0 14px 28px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-}
-
-.aky-file--folder {
-  -webkit-box-shadow: none;
-          box-shadow: none;
-  border: 1px solid lightgrey;
 }
 
 .aky-file-collection {
@@ -15611,6 +15623,11 @@ a.text-white:focus {
   border: 1px solid white;
 }
 
+.aky-file .btn-sm,
+.aky-file .btn-group-sm > .btn {
+  font-size: 0.75rem;
+}
+
 .aky-file-infos {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -15619,14 +15636,55 @@ a.text-white:focus {
   -webkit-box-direction: normal;
       -ms-flex-direction: row;
           flex-direction: row;
-  -ms-flex-wrap: wrap;
-      flex-wrap: wrap;
+  -ms-flex-wrap: nowrap;
+      flex-wrap: nowrap;
   -webkit-box-pack: justify;
       -ms-flex-pack: justify;
           justify-content: space-between;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  -webkit-box-align: start;
+      -ms-flex-align: start;
+          align-items: flex-start;
   font-size: 10px;
   padding: 5px;
+  width: 150px;
+}
+
+.aky-file-infos__name {
+  word-break: break-all;
+}
+
+.aky-file-infos__size {
+  word-break: keep-all;
+  margin-left: 3px;
+}
+
+.aky-file--folder {
+  -webkit-box-shadow: none;
+          box-shadow: none;
+  border: 1px solid lightgrey;
+  height: 45px;
+}
+
+.aky-file--folder .aky-file-preview {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -ms-flex-wrap: nowrap;
+      flex-wrap: nowrap;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+  -webkit-box-align: start;
+      -ms-flex-align: start;
+          align-items: flex-start;
+  padding-left: 5px;
+  font-size: 2.5rem;
+}
+
+#aky-filemanager-modal-cci_document_file > .modal-dialog {
+  max-width: 1200px;
 }

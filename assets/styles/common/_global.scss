@@ -1,10 +1,14 @@
+.current-dir {
+    margin-top: 0 !important;
+}
+
 form[name=upload] {
-    display: flex;
-    align-items: center;
+    @include flex(column, nowrap, flex-start, flex-end);
     overflow: hidden;
 
     #upload {
-        padding: 1rem 2rem;
+        padding: 1rem 0;
+        width: 100%;
         .custom-file {
             height: 100%;
             &-label {
@@ -12,4 +16,8 @@ form[name=upload] {
             }
         }
     }
+}
+
+.button-label {
+    cursor: pointer !important;
 }

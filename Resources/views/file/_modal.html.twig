@@ -1,9 +1,12 @@
+{% form_theme nameFolderFormType 'bootstrap_4_layout.html.twig' %}
+{% form_theme moveFormType 'bootstrap_4_layout.html.twig' %}
+
 <!-- Modal -->
 <div class="modal fade aky-filemanager-modal" id="aky-filemanager-modal-manage-folder" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">{{ 'Dossier ajout/renommer'|trans }}</h5>
+                <h5 class="modal-title">{{ 'Créer / Renommer un dossier'|trans }}</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -12,21 +15,22 @@
                 {{ form_start(nameFolderFormType) }}
                     {{ form_row(nameFolderFormType.name) }}
                     {{ form_row(nameFolderFormType.folder) }}
-                    <button class="btn btn-outline-success">Ajouter</button>
+                    <input type="submit" id="aky-filemanager-modal-manage-folder-submit" class="d-none"/>
                 {{ form_end(nameFolderFormType) }}
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ 'Close'|trans }}</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ 'Annuler'|trans }}</button>
+                <button type="submit" class="btn btn-outline-success"><label class="button-label mb-0" for="aky-filemanager-modal-manage-folder-submit">{{ 'Enregistrer'|trans }}</label></button>
             </div>
         </div>
     </div>
 </div>
 
 <div class="modal fade aky-filemanager-modal" id="aky-filemanager-modal-edit-file" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">{{ 'Editer mon fichier'|trans }}</h5>
+                <h5 class="modal-title">{{ 'Éditer les informations du fichier'|trans }}</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -34,14 +38,15 @@
             <div class="modal-body" id="aky-filemanager-modal-edit-file-body">
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ 'Close'|trans }}</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ 'Annuler'|trans }}</button>
+                <button type="submit" class="btn btn-outline-success"><label class="button-label mb-0" for="aky-filemanager-modal-edit-file-submit">{{ 'Enregistrer'|trans }}</label></button>
             </div>
         </div>
     </div>
 </div>
 
 <div class="modal fade aky-filemanager-modal" id="aky-filemanager-modal-move-manager" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">{{ 'Déplacer le fichier/dossier'|trans }}</h5>
@@ -52,11 +57,12 @@
             <div class="modal-body">
                 {{ form_start(moveFormType) }}
                 {{ form_widget(moveFormType) }}
-                <button class="btn btn-outline-success">Déplacer</button>
+                <input type="submit" id="aky-filemanager-modal-move-manager-submit" class="d-none"/>
                 {{ form_end(moveFormType) }}
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ 'Close'|trans }}</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ 'Annuler'|trans }}</button>
+                <button type="submit" class="btn btn-outline-success"><label class="button-label mb-0" for="aky-filemanager-modal-move-manager-submit">{{ 'Déplacer'|trans }}</label></button>
             </div>
         </div>
     </div>

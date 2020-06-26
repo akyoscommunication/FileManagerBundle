@@ -24,20 +24,27 @@
         </h4>
     </section>
 
-    <div class="aky-header-page d-flex align-items-center">
-        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#aky-filemanager-modal-manage-folder" data-action="CREATE">
-            <i class="fas fa-folder-plus"></i>
-        </button>
-        <a class="btn btn-black btn-sm" href="javascript:history.back()"><i class="fas fa-arrow-left"></i></a>
-        <a class="btn btn-black btn-sm" href="javascript:location.reload()"><i class="fas fa-sync-alt"></i></a>
-        {{ form_start(uploadForm) }}
-            {{ form_widget(uploadForm) }}
-            <button class="btn btn-outline-success">Ajouter</button>
-        {{ form_end(uploadForm) }}
+    <div class="aky-header-page">
+        <div class="buttons d-flex">
+            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#aky-filemanager-modal-manage-folder" data-action="CREATE">
+                <i class="fas fa-folder-plus"></i> Nouveau dossier
+            </button>
+            <button type="button" class="btn btn-primary btn-sm ml-2" data-toggle="collapse" data-target="#collapseUploadForm" aria-expanded="false" aria-controls="collapseUploadForm">
+                <i class="fas fa-file-upload"></i> Nouveaux fichiers
+            </button>
+            <a class="btn btn-black btn-sm ml-auto" href="javascript:history.back()"><i class="fas fa-arrow-left"></i> Retour</a>
+            <a class="btn btn-black btn-sm ml-2" href="javascript:location.reload()"><i class="fas fa-sync-alt"></i> Actualiser</a>
+        </div>
+        <div class="collapse" id="collapseUploadForm">
+            {{ form_start(uploadForm) }}
+                {{ form_widget(uploadForm) }}
+                <button class="btn btn-outline-success">Ajouter</button>
+            {{ form_end(uploadForm) }}
+        </div>
     </div>
 
     <section class="my-4">
-        <h2>Dossiers</h2>
+        <h4>Dossiers</h4>
         <div class="aky-file-collection">
             {% if directories != null %}
                 {% for directory in directories %}
@@ -54,15 +61,13 @@
                                     <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#aky-filemanager-modal-move-manager" data-file="{{ directory.absolutePath }}" data-type="FOLDER">
                                         <i class="fas fa-hand-point-right"></i>
                                     </button>
+                                    <a class="btn btn-danger btn-sm" href="{{ path('file_remove_folder', { folder : app.request.get('path')~'/'~directory.name }) }}"><i class="fas fa-times"></i></a>
                                 </div>
-                            </div>
-                            <div class="aky-file-collection-remove">
-                                <a class="btn btn-danger btn-sm" href="{{ path('file_remove_folder', { folder : app.request.get('path')~'/'~directory.name }) }}"><i class="fas fa-times"></i></a>
                             </div>
                         </div>
                         <div class="aky-file-infos">
-                            <div class="aky-file-infos__name">{{ directory.name|slice(0, 10) }}</div>
-                            <div class="aky-file-infos__size">{{ directory.size|format_bytes }}</div>
+                            <div class="aky-file-infos__name">{{ directory.name|slice(0, 40) }}</div>
+                            <div class="aky-file-infos__size">{{ directory.size|format_bytes|replace({' ': '&nbsp;'})|raw }}</div>
                         </div>
                     </div>
                 {% else %}
@@ -75,16 +80,17 @@
     </section>
 
     <section>
-        <h2>Fichiers</h2>
+        <h4>Fichiers</h4>
         <div class="aky-file-collection">
             {% for file in files %}
                 <div class="aky-file-container">
                     <div class="aky-file">
                         <a href="#" class="aky-file-preview aky-file-addto-btn" data-path="{{ file.path }}" data-urltoget="{{ path('file_get_file_id') }}">
-                            <img src="{{ asset(file.path) }}" alt="" width="100%">
+                            {{ renderFileManagerNotLazy(file.path, null, null, true) | raw }}
                         </a>
                         <div class="aky-file-btnmanager">
                             <div class="btn-group" role="group">
+                                <a href="{{ renderFileManagerUrl( file.path ) }}" class="btn btn-primary btn-sm" target="_blank" rel="noopener noreferrer"><i class="fas fa-external-link-alt"></i></a>
                                 <button type="button" class="btn btn-primary btn-sm aky-filemanager-modal-edit-file-btn" data-toggle="modal" data-target="#aky-filemanager-modal-edit-file" data-path="{{ file.path }}" data-url="{{ path('file_edit', { 'path' : file.path }) }}">
                                     <i class="fas fa-pen"></i>
                                 </button>
@@ -103,8 +109,8 @@
                         </div>
                     </div>
                     <div class="aky-file-infos">
-                        <div class="aky-file-infos__name">{{ file.name|slice(0, 10) }}</div>
-                        <div class="aky-file-infos__size">{{ file.size|format_bytes }}</div>
+                        <div class="aky-file-infos__name">{{ file.name|slice(0, 40) }}</div>
+                        <div class="aky-file-infos__size">{{ file.size|format_bytes|replace({' ': '&nbsp;'})|raw }}</div>
                     </div>
                 </div>
             {% else %}

@@ -41,6 +41,7 @@ class IframeAdd {
 
                 _this.changeValueOfInput(pathFile, url, iframeContent);
             });
+
             iframeContent.on('click', '.aky-file-updateiframe-btn', function () {
                 _this.clickButton(iframe);
             });

@@ -13,7 +13,9 @@ class NameFolderFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('name', TextType::class)
+            ->add('name', TextType::class, [
+                'label' => 'Nom du dossier',
+            ])
             ->add('folder', HiddenType::class)
         ;
     }

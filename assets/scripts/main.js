@@ -26,6 +26,8 @@ class FileManager {
         // AkyUppyInit.init();
         
         this.initFileCollection();
+
+
     }
     
     static initFileCollection() {

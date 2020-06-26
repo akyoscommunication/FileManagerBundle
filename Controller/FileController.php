@@ -203,4 +203,16 @@ class FileController extends AbstractController
 
         return new JsonResponse($id);
     }
+
+    /**
+     * @Route("/render-file/{id}", name="render_file", methods={"GET"}, options={"expose"=true})
+     * @param File $file
+     * @return Response
+     */
+    public function renderFile(File $file): Response
+    {
+        return $this->render('@AkyosFileManager/form/render_file.html.twig', [
+            'file' => $file,
+        ]);
+    }
 }
