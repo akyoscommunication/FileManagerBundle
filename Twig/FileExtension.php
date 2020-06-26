@@ -3,6 +3,7 @@
 namespace Akyos\FileManagerBundle\Twig;
 
 use Akyos\FileManagerBundle\Entity\File;
+use Akyos\FileManagerBundle\Repository\FileRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
@@ -11,10 +12,12 @@ use Twig\TwigFunction;
 class FileExtension extends AbstractExtension
 {
     private $em;
+    private $fileRepository;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager, FileRepository $fileRepository)
     {
         $this->em = $entityManager;
+        $this->fileRepository = $fileRepository;
     }
 
     public function getFilters(): array
@@ -32,6 +35,8 @@ class FileExtension extends AbstractExtension
         return [
             new TwigFunction('getImagePathById', [$this, 'getImagePathById']),
             new TwigFunction('getImageAltById', [$this, 'getImageAltById']),
+            new TwigFunction('getImageNameById', [$this, 'getImageNameById']),
+            new TwigFunction('getImageDescById', [$this, 'getImageDescById']),
             new TwigFunction('renderFileManager', [$this, 'renderFileManager']),
             new TwigFunction('renderFileManagerNotLazy', [$this, 'renderFileManagerNotLazy']),
             new TwigFunction('renderFileManagerUrl', [$this, 'renderFileManagerUrl']),
@@ -40,14 +45,26 @@ class FileExtension extends AbstractExtension
 
     public function getImagePathById($id)
     {
-        $file = $this->em->getRepository(File::class)->find($id);
+        $file = $this->fileRepository->find($id);
         return $file ? $file->getFile() : false;
     }
 
     public function getImageAltById($id)
     {
-        $file = $this->em->getRepository(File::class)->find($id);
+        $file = $this->fileRepository->find($id);
         return $file ? $file->getAlt() : false;
+    }
+
+    public function getImageNameById($id)
+    {
+        $file = $this->fileRepository->find($id);
+        return $file ? $file->getName() : false;
+    }
+
+    public function getImageDescById($id)
+    {
+        $file = $this->fileRepository->find($id);
+        return $file ? $file->getDescription() : false;
     }
 
     /*
@@ -65,7 +82,7 @@ class FileExtension extends AbstractExtension
         $file = null;
 
         if (preg_match($intPattern, $value)) {
-            $file = $this->em->getRepository(File::class)->find($value);
+            $file = $this->fileRepository->find($value);
             if(!$file) {
                 return false;
             }
@@ -123,7 +140,7 @@ class FileExtension extends AbstractExtension
         $file = null;
 
         if (preg_match($intPattern, $value)) {
-            $file = $this->em->getRepository(File::class)->find($value);
+            $file = $this->fileRepository->find($value);
             $pathToFile = __DIR__.'/../../../public'.$file->getFile();
         }
 
@@ -189,7 +206,7 @@ class FileExtension extends AbstractExtension
         $file = null;
 
         if (preg_match($intPattern, $value)) {
-            $file = $this->em->getRepository(File::class)->find($value);
+            $file = $this->fileRepository->find($value);
         }
 
         $result = '';
