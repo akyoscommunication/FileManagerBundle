@@ -41,18 +41,22 @@ class FileController extends AbstractController
      */
     public function index(FileHandler $fileHandler, Request $request): Response
     {
+        $dir = $this->kernel->getProjectDir().'/public'.$this->getParameter('web_dir');
+        if (!$this->fs->exists($dir)) {
+            $this->fs->mkdir($dir, 0755);
+        }
+
         $files = null;
         $directories = null;
         $relativePath = $request->get('path');
 
         $finder = new Finder();
-//        $file = new File();
 
         $uploadFileForm = $this->createForm(UploadType::class);
         $nameFolderFormType = $this->createForm(NameFolderFormType::class);
 
         $moveFormType = $this->createForm(MoveType::class, null, array(
-            'directories' => $finder->files()->in($this->kernel->getProjectDir().'/public'.$this->getParameter('web_dir'))->directories(),
+            'directories' => $finder->files()->in($dir)->directories(),
             'racine' => $this->kernel->getProjectDir().'/public'.$this->getParameter('web_dir')
         ));
 
@@ -70,11 +74,7 @@ class FileController extends AbstractController
 
         $finder = new Finder();
 
-        $finder->files()->in($this->kernel->getProjectDir().'/public'.$this->getParameter('web_dir').$relativePath);
-
-//        if ( $relativePath ) {
-//            $relativePath = '/'.$relativePath;
-//        }
+        $finder->files()->in($dir.$relativePath);
 
         foreach ($finder->depth(0) as $file) {
             $files[] = (object) array(
