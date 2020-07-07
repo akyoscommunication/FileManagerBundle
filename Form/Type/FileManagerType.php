@@ -15,7 +15,9 @@ class FileManagerType extends AbstractType
         $resolver->setDefaults([
             'label' => '',
             'config' => 'restrict',
-            'required' => false
+            'required' => false,
+            'secured' => false,
+            'shared' => false,
         ]);
     }
 
@@ -25,6 +27,8 @@ class FileManagerType extends AbstractType
 
         $view->vars = array_replace($view->vars, [
             'config' => $options['config'],
+            'secured' => $options['secured'],
+            'shared' => $options['shared'],
         ]);
     }
 

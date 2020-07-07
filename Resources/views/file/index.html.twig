@@ -7,7 +7,7 @@
     <section class="current-dir my-4">
         <h4>
             {% set pathDirs = currentPath|split('/') %}
-            <a href="{{ path('file_index', { path : '/' }) }}">Uploads </a>
+            <a href="{{ path('file_index', { 'path' : '/', 'secured' : secured, 'shared' : shared, 'previous_path' : previousFile }) }}">Documents {{ secured ? 'sécurisés' : ''}} </a>
             {% for key, value in pathDirs|filter((v, k) => k > 0) %}
                 {% set pathString = "" %}
                 {% for i in 1..key %}
@@ -15,7 +15,7 @@
                 {% endfor %}
                 {% if value %}
                     {% if key < (pathDirs|length - 1) %}
-                        / <a href="{{ path('file_index', { path : pathString }) }}">{{ value }}</a>
+                        / <a href="{{ path('file_index', { 'path' : pathString, 'secured' : secured, 'shared' : shared, 'previous_path' : previousFile }) }}">{{ value }}</a>
                     {% else %}
                         / <span>{{ value }}</span>
                     {% endif %}
@@ -50,7 +50,7 @@
                 {% for directory in directories %}
                     <div class="aky-file-container">
                         <div class="aky-file aky-file--folder">
-                            <a class="aky-file-preview aky-file-updateiframe-btn" href="{{ path('file_index', { path : app.request.get('path')~'/'~directory.name }) }}">
+                            <a class="aky-file-preview aky-file-updateiframe-btn" href="{{ path('file_index', { 'path' : app.request.get('path')~'/'~directory.name, 'secured': secured, 'shared' : shared, 'previous_path' : previousFile }) }}">
                                 <i class="fas fa-folder"></i>
                             </a>
                             <div class="aky-file-btnmanager">
@@ -61,7 +61,7 @@
                                     <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#aky-filemanager-modal-move-manager" data-file="{{ directory.absolutePath }}" data-type="FOLDER">
                                         <i class="fas fa-hand-point-right"></i>
                                     </button>
-                                    <a class="btn btn-danger btn-sm" href="{{ path('file_remove_folder', { folder : app.request.get('path')~'/'~directory.name }) }}"><i class="fas fa-times"></i></a>
+                                    <a class="btn btn-danger btn-sm" href="{{ path('file_remove_folder', { 'folder' : app.request.get('path')~'/'~directory.name, 'path' : app.request.get('path'), 'secured': secured, 'shared' : shared, 'previous_path' : previousFile }) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet élément ?');"><i class="fas fa-times"></i></a>
                                 </div>
                             </div>
                         </div>
@@ -84,14 +84,21 @@
         <div class="aky-file-collection">
             {% for file in files %}
                 <div class="aky-file-container">
-                    <div class="aky-file">
+                    <div class="aky-file {{ previousFile and previousFile.file == file.path ? 'selected' : '' }}">
+                        {% if isFileShared(file.path) %}
+                            <div class="aky-file-shared" data-toggle="tooltip" data-placement="top" title="Ce fichier à été ajouté sur un endroit partagé du site, d'autres utilisateurs peuvent le consulter."><i class="fas fa-users"></i></div>
+                        {% endif %}
                         <a href="#" class="aky-file-preview aky-file-addto-btn" data-path="{{ file.path }}" data-urltoget="{{ path('file_get_file_id') }}">
-                            {{ renderFileManagerNotLazy(file.path, null, null, true) | raw }}
+                            {{ renderFileManager(file.path, false, true)|raw }}
                         </a>
                         <div class="aky-file-btnmanager">
                             <div class="btn-group" role="group">
-                                <a href="{{ renderFileManagerUrl( file.path ) }}" class="btn btn-primary btn-sm" target="_blank" rel="noopener noreferrer"><i class="fas fa-external-link-alt"></i></a>
-                                <button type="button" class="btn btn-primary btn-sm aky-filemanager-modal-edit-file-btn" data-toggle="modal" data-target="#aky-filemanager-modal-edit-file" data-path="{{ file.path }}" data-url="{{ path('file_edit', { 'path' : file.path }) }}">
+                                {% if secured %}
+                                    <a href="{{ path('file_download_secured_file', {'path': file.path}) }}" class="btn btn-primary btn-sm"><i class="fas fa-file-download"></i></a>
+                                {% else %}
+                                    <a href="{{ renderFileManagerUrl(file.path) }}" class="btn btn-primary btn-sm" target="_blank" rel="noopener noreferrer"><i class="fas fa-external-link-alt"></i></a>
+                                {% endif %}
+                                <button type="button" class="btn btn-primary btn-sm aky-filemanager-modal-edit-file-btn" data-toggle="modal" data-target="#aky-filemanager-modal-edit-file" data-path="{{ file.path }}" data-url="{{ path('file_edit', { 'path' : file.path, 'secured': secured, 'shared' : shared, 'previous_path' : previousFile }) }}">
                                     <i class="fas fa-pen"></i>
                                 </button>
                                 <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#aky-filemanager-modal-move-manager" data-file="{{ file.path }}" data-type="FILE">
@@ -100,13 +107,14 @@
                             </div>
                         </div>
                         <div class="aky-file-collection-remove">
-                            <form method="post" class="not-submit index-delete" action="{{ path('file_delete') }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet élément ?');">
+                            <form method="post" class="not-submit index-delete" action="{{ path('file_delete', {'path' : app.request.get('path'), 'secured': secured, 'shared' : shared, 'previous_path' : previousFile}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet élément ?');">
                                 <input type="hidden" name="_method" value="DELETE">
                                 <input type="hidden" name="_file" value="{{ file.path }}">
                                 <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ file.name) }}">
                                 <button class="btn btn-danger btn-sm"><i class="fas fa-times"></i></button>
                             </form>
                         </div>
+
                     </div>
                     <div class="aky-file-infos">
                         <div class="aky-file-infos__name">{{ file.name|slice(0, 40) }}</div>

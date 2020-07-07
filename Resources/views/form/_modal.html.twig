@@ -10,7 +10,7 @@
             </div>
             <div class="modal-body aky-filemanager-container">
                 <iframe class="aky-filemanager-iframe"
-                        data-src="{{ path('file_index') }}"
+                        data-src="{{ path('file_index', {'secured': form.vars.secured ? 1 : 0, 'shared': form.vars.shared ? 1 : 0, 'previous_path': form.vars.value}) }}"
                         data-target="{{ form.vars.id }}"
                         width="100%"
                         height="500"

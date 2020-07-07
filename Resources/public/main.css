@@ -2296,6 +2296,18 @@ a.uppy-Dashboard-poweredBy {
   .uppy-FileInput-btn:hover {
     background-color: #14457f;
     color: #fff; }
+:root {
+  --color-primary: #163D82;
+  --color-gold: #d1c186;
+  --color-goldlight: #e6d8bb;
+  --color-golddark: #AC9960;
+  --color-gray: #cecece;
+  --color-lightgray: #f5f5f5;
+  --color-third: #fcfcfe;
+  --color-black: black;
+  --color-white: white;
+}
+
 /*!
  * Bootstrap v4.3.1 (https://getbootstrap.com/)
  * Copyright 2011-2019 The Bootstrap Authors
@@ -15417,6 +15429,18 @@ a.text-white:focus {
   }
 }
 
+:root {
+  --color-primary: #163D82;
+  --color-gold: #d1c186;
+  --color-goldlight: #e6d8bb;
+  --color-golddark: #AC9960;
+  --color-gray: #cecece;
+  --color-lightgray: #f5f5f5;
+  --color-third: #fcfcfe;
+  --color-black: black;
+  --color-white: white;
+}
+
 #mainFileManagerBundle {
   /** Import theme styles */
 }
@@ -15490,6 +15514,10 @@ a.text-white:focus {
   -webkit-box-shadow: 0 14px 28px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(0, 0, 0, 0.1);
           box-shadow: 0 14px 28px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(0, 0, 0, 0.1);
   overflow: hidden;
+}
+
+.aky-file.selected {
+  border: 3px solid var(--color-primary);
 }
 
 .aky-file-collection {
@@ -15623,6 +15651,37 @@ a.text-white:focus {
   border: 1px solid white;
 }
 
+.aky-file-shared {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -ms-flex-wrap: nowrap;
+      flex-wrap: nowrap;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  background-color: var(--color-white);
+  color: var(--color-primary);
+  padding: 2px;
+  border-radius: 50%;
+  border: 1px solid var(--color-primary);
+}
+
+.aky-file-shared svg {
+  height: 16px;
+  width: 16px;
+}
+
 .aky-file .btn-sm,
 .aky-file .btn-group-sm > .btn {
   font-size: 0.75rem;
@@ -15685,6 +15744,16 @@ a.text-white:focus {
   font-size: 2.5rem;
 }
 
-#aky-filemanager-modal-cci_document_file > .modal-dialog {
+body > .aky-filemanager-modal > .modal-dialog {
   max-width: 1200px;
+}
+
+body #file-manager-access-denied {
+  height: 100vh;
+}
+
+body #file-manager-access-denied img {
+  width: auto;
+  height: 80px;
+  display: block;
 }

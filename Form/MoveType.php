@@ -13,9 +13,16 @@ class MoveType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $tree = [];
-        $tree['racine'] = $options['racine'].'/';
+        $tree['Dossier racine'] = $options['racine'].'/';
         foreach ($options['directories'] as $branch) {
-            $tree[$branch->getFilename()] = $branch->getPath().'/'.$branch->getFilename().'/';
+            $filePath = $branch->getPath().'/'.$branch->getFilename();
+            if(strpos($filePath, '/secured_files')) {
+                $filePath = explode('/secured_files', $filePath)[1];
+            }
+            if(strpos($filePath, '/public/uploads')) {
+                $filePath = explode('/public/uploads', $filePath)[1];
+            }
+            $tree[$filePath] = $branch->getPath().'/'.$branch->getFilename().'/';
         }
 
         $builder

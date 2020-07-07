@@ -8,7 +8,11 @@ $theme-colors: (
         third : #fcfcfe,
         black: black,
         white: white,
-
 );
 
+:root {
+    @each $name, $color in $theme-colors {
+        --color-#{$name}: #{$color};
+    }
+}
 

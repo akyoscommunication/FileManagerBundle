@@ -1,0 +1,16 @@
+{% extends '@AkyosFileManager/layout.html.twig' %}
+
+{% block title %}Accès refusé{% endblock %}
+
+{% block page_content %}
+    <section id="file-manager-access-denied" class="d-flex flex-column justify-content-center align-items-center">
+        <img src="{{ absolute_url(asset(getImagePathById(core_options.siteLogo))) }}" alt="{{ core_options.siteTitle }}" />
+        <h3 class="mt-3">{{ message }}</h3>
+        <a class="btn btn-black btn-sm ml-auto" href="javascript:history.back()"><i class="fas fa-arrow-left"></i> Retour</a>
+    </section>
+
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}

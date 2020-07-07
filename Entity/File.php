@@ -48,6 +48,11 @@ class File
      */
     private $file;
 
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $shared;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -116,5 +121,17 @@ class File
     public function __toString()
     {
         return $this->name;
+    }
+
+    public function getShared(): ?int
+    {
+        return $this->shared;
+    }
+
+    public function setShared(?int $shared): self
+    {
+        $this->shared = $shared;
+
+        return $this;
     }
 }

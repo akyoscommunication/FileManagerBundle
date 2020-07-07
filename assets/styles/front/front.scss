@@ -1,7 +1,18 @@
-#aky-filemanager-modal-cci_document_file {
+body {
+    > .aky-filemanager-modal {
 
-    > .modal-dialog {
-        max-width: 1200px;
+        > .modal-dialog {
+            max-width: 1200px;
+        }
+    }
 
+    #file-manager-access-denied {
+        height: 100vh;
+
+        img {
+            width: auto;
+            height: 80px;
+            display: block;
+        }
     }
 }

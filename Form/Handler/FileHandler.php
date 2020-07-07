@@ -3,9 +3,11 @@
 namespace Akyos\FileManagerBundle\Form\Handler;
 
 use Akyos\FileManagerBundle\Entity\File;
+use Akyos\FileManagerBundle\Service\UploadsService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -15,28 +17,33 @@ class FileHandler extends AbstractController
     private $em;
     private $fs;
     private $kernel;
+    private $uploadsService;
 
-    public function __construct(EntityManagerInterface $em, KernelInterface $kernel, Filesystem $filesystem)
+    public function __construct(EntityManagerInterface $em, KernelInterface $kernel, Filesystem $filesystem, UploadsService $uploadsService)
     {
         $this->em = $em;
         $this->fs = $filesystem;
         $this->kernel = $kernel;
+        $this->uploadsService = $uploadsService;
     }
 
     public function uploadFile(FormInterface $form, Request $request): bool
     {
+        $secured = $request->get('secured');
+        $relativePath = $request->get('path');
+        if (strlen($relativePath) && substr($relativePath, 0, 1) !== '/') {
+            $relativePath = '/'.$relativePath;
+        }
+        $absoluteRootFilesPath = $this->uploadsService->getRootFilesPath($secured);
+        $relativeRootFilesPath = $this->uploadsService->getRootFilesPath($secured, true);
+
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             foreach ($form['file']->getData() as $fileUploaded) {
                 $file = new File();
-                $relativePath = $request->get('path');
-                if ($relativePath) {
-                    $relativePath = '/'.$relativePath;
-                }
 
                 if ($fileUploaded) {
                     $originalFilename = pathinfo($fileUploaded->getClientOriginalName(), PATHINFO_FILENAME);
-                    // this is needed to safely include the file name as part of the URL
 					$originalFilename = str_replace(' ', '_', $originalFilename);
                     $safeFilename = transliterator_transliterate('Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()', $originalFilename);
                     $extension = $fileUploaded->guessExtension();
@@ -45,20 +52,20 @@ class FileHandler extends AbstractController
                     }
                     $newFilename = $safeFilename.'.'.$extension;
 
-                    // Move the file to the directory where brochures are stored
                     try {
                         $fileUploaded->move(
-                            $this->kernel->getProjectDir().'/public'.$this->getParameter('web_dir').$relativePath,
+                            $absoluteRootFilesPath.$relativePath,
                             $newFilename
                         );
                     } catch (FileException $e) {
                         dd($e);
                     }
 
-                    // updates the 'brochureFilename' property to store the PDF file name
-                    // instead of its contents
                     $file->setName($newFilename);
-                    $file->setFile($this->getParameter('web_dir').'/'.$newFilename);
+                    if (strlen($newFilename) && substr($newFilename, 0, 1) !== '/') {
+                        $newFilename = '/'.$newFilename;
+                    }
+                    $file->setFile($relativeRootFilesPath.$relativePath.$newFilename);
                 }
 
                 $this->em->persist($file);
@@ -74,16 +81,18 @@ class FileHandler extends AbstractController
     {
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $pathOrigin = $this->kernel->getProjectDir().'/public'.$pathOrigin;
+            $secured = $request->get('secured');
+
+            $pathOrigin = $this->kernel->getProjectDir().(!$secured ? '/public' : '').$pathOrigin;
             $newPath = explode('/', $pathOrigin);
-            $newPath[sizeof($newPath)-1] = $form->get('name')->getData();
+            $newPath[count($newPath)-1] = $form->get('name')->getData();
             if ( !($this->fs->exists(implode('/', $newPath))) ) {
                 $this->fs->rename($pathOrigin,implode('/', $newPath));
             }
 
             $pathOrigin = $form->getData()->getFile();
             $newPath = explode('/', $pathOrigin);
-            $newPath[sizeof($newPath)-1] = $form->get('name')->getData();
+            $newPath[count($newPath)-1] = $form->get('name')->getData();
             $form->getData()->setFile(implode('/', $newPath));
             $this->em->flush();
 
@@ -97,6 +106,10 @@ class FileHandler extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $relativePath = $request->get('path');
+            $secured = $request->get('secured');
+            $absoluteRootFilesPath = $this->uploadsService->getRootFilesPath($secured);
+            $relativeRootFilesPath = $this->uploadsService->getRootFilesPath($secured, true);
+
             if ($relativePath) {
                 $relativePath = $relativePath.'/';
             }
@@ -105,11 +118,11 @@ class FileHandler extends AbstractController
 
 
             if (!$folder) {
-                $this->fs->mkdir($this->kernel->getProjectDir().'/public'.$this->getParameter('web_dir').'/'.$relativePath.$newFolderName);
+                $this->fs->mkdir($absoluteRootFilesPath.'/'.$relativePath.$newFolderName);
             } else {
-                $this->fs->rename($this->kernel->getProjectDir().'/public'.$this->getParameter('web_dir').$folder, $this->kernel->getProjectDir().'/public'.$this->getParameter('web_dir').$relativePath.$form->get('name')->getData());
+                $this->fs->rename($absoluteRootFilesPath.$folder, $absoluteRootFilesPath.$relativePath.$form->get('name')->getData());
 
-                $filesToChange = $this->em->getRepository(File::class)->findByFilePathBegin($this->getParameter('web_dir').$folder);
+                $filesToChange = $this->em->getRepository(File::class)->findByFilePathBegin($relativeRootFilesPath.$folder);
                 foreach ($filesToChange as $file) {
                     if ($file instanceof File) {
                         $originPath = $file->getFile();
@@ -127,7 +140,8 @@ class FileHandler extends AbstractController
 
     public function moveManager(FormInterface $form, Request $request): bool
     {
-        $publicFolder = $this->kernel->getProjectDir().'/public';
+        $secured = $request->get('secured');
+        $publicFolder = $this->kernel->getProjectDir().(!$secured ? '/public' : '');
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $destination = $form->get('tree')->getData();
@@ -135,10 +149,14 @@ class FileHandler extends AbstractController
             $type = $form->get('type')->getData();
 
             $fileName = explode('/', $initPathFile);
-            $fileName = $fileName[sizeof($fileName)-1];
+            $fileName = $fileName[count($fileName)-1];
 
             $newPath = explode('/public', $destination.$fileName);
-            $newPath = $newPath[sizeof($newPath)-1];
+            $newPath = $newPath[count($newPath)-1];
+
+            if($secured && strpos($newPath, '/secured_files') === false) {
+                $newPath = '/secured_files'.$newPath;
+            }
 
             if ($type === 'FILE') {
                 $this->fs->copy($publicFolder.$initPathFile, $destination.$fileName);
@@ -161,8 +179,8 @@ class FileHandler extends AbstractController
                 $folderName = explode('/', $initPathFile);
                 $folderName = $folderName[count($folderName)-2].'/';
 
-                $this->fs->mirror($publicFolder.$initPathFile, $destination.$folderName);
-                $this->fs->remove([$publicFolder.$initPathFile, '*']);
+                $this->fs->mirror($initPathFile, $destination.$folderName);
+                $this->fs->remove([$initPathFile, '*']);
 
                 $files = $this->em->getRepository(File::class)->findByFilePathBegin($initPathFile);
 
@@ -183,16 +201,18 @@ class FileHandler extends AbstractController
 
     public function removeFile($file, Request $request): bool
     {
+        $secured = $request->get('secured');
+
         // if there is file in DB
         if ($file) {
             if ($this->isCsrfTokenValid('delete'.$file->getName(), $request->request->get('_token'))) {
                 $this->em->remove($file);
-                $this->fs->remove($this->kernel->getProjectDir().'/public'.$request->request->get('_file'));
+                $this->fs->remove($this->kernel->getProjectDir().(!$secured ? '/public' : '').$request->request->get('_file'));
                 $this->em->flush();
                 return true;
             }
         } else {
-            $this->fs->remove($this->kernel->getProjectDir().'/public'.$request->request->get('_file'));
+            $this->fs->remove($this->kernel->getProjectDir().(!$secured ? '/public' : '').$request->request->get('_file'));
             return true;
         }
         return false;

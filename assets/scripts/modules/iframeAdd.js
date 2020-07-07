@@ -16,15 +16,49 @@ class IframeAdd {
         const _this = this;
 
         $document.on('click', '.aky-filemanager-open', function () {
-                _this.akyOpenFolder = this;
-                _this.akyTarget = $(this).data('target');
+            _this.akyOpenFolder = this;
+            _this.akyTarget = $(this).data('target');
 
-                const $iframe = $(_this.akyTarget).find('.aky-filemanager-iframe');
-                if (!$iframe.attr('src')) {
-                    $iframe.attr('src', $iframe.data('src'));
+            const $iframe = $(_this.akyTarget).find('.aky-filemanager-iframe');
+            if(!$iframe.attr('src')) {
+                $iframe.attr('src', $iframe.data('src'));
+            }
+            _this.clickButton($iframe);
+        })
+
+        const fileManagerInputs = $('.aky-file-container input');
+        const forms = fileManagerInputs.parents('form');
+        forms.on('submit', function (e) {
+            e.preventDefault();
+            let valid = false;
+            const inputs = $(this).find('.aky-file-container input');
+            inputs.each(function() {
+                if($(this)[0].hasAttribute('data-required') && !$(this).val()) {
+                    $(this).parents('.aky-file-container').after('<div class="empty-field small text-danger">Ce champ est obligatoire!</div>');
+                } else {
+                    $.ajax({
+                        method: 'GET',
+                        url: $(this).data('previous-value-url'),
+                        data: {
+                            new_value : $(this).val()
+                        },
+                        success: function (res) {
+                            console.log(res);
+                        },
+                        error: function(er) {
+                            console.log(er, 'error');
+                        }
+                    });
+                    valid = true;
                 }
-                _this.clickButton($iframe);
             })
+            if(valid) {
+                $(this).off('submit');
+                $(this).submit();
+            }
+        })
+
+        $('[data-toggle="tooltip"]').tooltip();
     }
 
     clickButton(iframe) {
