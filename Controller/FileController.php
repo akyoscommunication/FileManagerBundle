@@ -29,15 +29,6 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class FileController extends AbstractController
 {
-    private $fs;
-    private $kernel;
-
-    public function __construct(Filesystem $fs, KernelInterface $kernel)
-    {
-        $this->fs = $fs;
-        $this->kernel = $kernel;
-    }
-
     /**
      * @Route("/", name="index", methods={"GET","POST"})
      * @param FileHandler $fileHandler
@@ -195,18 +186,20 @@ class FileController extends AbstractController
      * @param Request $request
      * @param FileRepository $fileRepository
      * @param EntityManagerInterface $em
+     * @param Filesystem $filesystem
+     * @param KernelInterface $kernel
      * @return Response
      */
-    public function removeFolder(Request $request, FileRepository $fileRepository, EntityManagerInterface $em): Response
+    public function removeFolder(Request $request, FileRepository $fileRepository, EntityManagerInterface $em, Filesystem $filesystem, KernelInterface $kernel): Response
     {
         $secured = $request->get('secured');
         $shared = $request->get('shared');
         $previousId = $request->get('previous_path');
         $path = $request->get('path');
         $folderPath = $this->getParameter($secured ? 'secured_dir' : 'web_dir').$request->get('folder');
-        $absolutePath = $this->kernel->getProjectDir().(!$secured ? '/public' : '').$folderPath.'/';
+        $absolutePath = $kernel->getProjectDir().(!$secured ? '/public' : '').$folderPath.'/';
 
-        $this->fs->remove($absolutePath);
+        $filesystem->remove($absolutePath);
 
         /* @var ArrayCollection $files */
         $files = $fileRepository->findByFilePathBegin($folderPath);
