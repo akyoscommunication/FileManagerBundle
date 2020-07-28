@@ -93,12 +93,12 @@ class FileExtension extends AbstractExtension
     }
 
     /*
-     * @Deprecated use renderFileManager() instead with second parameter to false, to disable lazy load
+     * @deprecated use renderFileManager() instead with second parameter to false, to disable lazy load
      */
     public function renderFileManagerNotLazy($value, $height = null, $width = null, $noEmbed = false)
     {
         /*
-         * @Deprecated => Replaced by renderFileManager()
+         * => Replaced by renderFileManager()
          */
         return $this->renderFileManager($value,false, $noEmbed);
     }

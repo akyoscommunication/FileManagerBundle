@@ -47,7 +47,6 @@
     "jquery": "^3.3.1",
     "jquery-ui": "^1.12.1",
     "popper.js": "~1.14.4",
-    "select2": "^4.0.11",
     "swiper": "^4.3.5",
     "symfony-collection": "ninsuo/symfony-collection",
     "ts-loader": "^6.2.1",

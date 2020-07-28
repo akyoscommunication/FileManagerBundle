@@ -33,6 +33,7 @@ class IframeAdd {
             let valid = false;
             const inputs = $(this).find('.aky-file-container input');
             inputs.each(function() {
+                $(this).parents('.aky-file-container').find('.empty-field').remove();
                 if($(this)[0].hasAttribute('data-required') && !$(this).val()) {
                     $(this).parents('.aky-file-container').after('<div class="empty-field small text-danger">Ce champ est obligatoire!</div>');
                 } else {
