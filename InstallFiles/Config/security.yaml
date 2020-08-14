@@ -46,7 +46,7 @@ security:
             anonymous: lazy
             guard:
                 authenticators:
-                    - Akyos\FileManagerBundle\FileManagerBundleAuthenticator
+                    - Akyos\FileManagerBundle\Security\FileManagerBundleAuthenticator
             logout:
                 path: file_manager_logout
                 target: 'home'
