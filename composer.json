@@ -24,9 +24,9 @@
   ],
   "scripts": {
     "after-install-dependencies": [
-      "echo 'file_manager:' >> routes.yaml",
-      "echo '  resource: '../lib/FileManagerBundle/Controller/'' >> routes.yaml",
-      "echo '  type:     annotation' >> routes.yaml,",
+      "echo 'file_manager:' >> config/routes.yaml",
+      "echo '  resource: '../lib/FileManagerBundle/Controller/'' >> config/routes.yaml",
+      "echo '  type:     annotation' >> config/routes.yaml,",
       "mv lib/FileManagerBundle/InstallFiles/Config/security.yaml config/packages",
       "mv lib/FileManagerBundle/InstallFiles/Templates/front_layout.html.twig templates/bundles/AkyosCoreBundle/front/layouts",
       "rm -rf lib/FileManagerBundle/InstallFiles",
