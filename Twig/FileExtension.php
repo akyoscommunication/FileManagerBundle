@@ -120,7 +120,7 @@ class FileExtension extends AbstractExtension
         if(preg_match($pathPattern, $value)) {
             if (strpos($value, 'secured_files') !== false) {
                 $pathToValue = $this->rootPath.$value;
-                $streamedValue = $this->urlGenerator->generate('file_download_secured_file', ['path' => $value]);
+                $streamedValue = $this->urlGenerator->generate('file_download_secured_file', ['path' => $value, 'display' => true]);
             } else {
                 $pathToValue = $this->rootPath.'/public'.$value;
             }
@@ -134,7 +134,7 @@ class FileExtension extends AbstractExtension
             }
             if(strpos($file->getFile(), 'secured_files') !== false) {
                 $pathToFile = $this->rootPath.$file->getFile();
-                $streamedFile = $this->urlGenerator->generate('file_download_secured_file', ['path' => $file->getFile()]);
+                $streamedFile = $this->urlGenerator->generate('file_download_secured_file', ['path' => $file->getFile(), 'display' => true]);
             } else {
                 $pathToFile = $this->rootPath.'/public'.$file->getFile();
             }
@@ -192,7 +192,7 @@ class FileExtension extends AbstractExtension
                         $result = '<video controls width="100%">';
                             $result .= '<source src="'.$fileToDisplay.'" type="'.mime_content_type($pathToFile).'">';
                         $result .= '</video>';
-                    } elseif (mime_content_type($pathToFile) === 'application/pdf' && $noEmbed) {
+                    } elseif ($noEmbed && mime_content_type($pathToFile) === 'application/pdf') {
                         $result = $this->twig->render('@AkyosFileManager/svg/pdf.html.twig', [
                             'alt' => $file->getAlt(),
                         ]);

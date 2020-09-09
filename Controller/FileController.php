@@ -294,6 +294,7 @@ class FileController extends AbstractController
     public function downloadSecuredFile(Request $request, UploadsService $uploadsService, FileRepository $fileRepository): BinaryFileResponse
     {
         $path = $request->get('path');
+        $display = $request->get('display');
         $userSecuredRootPath = $uploadsService->getUserSecuredRootPath();
         /* @var File|null $file */
         $file = $fileRepository->findOneBy(array('file' => $path));
@@ -309,7 +310,7 @@ class FileController extends AbstractController
         $response->headers->set('Cache-Control', 'private');
         $response->headers->set('Content-Type', $splFile->getExtension());
         $response->headers->set('Content-Disposition', $response->headers->makeDisposition(
-            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+            ($display ? ResponseHeaderBag::DISPOSITION_INLINE : ResponseHeaderBag::DISPOSITION_ATTACHMENT),
             ($file ? $file->getName() : $splFile->getFilename())
         ));
         return $response;
