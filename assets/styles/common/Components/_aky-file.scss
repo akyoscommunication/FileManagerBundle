@@ -30,6 +30,8 @@
                 padding-right: 10px;
                 padding-bottom: 10px;
                 margin-bottom: 10px;
+                flex: 1;
+                max-width: 155px;
             }
 
             &-add {
@@ -110,17 +112,17 @@
         font-size: 0.75rem;
     }
 
-    &-infos {
+    &-infos{
         @include flex(row, nowrap, space-between, flex-start);
         font-size: 10px;
         padding: 5px;
         width: 150px;
 
-        &__name {
+        &__name{
             word-break: break-all;
         }
 
-        &__size {
+        &__size{
             word-break: keep-all;
             margin-left: 3px;
         }
