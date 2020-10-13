@@ -16,6 +16,16 @@ services:
         resource: '../../../../lib/FileManagerBundle/*'
         tags: ['controller.service_arguments']
         public: true
+
+    Akyos\FileManagerBundle\Annotations\PathAnnotation:
+        arguments:
+            $values: [ ]
+
+    Akyos\FileManagerBundle\DoctrineListener\PathAnnotationListener:
+        tags:
+            - { name: 'doctrine.event_listener', event: 'postUpdate' }
+            - { name: 'doctrine.event_listener', event: 'prePersist' }
+        public: true
 #
 #    file_manager.sidebar:
 #        alias: "Akyos\\FileManagerBundle\\Service\\ExtendSidebar"
