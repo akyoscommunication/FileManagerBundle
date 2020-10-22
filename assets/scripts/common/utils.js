@@ -8,7 +8,7 @@ import {far} from '@fortawesome/free-regular-svg-icons';
 export default {
     init() {
         // JavaScript to be fired on all pages
-        window.FontAwesomeConfig.searchPseudoElements = true;
+        window.FontAwesomeConfig.searchPseudoElements = false;
         library.add(fab);
         library.add(fas);
         library.add(far);
