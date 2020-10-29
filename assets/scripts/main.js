@@ -10,8 +10,8 @@ import '@grafikart/drop-files-element';
 import '@grafikart/spinning-dots-element';
 
 import 'symfony-collection';
-import initCollectionType from "../../../CoreBundle/assets/scripts/modules/collectionType";
-import AkyUppyInit from "./modules/_uppy";
+// import initCollectionType from "../../../CoreBundle/assets/scripts/modules/collectionType";
+// import AkyUppyInit from "./modules/_uppy";
 import SpinningDots from "@grafikart/spinning-dots-element";
 
 class FileManager {
