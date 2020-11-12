@@ -16,7 +16,10 @@ class ExtendSidebar
 
     public function getTemplate($route)
     {
-        $template = '<li class="'.(strpos($route,"contact_form") !== false ? "active" : "").'"><a href="'.$this->router->generate('file_index').'">Formulaire de contact</a></li>';
+        $template = '
+        <li class="'.(strpos($route,"file_show") !== false ? "active" : "").'">
+            <a href="'.$this->router->generate('file_show').'">Gestion des fichiers</a>
+        </li>';
         return new Response($template);
     }
 }

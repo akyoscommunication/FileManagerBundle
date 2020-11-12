@@ -118,6 +118,16 @@ class FileController extends AbstractController
     }
 
     /**
+     * @Route("/show", name="show")
+     */
+    public function show()
+    {
+        return $this->render('@AkyosFileManager/file/show.html.twig', [
+            'title'=> 'Fichiers'
+        ]);
+    }
+
+    /**
      * @Route("/edit", name="edit", methods={"GET","POST"}, options={"expose"=true})
      * @param Request $request
      * @param FileHandler $fileHandler
