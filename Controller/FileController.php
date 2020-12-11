@@ -299,9 +299,10 @@ class FileController extends AbstractController
      * @param Request $request
      * @param UploadsService $uploadsService
      * @param FileRepository $fileRepository
+     * @param KernelInterface $kernel
      * @return BinaryFileResponse
      */
-    public function downloadSecuredFile(Request $request, UploadsService $uploadsService, FileRepository $fileRepository): BinaryFileResponse
+    public function downloadSecuredFile(Request $request, UploadsService $uploadsService, FileRepository $fileRepository, KernelInterface $kernel): BinaryFileResponse
     {
         $path = $request->get('path');
         $display = $request->get('display');
@@ -313,12 +314,11 @@ class FileController extends AbstractController
             throw $this->createAccessDeniedException('Accès refusé');
         }
 
-        $absolutePath = $uploadsService->getFilePathFromValue($path);
+        $absolutePath = $kernel->getProjectDir().$path;
         $splFile = new \SplFileInfo($absolutePath);
         $stream = new Stream($absolutePath);
         $response = new BinaryFileResponse($stream);
         $response->headers->set('Cache-Control', 'private');
-        $response->headers->set('Content-Type', $splFile->getExtension());
         $response->headers->set('Content-Disposition', $response->headers->makeDisposition(
             ($display ? ResponseHeaderBag::DISPOSITION_INLINE : ResponseHeaderBag::DISPOSITION_ATTACHMENT),
             ($file ? $file->getName() : $splFile->getFilename())
