@@ -202,18 +202,21 @@ class FileHandler extends AbstractController
     public function removeFile($file, Request $request): bool
     {
         $secured = $request->get('secured');
+        $fileToDelete = $request->request->get('_file');
 
         // if there is file in DB
         if ($file) {
             if ($this->isCsrfTokenValid('delete'.$file->getName(), $request->request->get('_token'))) {
                 $this->em->remove($file);
-                $this->fs->remove($this->kernel->getProjectDir().(!$secured ? '/public' : '').$request->request->get('_file'));
+                $this->fs->remove($this->kernel->getProjectDir().(!$secured ? '/public' : '').$fileToDelete);
                 $this->em->flush();
                 return true;
             }
         } else {
-            $this->fs->remove($this->kernel->getProjectDir().(!$secured ? '/public' : '').$request->request->get('_file'));
-            return true;
+            if($fileToDelete) {
+                $this->fs->remove($this->kernel->getProjectDir().(!$secured ? '/public' : '').$fileToDelete);
+                return true;
+            }
         }
         return false;
     }
