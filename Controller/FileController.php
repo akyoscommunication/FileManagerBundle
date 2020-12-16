@@ -316,13 +316,18 @@ class FileController extends AbstractController
 
         $absolutePath = $kernel->getProjectDir().$path;
         $splFile = new \SplFileInfo($absolutePath);
-        $stream = new Stream($absolutePath);
-        $response = new BinaryFileResponse($stream);
-        $response->headers->set('Cache-Control', 'private');
-        $response->headers->set('Content-Disposition', $response->headers->makeDisposition(
-            ($display ? ResponseHeaderBag::DISPOSITION_INLINE : ResponseHeaderBag::DISPOSITION_ATTACHMENT),
-            ($file ? $file->getName() : $splFile->getFilename())
-        ));
-        return $response;
+
+        if ($splFile->isFile()) {
+            $stream = new Stream($absolutePath);
+            $response = new BinaryFileResponse($stream);
+            $response->headers->set('Cache-Control', 'private');
+            $response->headers->set('Content-Disposition', $response->headers->makeDisposition(
+                ($display ? ResponseHeaderBag::DISPOSITION_INLINE : ResponseHeaderBag::DISPOSITION_ATTACHMENT),
+                ($file ? $file->getName() : $splFile->getFilename())
+            ));
+            return $response;
+        } else {
+            throw $this->createNotFoundException("Le fichier n'existe pas.");
+        }
     }
 }
