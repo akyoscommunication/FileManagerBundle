@@ -167,7 +167,7 @@ class FileController extends AbstractController
     }
 
     /**
-     * @Route("/", name="delete", methods={"DELETE"})
+     * @Route("/delete/file", name="delete", methods={"DELETE"})
      * @param Request $request
      * @param FileRepository $fileRepository
      * @param FileHandler $fileHandler
@@ -209,15 +209,17 @@ class FileController extends AbstractController
         $folderPath = $this->getParameter($secured ? 'secured_dir' : 'web_dir').$request->get('folder');
         $absolutePath = $kernel->getProjectDir().(!$secured ? '/public' : '').$folderPath.'/';
 
-        $filesystem->remove($absolutePath);
+        if ($path) {
+            $filesystem->remove($absolutePath);
 
-        /* @var ArrayCollection $files */
-        $files = $fileRepository->findByFilePathBegin($folderPath);
-        foreach ($files as $file) {
-            /* @var File $file */
-            $em->remove($file);
+            /* @var ArrayCollection $files */
+            $files = $fileRepository->findByFilePathBegin($folderPath);
+            foreach ($files as $file) {
+                /* @var File $file */
+                $em->remove($file);
+            }
+            $em->flush();
         }
-        $em->flush();
 
         return $this->redirectToRoute('file_index', ['path' => $path, 'secured' => $secured, 'shared' => $shared, 'previous_path' => $previousId]);
     }

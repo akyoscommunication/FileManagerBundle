@@ -26,12 +26,12 @@ class IframeAdd {
             _this.clickButton($iframe);
         })
 
-        const fileManagerInputs = $('.aky-file-container input');
+        const fileManagerInputs = $('.aky-file-container .aky-file-input input');
         const forms = fileManagerInputs.parents('form');
         forms.on('submit', function (e) {
             e.preventDefault();
             let valid = false;
-            const inputs = $(this).find('.aky-file-container input');
+            const inputs = $(this).find('.aky-file-container .aky-file-input input');
             inputs.each(function() {
                 $(this).parents('.aky-file-container').find('.empty-field').remove();
                 if($(this)[0].hasAttribute('data-required') && !$(this).val()) {

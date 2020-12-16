@@ -7,28 +7,22 @@ import moveManager from "./modules/moveManager";
 import utils from "./common/utils";
 
 import '@grafikart/drop-files-element';
-import '@grafikart/spinning-dots-element';
 
 import 'symfony-collection';
-// import initCollectionType from "../../../CoreBundle/assets/scripts/modules/collectionType";
-// import AkyUppyInit from "./modules/_uppy";
+import initCollectionType from "../../../CoreBundle/assets/scripts/modules/collectionType";
 import SpinningDots from "@grafikart/spinning-dots-element";
 
 class FileManager {
     static init() {
-        console.log("filemanger")
         new IframeAdd();
         loadPreview.init();
         removeFile.init();
         editFile.init();
         manageFolder.init();
         moveManager.init();
-        // initCollectionType.initDataPrototype('.aky-file-collection', '.aky-file');
-        // AkyUppyInit.init();
+        initCollectionType.initDataPrototype('.aky-file-collection', '.aky-file');
         
         this.initFileCollection();
-
-
     }
     
     static initFileCollection() {
