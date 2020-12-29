@@ -3,6 +3,7 @@
 namespace Akyos\FileManagerBundle\Service;
 
 use Akyos\FileManagerBundle\Entity\File;
+use Akyos\FileManagerBundle\Entity\PrivateSpace;
 use Akyos\FileManagerBundle\Repository\FileRepository;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Filesystem\Filesystem;
@@ -32,15 +33,21 @@ class UploadsService
 
 
     // GET ROOT DIRECTORY FOR FILE MANAGER (PUBLIC OR SECURED_FILES OR SECURED_FILES/USER_DIRECTORY )
-    public function getRootFilesPath($secured = false, $relative = false)
+    public function getRootFilesPath($view = false, $relative = false, $privateSpace = null)
     {
-        if($secured) {
+        if($view === "secured") {
             $relativePath = $this->getUserSecuredRootPath();
             if(!$relativePath) {
                 // ACCESS DENIED
                 return false;
             }
-        } else {
+        } elseif($view === "private_space") {
+			$relativePath = $this->getPrivateSpaceRootPath($privateSpace);
+			if(!$relativePath) {
+				// ACCESS DENIED
+				return false;
+			}
+		} else {
             // PUBLIC FILES ACCESS
             if($this->security->isGranted('ROLE_FILE_MANAGER') || $this->security->isGranted('ROLE_ADMIN')) {
                 // WHOLE PUBLIC DIRECTORY ACCESS
@@ -53,7 +60,7 @@ class UploadsService
         if($relative) {
             return $relativePath;
         }
-        return $this->kernel->getProjectDir().(!$secured ? '/public' : '').$relativePath;
+        return $this->kernel->getProjectDir().($view === "public" ? '/public' : '').$relativePath;
     }
 
 
@@ -77,11 +84,29 @@ class UploadsService
         }
         return $relativePath;
     }
+	
+	// GET PRIVATE SPACE ROOT DIRECTORY FOR FILE MANAGER
+	public function getPrivateSpaceRootPath(PrivateSpace $privateSpace) {
+		// IF IS GRANTED FOR FILE MANAGER
+		if($this->security->isGranted('ROLE_FILE_MANAGER') || $this->security->isGranted('ROLE_ADMIN')) {
+			// PRIVATE SPACE DIRECTORY ACCESS
+			$privateSpaceRootFolderName = $privateSpace->getSlug();
+			$privateSpaceRootFolderPath = $this->kernel->getProjectDir().$this->parameterBag->get('private_spaces_dir').'/'.$privateSpaceRootFolderName;
+			if(!$this->filesystem->exists($privateSpaceRootFolderPath)) {
+				$this->filesystem->mkdir($privateSpaceRootFolderPath);
+			}
+			$relativePath = $this->parameterBag->get('private_spaces_dir').'/'.$privateSpaceRootFolderName;
+		} else {
+			// ACCESS DENIED
+			return false;
+		}
+		return $relativePath;
+	}
 
 
-    // ABSOLUTE FILE PATH (IN /SECURED_FILES OR /PUBLIC)
+    // ABSOLUTE FILE PATH (IN /SECURED_FILES OR /PUBLIC_SPACES OR /PUBLIC)
     public function getFilePath(File $file) {
-        return $this->rootPath.(strpos($file->getFile(), 'secured_files') === false ? '/public' : '').$file->getFile();
+        return $this->rootPath.(strpos($file->getFile(), 'secured_files') || strpos($file->getFile(), 'private_spaces_files') ? '' : '/public').$file->getFile();
     }
 
 
@@ -91,12 +116,12 @@ class UploadsService
             return false;
         }
         $intPattern = '/^\d+$/';
-        $pathPattern = "/^\/(".substr($this->parameterBag->get('web_dir'), 1)."|".substr($this->parameterBag->get('secured_dir'), 1).")\//";
+        $pathPattern = "/^\/(".substr($this->parameterBag->get('web_dir'), 1)."|".substr($this->parameterBag->get('secured_dir'), 1)."|".substr($this->parameterBag->get('private_spaces_dir'), 1).")\//";
         $file = null;
         $pathToFile = $value;
 
         if(preg_match($pathPattern, $value)) {
-            $pathToFile = $this->rootPath.(strpos($value, 'secured_files') === false ? '/public' : '').$value;
+            $pathToFile = $this->rootPath.(strpos($value, 'secured_files') || strpos($value, 'private_spaces_files') ? '' : '/public').$value;
         }
 
         if (preg_match($intPattern, $value)) {

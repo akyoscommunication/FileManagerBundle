@@ -16,7 +16,6 @@ import SpinningDots from "@grafikart/spinning-dots-element";
 
 class FileManager {
     static init() {
-        console.log("filemanger")
         new IframeAdd();
         loadPreview.init();
         removeFile.init();

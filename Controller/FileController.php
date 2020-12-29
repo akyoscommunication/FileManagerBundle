@@ -9,6 +9,7 @@ use Akyos\FileManagerBundle\Form\EditFileType;
 use Akyos\FileManagerBundle\Form\UploadType;
 use Akyos\FileManagerBundle\Form\Handler\FileHandler;
 use Akyos\FileManagerBundle\Repository\FileRepository;
+use Akyos\FileManagerBundle\Repository\PrivateSpaceRepository;
 use Akyos\FileManagerBundle\Service\UploadsService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
@@ -29,26 +30,30 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class FileController extends AbstractController
 {
-    /**
-     * @Route("/", name="index", methods={"GET","POST"})
-     * @param FileHandler $fileHandler
-     * @param Request $request
-     * @param UploadsService $uploadsService
-     * @param Filesystem $filesystem
-     * @param FileRepository $fileRepository
-     * @return Response
-     */
-    public function index(FileHandler $fileHandler, Request $request, UploadsService $uploadsService, Filesystem $filesystem, FileRepository $fileRepository): Response
+	/**
+	 * @Route("/", name="index", methods={"GET","POST"})
+	 * @param FileHandler $fileHandler
+	 * @param Request $request
+	 * @param UploadsService $uploadsService
+	 * @param Filesystem $filesystem
+	 * @param FileRepository $fileRepository
+	 * @param PrivateSpaceRepository $privateSpaceRepository
+	 * @return Response
+	 */
+    public function index(FileHandler $fileHandler, Request $request, UploadsService $uploadsService, Filesystem $filesystem, FileRepository $fileRepository, PrivateSpaceRepository $privateSpaceRepository): Response
     {
         $files = null;
         $directories = null;
         $relativePath = $request->get('path');
-        $secured = $request->get('secured');
-        $shared = $request->get('shared');
-        $previousId = $request->get('previous_path');
-        $previousFile = $fileRepository->findOneBy(['id' => $previousId]);
-        $rootFilesPath = $uploadsService->getRootFilesPath($secured);
-        $relativeRootFilesPath = $uploadsService->getRootFilesPath($secured, true);
+        
+        $privateSpaceId = $request->get('private_space');
+		$privateSpace = $privateSpaceRepository->find($privateSpaceId ? $privateSpaceId : 0);
+
+        $view = $request->get('view') ? $request->get('view') : "public";
+        
+        $rootFilesPath = $uploadsService->getRootFilesPath($view, false, $privateSpace);
+        $relativeRootFilesPath = $uploadsService->getRootFilesPath($view, true, $privateSpace);
+        
         if(!$rootFilesPath) {
             return $this->render('@AkyosFileManager/file/error.html.twig', [
                 'message' => 'Vous n\'avez pas l\'autorisation d\'accéder à ce dossier.',
@@ -66,15 +71,15 @@ class FileController extends AbstractController
         ));
 
         if ($fileHandler->uploadFile($uploadFileForm, $request)) {
-            return $this->redirectToRoute('file_index', ['path' => $relativePath.'/'.$nameFolderFormType->get('name')->getData(), 'secured' => $secured, 'shared' => $shared, 'previous_path' => $previousId]);
+            return $this->redirectToRoute('file_index', ['path' => $relativePath.'/'.$nameFolderFormType->get('name')->getData(), 'view' => $view, 'private_space' => $privateSpaceId]);
         }
 
         if ($fileHandler->manageFolder($nameFolderFormType, $request)) {
-            return $this->redirectToRoute('file_index', ['path' => $relativePath.'/'.$nameFolderFormType->get('name')->getData(), 'secured' => $secured, 'shared' => $shared, 'previous_path' => $previousId]);
+            return $this->redirectToRoute('file_index', ['path' => $relativePath.'/'.$nameFolderFormType->get('name')->getData(), 'view' => $view, 'private_space' => $privateSpaceId]);
         }
 
         if ($fileHandler->moveManager($moveFormType, $request)) {
-            return $this->redirectToRoute('file_index', ['path' => $nameFolderFormType->get('name')->getData(), 'secured' => $secured, 'shared' => $shared, 'previous_path' => $previousId]);
+            return $this->redirectToRoute('file_index', ['path' => $nameFolderFormType->get('name')->getData(), 'view' => $view, 'private_space' => $privateSpaceId]);
         }
 
         $finder = new Finder();
@@ -111,9 +116,8 @@ class FileController extends AbstractController
             'nameFolderFormType' => $nameFolderFormType->createView(),
             'moveFormType' => $moveFormType->createView(),
             'currentPath' => $relativePath,
-            'secured' => $secured,
-            'shared' => $shared,
-            'previousFile' => $previousFile,
+			'view' => $view,
+			'private_space' => $privateSpace,
         ]);
     }
 
@@ -138,9 +142,9 @@ class FileController extends AbstractController
      */
     public function edit(Request $request, FileHandler $fileHandler, FileRepository $fileRepository, EntityManagerInterface $em): Response
     {
-        $secured = $request->get('secured');
-        $shared = $request->get('shared');
-        $previousId = $request->get('previous_path');
+		$privateSpaceId = $request->get('private_space');
+		$view = $request->get('view') ? $request->get('view') : "public";
+		
         $path = $request->get('path');
 
         /* @var File|null $file */
@@ -158,7 +162,7 @@ class FileController extends AbstractController
         $editFileForm = $this->createForm(EditFileType::class, $file);
 
         if ($fileHandler->editFile($editFileForm, $request, $path)) {
-            return $this->redirectToRoute('file_index', ['path' => $path, 'secured' => $secured, 'shared' => $shared, 'previous_path' => $previousId]);
+            return $this->redirectToRoute('file_index', ['path' => $path, 'view' => $view, 'private_space' => $privateSpaceId]);
         }
 
         return $this->render('@AkyosFileManager/file/edit.html.twig', [
@@ -175,9 +179,8 @@ class FileController extends AbstractController
      */
     public function delete(Request $request, FileRepository $fileRepository, FileHandler $fileHandler): Response
     {
-        $secured = $request->get('secured');
-        $shared = $request->get('shared');
-        $previousId = $request->get('previous_path');
+		$privateSpaceId = $request->get('private_space');
+		$view = $request->get('view') ? $request->get('view') : "public";
         $path = $request->get('path');
         $fileToDelete = $request->request->get('_file');
 
@@ -185,10 +188,10 @@ class FileController extends AbstractController
         $file = $fileRepository->findOneBy(array('file' => $fileToDelete));
 
         if ($fileHandler->removeFile($file, $request)) {
-            return $this->redirectToRoute('file_index', ['path' => $path, 'secured' => $secured, 'shared' => $shared, 'previous_path' => $previousId]);
+            return $this->redirectToRoute('file_index', ['path' => $path, 'view' => $view, 'private_space' => $privateSpaceId]);
         }
 
-        return $this->redirectToRoute('file_index', ['path' => $path, 'secured' => $secured, 'shared' => $shared, 'previous_path' => $previousId]);
+        return $this->redirectToRoute('file_index', ['path' => $path, 'view' => $view, 'private_space' => $privateSpaceId]);
     }
 
     /**
@@ -202,12 +205,11 @@ class FileController extends AbstractController
      */
     public function removeFolder(Request $request, FileRepository $fileRepository, EntityManagerInterface $em, Filesystem $filesystem, KernelInterface $kernel): Response
     {
-        $secured = $request->get('secured');
-        $shared = $request->get('shared');
-        $previousId = $request->get('previous_path');
+		$privateSpaceId = $request->get('private_space');
+		$view = $request->get('view') ? $request->get('view') : "public";
         $path = $request->get('path');
-        $folderPath = $this->getParameter($secured ? 'secured_dir' : 'web_dir').$request->get('folder');
-        $absolutePath = $kernel->getProjectDir().(!$secured ? '/public' : '').$folderPath.'/';
+        $folderPath = $this->getParameter($view === "private_space" ? "private_spaces_dir" : ($view === "secured" ? 'secured_dir' : 'web_dir')).$request->get('folder');
+        $absolutePath = $kernel->getProjectDir().($view === "public" ? '/public' : '').$folderPath.'/';
 
         $filesystem->remove($absolutePath);
 
@@ -219,18 +221,18 @@ class FileController extends AbstractController
         }
         $em->flush();
 
-        return $this->redirectToRoute('file_index', ['path' => $path, 'secured' => $secured, 'shared' => $shared, 'previous_path' => $previousId]);
+        return $this->redirectToRoute('file_index', ['path' => $path, 'view' => $view, 'private_space' => $privateSpaceId]);
     }
-
-    /**
-     * @Route("/get-file-id", name="get_file_id", methods={"GET"}, options={"expose"=true})
-     * @param Request $request
-     * @param FileRepository $fileRepository
-     * @return JsonResponse
-     */
-    public function getFileIdByPath(Request $request, FileRepository $fileRepository): JsonResponse
+	
+	/**
+	 * @Route("/get-file-id", name="get_file_id", methods={"GET"}, options={"expose"=true})
+	 * @param Request $request
+	 * @param FileRepository $fileRepository
+	 * @param EntityManagerInterface $em
+	 * @return JsonResponse
+	 */
+    public function getFileIdByPath(Request $request, FileRepository $fileRepository, EntityManagerInterface $em): JsonResponse
     {
-        $em = $this->getDoctrine()->getManager();
         $path = $request->get('path');
         /* @var File|null $file */
         $file = $fileRepository->findOneBy(['file' => $path]);
@@ -248,38 +250,6 @@ class FileController extends AbstractController
         $id = $file->getId();
 
         return new JsonResponse($id);
-    }
-
-    /**
-     * @Route("/change-file-shared-status", name="update_shared_status", methods={"GET"}, options={"expose"=true})
-     * @param Request $request
-     * @param FileRepository $fileRepository
-     * @param EntityManagerInterface $em
-     * @return Response
-     */
-    public function fileUpdateSharedStatus(Request $request, FileRepository $fileRepository, EntityManagerInterface $em): Response
-    {
-        $previousValue = $request->get('previous_value');
-        $newValue = $request->get('new_value');
-
-        if($previousValue !== $newValue) {
-            /* @var File|null $previousFile */
-            $previousFile = $fileRepository->find($previousValue);
-            /* @var File|null $newFile */
-            $newFile = $fileRepository->find($newValue);
-
-            if($previousFile) {
-                $previousFile->setShared(!is_null($previousFile->getShared()) && $previousFile->getShared() > 0 ? $previousFile->getShared() - 1 : 0);
-            }
-
-            if($newFile) {
-                $newFile->setShared(!is_null($newFile->getShared()) ? $newFile->getShared() + 1 : 1);
-            }
-
-            $em->flush();
-        }
-
-        return new JsonResponse(true);
     }
 
     /**
@@ -305,13 +275,8 @@ class FileController extends AbstractController
     {
         $path = $request->get('path');
         $display = $request->get('display');
-        $userSecuredRootPath = $uploadsService->getUserSecuredRootPath();
         /* @var File|null $file */
         $file = $fileRepository->findOneBy(array('file' => $path));
-
-        if(strpos($path, $userSecuredRootPath) === false && !$file->getShared()) {
-            throw $this->createAccessDeniedException('Accès refusé');
-        }
 
         $absolutePath = $uploadsService->getFilePathFromValue($path);
         $splFile = new \SplFileInfo($absolutePath);

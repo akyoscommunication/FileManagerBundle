@@ -38,8 +38,8 @@ class FileManagerCollectionType extends AbstractType implements DataTransformerI
             'add_at_the_end' => true,
             'tree' => 0,
             'error_bubbling' => false,
-            'secured' => false,
-            'shared' => false,
+            'view' => "public",
+            'private_space' => null,
         ]);
     }
 
@@ -53,8 +53,8 @@ class FileManagerCollectionType extends AbstractType implements DataTransformerI
             'data_init_with_n_elements' => $options['init_with_n_elements'],
             'data_add_at_the_end' => $options['add_at_the_end'],
             'tree' => $options['tree'],
-            'secured' => $options['secured'],
-            'shared' => $options['shared'],
+            'view' => $options['view'],
+            'private_space' => $options['private_space'],
         ]);
     }
 

@@ -1,7 +1,3 @@
-.current-dir {
-    margin-top: 0 !important;
-}
-
 form[name=upload] {
     @include flex(column, nowrap, flex-start, flex-end);
     overflow: hidden;

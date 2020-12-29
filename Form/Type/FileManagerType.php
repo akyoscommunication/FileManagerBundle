@@ -16,8 +16,8 @@ class FileManagerType extends AbstractType
             'label' => '',
             'config' => 'restrict',
             'required' => false,
-            'secured' => false,
-            'shared' => false,
+            'view' => 'public',
+            'private_space' => null,
         ]);
     }
 
@@ -27,8 +27,8 @@ class FileManagerType extends AbstractType
 
         $view->vars = array_replace($view->vars, [
             'config' => $options['config'],
-            'secured' => $options['secured'],
-            'shared' => $options['shared'],
+            'view' => $options['view'],
+            'private_space' => $options['private_space'],
         ]);
     }
 

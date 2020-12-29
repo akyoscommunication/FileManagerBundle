@@ -22,4 +22,10 @@ class ExtendSidebar
         </li>';
         return new Response($template);
     }
+	
+	public function getOptionsTemplate($route)
+	{
+		$template = '<li class="'.(strpos($route,"file_manager_options") !== false ? "active" : "").'"><a href="'.$this->router->generate('file_manager_options').'">FileManager</a></li>';
+		return new Response($template);
+	}
 }

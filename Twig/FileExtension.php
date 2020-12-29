@@ -118,7 +118,7 @@ class FileExtension extends AbstractExtension
         $streamedFile = null;
 
         if(preg_match($pathPattern, $value)) {
-            if (strpos($value, 'secured_files') !== false) {
+            if (strpos($value, 'secured_files') !== false || strpos($value, 'private_spaces_files') !== false) {
                 $pathToValue = $this->rootPath.$value;
                 $streamedValue = $this->urlGenerator->generate('file_download_secured_file', ['path' => $value, 'display' => true]);
             } else {
@@ -132,7 +132,7 @@ class FileExtension extends AbstractExtension
             if(!$file) {
                 return false;
             }
-            if(strpos($file->getFile(), 'secured_files') !== false) {
+            if(strpos($file->getFile(), 'secured_files') !== false || strpos($file->getFile(), 'private_spaces_files') !== false) {
                 $pathToFile = $this->rootPath.$file->getFile();
                 $streamedFile = $this->urlGenerator->generate('file_download_secured_file', ['path' => $file->getFile(), 'display' => true]);
             } else {
