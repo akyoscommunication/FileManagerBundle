@@ -57,10 +57,13 @@ class FileExtension extends AbstractExtension
         ];
     }
 
-    public function getImagePathById($id)
+    public function getImagePathById($id, bool $display = true)
     {
         /* @var File|null $file */
         $file = $this->fileRepository->find($id);
+		if (strpos($file->getFile(), 'secured_files') !== false || strpos($file->getFile(), 'private_spaces_files') !== false) {
+			return $file ? $this->urlGenerator->generate('file_download_secured_file', ['path' => $file->getFile(), 'display' => $display]) : false;
+		}
         return $file ? $file->getFile() : false;
     }
 
@@ -112,7 +115,7 @@ class FileExtension extends AbstractExtension
         $ytPattern = '%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i';
         $urlPattern = '#((https?|ftp)://(\S*?\.\S*?))([\s)\[\]{},;"\':<]|\.\s|$)#i';
         $intPattern = '/^\d+$/';
-        $pathPattern = "/^\/(".substr($this->parameterBag->get('web_dir'), 1)."|".substr($this->parameterBag->get('secured_dir'), 1).")\//";
+        $pathPattern = "/^\/(".substr($this->parameterBag->get('web_dir'), 1)."|".substr($this->parameterBag->get('secured_dir'), 1)."|".substr($this->parameterBag->get('private_spaces_dir'), 1).")\//";
         $file = null;
         $streamedValue = null;
         $streamedFile = null;

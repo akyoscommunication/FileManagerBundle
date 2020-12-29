@@ -97,6 +97,7 @@ class FileController extends AbstractController
                 'name' => $file->getFilename(),
                 'size' => $file->getSize(),
                 'path' => $relativeRootFilesPath.$relativePath.'/'.$file->getRelativePathname(),
+				'absolutePath' => $file->getPath().'/'.$file->getRelativePathname(),
             );
         }
         foreach ($finder->directories()->depth(0) as $directory) {
@@ -171,7 +172,7 @@ class FileController extends AbstractController
     }
 
     /**
-     * @Route("/", name="delete", methods={"DELETE"})
+     * @Route("/delete/file", name="delete", methods={"DELETE"})
      * @param Request $request
      * @param FileRepository $fileRepository
      * @param FileHandler $fileHandler
@@ -203,23 +204,27 @@ class FileController extends AbstractController
      * @param KernelInterface $kernel
      * @return Response
      */
-    public function removeFolder(Request $request, FileRepository $fileRepository, EntityManagerInterface $em, Filesystem $filesystem, KernelInterface $kernel): Response
+    public function removeFolder(Request $request, FileRepository $fileRepository, EntityManagerInterface $em, PrivateSpaceRepository $privateSpaceRepository, Filesystem $filesystem, KernelInterface $kernel): Response
     {
 		$privateSpaceId = $request->get('private_space');
+		$privateSpace = $privateSpaceRepository->find($privateSpaceId ? $privateSpaceId : 0);
 		$view = $request->get('view') ? $request->get('view') : "public";
         $path = $request->get('path');
-        $folderPath = $this->getParameter($view === "private_space" ? "private_spaces_dir" : ($view === "secured" ? 'secured_dir' : 'web_dir')).$request->get('folder');
+        if($view === "private_space") {
+        	$folderPath = $this->getParameter("private_spaces_dir").'/'.$privateSpace->getSlug().$request->get('folder');
+		} else {
+        	$folderPath = $this->getParameter($view === "secured" ? 'secured_dir' : 'web_dir').$request->get('folder');
+		}
         $absolutePath = $kernel->getProjectDir().($view === "public" ? '/public' : '').$folderPath.'/';
 
-        $filesystem->remove($absolutePath);
-
-        /* @var ArrayCollection $files */
-        $files = $fileRepository->findByFilePathBegin($folderPath);
-        foreach ($files as $file) {
-            /* @var File $file */
-            $em->remove($file);
-        }
-        $em->flush();
+		$filesystem->remove($absolutePath);
+		/* @var ArrayCollection $files */
+		$files = $fileRepository->findByFilePathBegin($folderPath);
+		foreach ($files as $file) {
+			/* @var File $file */
+			$em->remove($file);
+		}
+		$em->flush();
 
         return $this->redirectToRoute('file_index', ['path' => $path, 'view' => $view, 'private_space' => $privateSpaceId]);
     }
@@ -269,25 +274,31 @@ class FileController extends AbstractController
      * @param Request $request
      * @param UploadsService $uploadsService
      * @param FileRepository $fileRepository
+     * @param KernelInterface $kernel
      * @return BinaryFileResponse
      */
-    public function downloadSecuredFile(Request $request, UploadsService $uploadsService, FileRepository $fileRepository): BinaryFileResponse
+    public function downloadSecuredFile(Request $request, UploadsService $uploadsService, FileRepository $fileRepository, KernelInterface $kernel): BinaryFileResponse
     {
         $path = $request->get('path');
         $display = $request->get('display');
         /* @var File|null $file */
-        $file = $fileRepository->findOneBy(array('file' => $path));
-
+        $file = $fileRepository->findOneBy(['file' => $path]);
+        
         $absolutePath = $uploadsService->getFilePathFromValue($path);
+
         $splFile = new \SplFileInfo($absolutePath);
-        $stream = new Stream($absolutePath);
-        $response = new BinaryFileResponse($stream);
-        $response->headers->set('Cache-Control', 'private');
-        $response->headers->set('Content-Type', $splFile->getExtension());
-        $response->headers->set('Content-Disposition', $response->headers->makeDisposition(
-            ($display ? ResponseHeaderBag::DISPOSITION_INLINE : ResponseHeaderBag::DISPOSITION_ATTACHMENT),
-            ($file ? $file->getName() : $splFile->getFilename())
-        ));
-        return $response;
+
+        if ($splFile->isFile()) {
+            $stream = new Stream($absolutePath);
+            $response = new BinaryFileResponse($stream);
+            $response->headers->set('Cache-Control', 'private');
+            $response->headers->set('Content-Disposition', $response->headers->makeDisposition(
+                ($display ? ResponseHeaderBag::DISPOSITION_INLINE : ResponseHeaderBag::DISPOSITION_ATTACHMENT),
+                ($file ? $file->getName() : $splFile->getFilename())
+            ));
+            return $response;
+        } else {
+            throw $this->createNotFoundException("Le fichier n'existe pas.");
+        }
     }
 }
