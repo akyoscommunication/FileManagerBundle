@@ -5,9 +5,11 @@ namespace Akyos\FileManagerBundle\Service;
 use Akyos\FileManagerBundle\Entity\File;
 use Akyos\FileManagerBundle\Entity\PrivateSpace;
 use Akyos\FileManagerBundle\Repository\FileRepository;
+use Akyos\FileManagerBundle\Repository\PrivateSpaceRepository;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\Security;
 
@@ -19,9 +21,20 @@ class UploadsService
     private $encoder;
     private $filesystem;
     private $fileRepository;
+    private $privateSpaceRepository;
+    private $authorizationChecker;
     private $rootPath = __DIR__.'/../../..';
 
-    public function __construct(KernelInterface $kernel, ParameterBagInterface $parameterBag, Security $security, UserPasswordEncoderInterface $encoder, Filesystem $filesystem, FileRepository $fileRepository)
+    public function __construct(
+    	KernelInterface $kernel,
+		ParameterBagInterface $parameterBag,
+		Security $security,
+		UserPasswordEncoderInterface $encoder,
+		Filesystem $filesystem,
+		FileRepository $fileRepository,
+		PrivateSpaceRepository $privateSpaceRepository,
+		AuthorizationCheckerInterface $authorizationChecker
+	)
     {
         $this->kernel = $kernel;
         $this->parameterBag = $parameterBag;
@@ -29,6 +42,8 @@ class UploadsService
         $this->encoder = $encoder;
         $this->filesystem = $filesystem;
         $this->fileRepository = $fileRepository;
+        $this->privateSpaceRepository = $privateSpaceRepository;
+        $this->authorizationChecker = $authorizationChecker;
     }
 
 
@@ -134,4 +149,53 @@ class UploadsService
 
         return $pathToFile;
     }
+    
+    //CHECK IF CURRENT USER HAS RIGHT TO ACCESS THE FILE
+	public function hasFileAccessRight($fileId) {
+    	$file = $this->fileRepository->find($fileId);
+    	if($file) {
+			if(strpos($file->getFile(), '/secured_files') !== false) {
+				if(
+					strpos(substr(base64_encode($this->security->getUser() ? $this->security->getUser()->getUsername().$this->security->getUser()->getSalt() : 'null'), 0, -2), $file->getFile()) === false
+					&&
+					!$this->authorizationChecker->isGranted('ROLE_SUPER_ADMIN')
+					&&
+					(
+						empty($file->getVisibility())
+						||
+						!$file->getVisibility()
+						||
+						!($this->authorizationChecker->isGranted($file->getVisibility()) || in_array('ANONYMOUS', is_array($file->getVisibility()) ? $file->getVisibility() : []))
+					)
+				) {
+					return false;
+				}
+				return true;
+			}
+			if(strpos($file->getFile(), '/private_spaces_files') !== false) {
+				$explodeOnPrivateSpacesFiles = explode('/private_spaces_files/', $file->getFile());
+				$explodeOnSlashes = explode('/', $explodeOnPrivateSpacesFiles[count($explodeOnPrivateSpacesFiles) - 1]);
+				$privateSpaceSlug = $explodeOnSlashes[0];
+				$privateSpace = $this->privateSpaceRepository->findOneBy(['slug' => $privateSpaceSlug]);
+				if($privateSpace) {
+					if(
+						!$this->authorizationChecker->isGranted($privateSpace->getRoles())
+						&&
+						(
+							empty($file->getVisibility())
+							||
+							!$file->getVisibility()
+							||
+							!($this->authorizationChecker->isGranted($file->getVisibility()) || in_array('ANONYMOUS', is_array($file->getVisibility()) ? $file->getVisibility() : []))
+						)
+					) {
+						return false;
+					}
+					return true;
+				}
+			}
+			return true;
+		}
+    	return false;
+	}
 }

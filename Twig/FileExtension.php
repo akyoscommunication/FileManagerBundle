@@ -54,6 +54,7 @@ class FileExtension extends AbstractExtension
             new TwigFunction('renderFileManager', [$this, 'renderFileManager']),
             new TwigFunction('renderFileManagerNotLazy', [$this, 'renderFileManagerNotLazy']),
             new TwigFunction('renderFileManagerUrl', [$this, 'renderFileManagerUrl']),
+            new TwigFunction('hasFileAccessRight', [$this->uploadsService, 'hasFileAccessRight']),
         ];
     }
 

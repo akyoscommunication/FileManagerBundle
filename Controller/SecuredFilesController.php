@@ -50,7 +50,7 @@ class SecuredFilesController extends AbstractController
 			
 			if(strpos($file->getFile(), '/secured_files') !== false) {
 				if(
-					strpos(substr(base64_encode($this->getUser()->getUsername().$this->getUser()->getSalt()), 0, -2), $absolutePath) === false
+					strpos(substr(base64_encode($this->getUser() ? $this->getUser()->getUsername().$this->getUser()->getSalt() : 'null'), 0, -2), $absolutePath) === false
 					&&
 					!$this->isGranted('ROLE_SUPER_ADMIN')
 					&&
