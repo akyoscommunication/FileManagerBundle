@@ -16,7 +16,7 @@
 
     }
 
-    &-collection {
+    &-collection, &-list {
         @include flex(row, wrap, flex-start, stretch);
 
         &-remove {

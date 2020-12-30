@@ -57,10 +57,13 @@ class FileExtension extends AbstractExtension
         ];
     }
 
-    public function getImagePathById($id)
+    public function getImagePathById($id, bool $display = true)
     {
         /* @var File|null $file */
         $file = $this->fileRepository->find($id);
+		if (strpos($file->getFile(), 'secured_files') !== false || strpos($file->getFile(), 'private_spaces_files') !== false) {
+			return $file ? $this->urlGenerator->generate('file_download_secured_file', ['path' => $file->getFile(), 'display' => $display]) : false;
+		}
         return $file ? $file->getFile() : false;
     }
 
@@ -112,13 +115,13 @@ class FileExtension extends AbstractExtension
         $ytPattern = '%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i';
         $urlPattern = '#((https?|ftp)://(\S*?\.\S*?))([\s)\[\]{},;"\':<]|\.\s|$)#i';
         $intPattern = '/^\d+$/';
-        $pathPattern = "/^\/(".substr($this->parameterBag->get('web_dir'), 1)."|".substr($this->parameterBag->get('secured_dir'), 1).")\//";
+        $pathPattern = "/^\/(".substr($this->parameterBag->get('web_dir'), 1)."|".substr($this->parameterBag->get('secured_dir'), 1)."|".substr($this->parameterBag->get('private_spaces_dir'), 1).")\//";
         $file = null;
         $streamedValue = null;
         $streamedFile = null;
 
         if(preg_match($pathPattern, $value)) {
-            if (strpos($value, 'secured_files') !== false) {
+            if (strpos($value, 'secured_files') !== false || strpos($value, 'private_spaces_files') !== false) {
                 $pathToValue = $this->rootPath.$value;
                 $streamedValue = $this->urlGenerator->generate('file_download_secured_file', ['path' => $value, 'display' => true]);
             } else {
@@ -132,7 +135,7 @@ class FileExtension extends AbstractExtension
             if(!$file) {
                 return false;
             }
-            if(strpos($file->getFile(), 'secured_files') !== false) {
+            if(strpos($file->getFile(), 'secured_files') !== false || strpos($file->getFile(), 'private_spaces_files') !== false) {
                 $pathToFile = $this->rootPath.$file->getFile();
                 $streamedFile = $this->urlGenerator->generate('file_download_secured_file', ['path' => $file->getFile(), 'display' => true]);
             } else {

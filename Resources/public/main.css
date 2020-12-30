@@ -13483,10 +13483,6 @@ a.text-white:focus {
   font-weight: 600;
 }
 
-#mainFileManagerBundle .current-dir {
-  margin-top: 0 !important;
-}
-
 #mainFileManagerBundle form[name=upload] {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -13553,7 +13549,8 @@ a.text-white:focus {
   border: 3px solid var(--color-primary);
 }
 
-.aky-file-collection {
+.aky-file-collection,
+.aky-file-list {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -13571,13 +13568,15 @@ a.text-white:focus {
           align-items: stretch;
 }
 
-.aky-file-collection-remove {
+.aky-file-collection-remove,
+.aky-file-list-remove {
   position: absolute;
   top: 5px;
   right: 5px;
 }
 
-.aky-file-collection .aky-file-container {
+.aky-file-collection .aky-file-container,
+.aky-file-list .aky-file-container {
   padding-right: 10px;
   padding-bottom: 10px;
   margin-bottom: 10px;
@@ -13587,7 +13586,8 @@ a.text-white:focus {
   max-width: 155px;
 }
 
-.aky-file-collection .aky-file-add {
+.aky-file-collection .aky-file-add,
+.aky-file-list .aky-file-add {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -13614,7 +13614,8 @@ a.text-white:focus {
   border-radius: 100%;
 }
 
-.aky-file-collection .aky-file-add:hover {
+.aky-file-collection .aky-file-add:hover,
+.aky-file-list .aky-file-add:hover {
   text-decoration: none;
   -webkit-box-shadow: 0 14px 28px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(0, 0, 0, 0.1);
           box-shadow: 0 14px 28px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(0, 0, 0, 0.1);

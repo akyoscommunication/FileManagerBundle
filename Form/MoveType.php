@@ -19,6 +19,9 @@ class MoveType extends AbstractType
             if(strpos($filePath, '/secured_files')) {
                 $filePath = explode('/secured_files', $filePath)[1];
             }
+			if(strpos($filePath, '/private_spaces_files')) {
+				$filePath = explode('/private_spaces_files', $filePath)[1];
+			}
             if(strpos($filePath, '/public/uploads')) {
                 $filePath = explode('/public/uploads', $filePath)[1];
             }

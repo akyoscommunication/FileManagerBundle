@@ -71,7 +71,7 @@
                                 <div class="modal-body aky-file-input">
                                     {% block aky_field %}
                                         <input type="text" class="form-control" id="{{ form.vars.id }}" name="{{ form.vars.full_name }}"
-                                               {% if form.vars.required %}data-required="required"{% endif %} {% if form.vars.secured %}data-secured="secured"{% endif %} {% if form.vars.shared %}data-shared="shared"{% endif %} data-previous-value-url="{{ path('file_update_shared_status', {'previous_value' : form.vars.value }) }}" value="{{ form.vars.value }}" {{ form.vars.readonly|default ? 'readonly="readonly"' }}>
+                                               {% if form.vars.required %}data-required="required"{% endif %} {% if form.vars.view %}data-view="view"{% endif %} {% if form.vars.private_space %}data-private_space="private_space"{% endif %} value="{{ form.vars.value }}" {{ form.vars.readonly|default ? 'readonly="readonly"' }}>
                                     {% endblock %}
                                 </div>
                                 <div class="modal-footer">

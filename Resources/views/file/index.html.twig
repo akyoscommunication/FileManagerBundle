@@ -4,27 +4,46 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block page_content %}
-    <section class="current-dir my-4">
-        <h4>
-            {% set pathDirs = currentPath|split('/') %}
-            <a href="{{ path('file_index', { 'path' : '/', 'secured' : secured, 'shared' : shared, 'previous_path' : previousFile }) }}">Documents {{ secured ? 'sécurisés' : ''}} </a>
-            {% for key, value in pathDirs|filter((v, k) => k > 0) %}
-                {% set pathString = "" %}
-                {% for i in 1..key %}
-                    {% set pathString = pathString ~ '/' ~ pathDirs[i]  %}
+    <section class="spaces mb-2 pt-2 pb-2 border-bottom">
+        <ul class="nav nav-pills nav-fill">
+            <li class="nav-item">
+                <a class="nav-link {{ not view or view == "public"  ? "active" : "" }}" href="{{ path('file_index') }}">Espace public</a>
+            </li>
+            {% if file_manager_options.privateSpaces|length %}
+                {% set isGrantedForAtLeastOnePrivateSpace = false %}
+                {% for privateSpace in file_manager_options.privateSpaces %}
+                    {% if is_granted(privateSpace.roles) %}{% set isGrantedForAtLeastOnePrivateSpace = true %}{% endif %}
                 {% endfor %}
-                {% if value %}
-                    {% if key < (pathDirs|length - 1) %}
-                        / <a href="{{ path('file_index', { 'path' : pathString, 'secured' : secured, 'shared' : shared, 'previous_path' : previousFile }) }}">{{ value }}</a>
-                    {% else %}
-                        / <span>{{ value }}</span>
-                    {% endif %}
+                {% if isGrantedForAtLeastOnePrivateSpace %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle {{ view == "private_space" ? "active" : "" }}" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Espaces partagés</a>
+                        <div class="dropdown-menu w-100">
+                            {% for key, privateSpace in file_manager_options.privateSpaces %}
+                                {% if is_granted(privateSpace.roles) %}
+                                    <a class="dropdown-item {{ view == "private_space" and private_space ? private_space.id : null == privateSpace.id ? "active" : "" }}" href="{{ path('file_index', {'view': "private_space", 'private_space' : privateSpace.id }) }}">{{ privateSpace.name }}</a>
+                                    {% if not loop.last %}<div class="dropdown-divider w-100"></div>{% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </li>
                 {% endif %}
-            {% endfor %}
-        </h4>
+            {% endif %}
+            <li class="nav-item">
+                <a class="nav-link {{ view == "secured" ? "active" : "" }}" href="{{ path('file_index', {'view': "secured"}) }}">Espace privé</a>
+            </li>
+        </ul>
+        {% if view =="public" %}
+            <div class="small mt-1">Les dossiers et fichiers de ce dossier sont visibles et modifiables par <b>tous les utilisateurs ayant accès au gestionnaire de fichiers</b>. Tout le monde peut voir ces fichiers et les trouver avec le lien, même s'ils ne sont affichés nulle part sur le site.</div>
+        {% endif %}
+        {% if view =="private_space" %}
+            <div class="small mt-1">Les dossiers et fichiers de ce dossier sont visibles et modifiables <b>uniquement par les utilisateurs ayant accès à cet espace partagé</b>. Les fichiers de cet espace sont protégés: leur visibilité dépend de ce que vous sélectionnez. Même avec le lien, quelqu'un qui n'est pas autorisé à accéder au fichier ne pourra pas le voir. </div>
+        {% endif %}
+        {% if view =="secured" %}
+            <div class="small mt-1">Les dossiers et fichiers de ce dossier sont visibles et modifiables <b>uniquement par vous et le super-admin du site</b>. Les fichiers de cet espace sont protégés: leur visibilité dépend de ce que vous sélectionnez. Même avec le lien, quelqu'un qui n'est pas autorisé à accéder au fichier ne pourra pas le voir.</div>
+        {% endif %}
     </section>
 
-    <div class="aky-header-page">
+    <section class="aky-header-page">
         <div class="buttons d-flex">
             <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#aky-filemanager-modal-manage-folder" data-action="CREATE">
                 <i class="fas fa-folder-plus"></i> Nouveau dossier
@@ -41,16 +60,37 @@
                 <button class="btn btn-outline-success">Ajouter</button>
             {{ form_end(uploadForm) }}
         </div>
-    </div>
+    </section>
+
+    <section class="current-dir mb-3 mt-3">
+        <h4>
+            {% set pathDirs = currentPath|split('/') %}
+            <a href="{{ path('file_index', { 'path' : '/', 'view': view, 'private_space': private_space ? private_space.id : null }) }}">{{ view == "secured" ? 'Documents sécurisés' : ( view == "private_space" ? private_space.name : 'Documents publics')}} </a>
+            {% for key, value in pathDirs|filter((v, k) => k > 0) %}
+                {% set pathString = "" %}
+                {% for i in 1..key %}
+                    {% set pathString = pathString ~ '/' ~ pathDirs[i]  %}
+                {% endfor %}
+                {% if value %}
+                    {% if key < (pathDirs|length - 1) %}
+                        / <a href="{{ path('file_index', { 'path' : pathString, 'view': view, 'private_space': private_space }) }}">{{ value }}</a>
+                    {% else %}
+                        / <span>{{ value }}</span>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        </h4>
+    </section>
+
 
     <section class="my-4">
-        <h4>Dossiers</h4>
-        <div class="aky-file-collection">
+        <div class="small-title mb-2">Dossiers</div>
+        <div class="aky-file-list">
             {% if directories != null %}
                 {% for directory in directories %}
                     <div class="aky-file-container">
                         <div class="aky-file aky-file--folder">
-                            <a class="aky-file-preview aky-file-updateiframe-btn" href="{{ path('file_index', { 'path' : app.request.get('path')~'/'~directory.name, 'secured': secured, 'shared' : shared, 'previous_path' : previousFile }) }}">
+                            <a class="aky-file-preview aky-file-updateiframe-btn" href="{{ path('file_index', { 'path' : app.request.get('path')~'/'~directory.name, 'view': view, 'private_space': private_space ? private_space.id : null }) }}">
                                 <i class="fas fa-folder"></i>
                             </a>
                             <div class="aky-file-btnmanager">
@@ -61,7 +101,7 @@
                                     <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#aky-filemanager-modal-move-manager" data-file="{{ directory.absolutePath }}" data-type="FOLDER">
                                         <i class="fas fa-hand-point-right"></i>
                                     </button>
-                                    <a class="btn btn-danger btn-sm" href="{{ path('file_remove_folder', { 'folder' : app.request.get('path')~'/'~directory.name, 'path' : app.request.get('path'), 'secured': secured, 'shared' : shared, 'previous_path' : previousFile }) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet élément ?');"><i class="fas fa-times"></i></a>
+                                    <a class="btn btn-danger btn-sm" href="{{ path('file_remove_folder', { 'folder' : app.request.get('path')~'/'~directory.name, 'path' : app.request.get('path'), 'view': view, 'private_space': private_space ? private_space.id : null }) }}" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce dossier ? Tous les dossiers et fichiers qu\'il contient seront définitivement perdus.');"><i class="fas fa-times"></i></a>
                                 </div>
                             </div>
                         </div>
@@ -80,34 +120,31 @@
     </section>
 
     <section>
-        <h4>Fichiers</h4>
-        <div class="aky-file-collection">
+        <div class="small-title mb-2">Fichiers</div>
+        <div class="aky-file-list">
             {% for file in files %}
                 <div class="aky-file-container">
-                    <div class="aky-file {{ previousFile and previousFile.file == file.path ? 'selected' : '' }}">
-                        {% if isFileShared(file.path) %}
-                            <div class="aky-file-shared" data-toggle="tooltip" data-placement="top" title="Ce fichier à été ajouté sur un endroit partagé du site, d'autres utilisateurs peuvent le consulter."><i class="fas fa-users"></i></div>
-                        {% endif %}
+                    <div class="aky-file">
                         <a href="#" class="aky-file-preview aky-file-addto-btn" data-path="{{ file.path }}" data-urltoget="{{ path('file_get_file_id') }}">
                             {{ renderFileManager(file.path, false, true)|raw }}
                         </a>
                         <div class="aky-file-btnmanager">
                             <div class="btn-group" role="group">
-                                {% if secured %}
+                                {% if view != "public" %}
                                     <a href="{{ path('file_download_secured_file', {'path': file.path}) }}" class="btn btn-primary btn-sm"><i class="fas fa-file-download"></i></a>
                                 {% else %}
                                     <a href="{{ renderFileManagerUrl(file.path) }}" class="btn btn-primary btn-sm" target="_blank" rel="noopener noreferrer"><i class="fas fa-external-link-alt"></i></a>
                                 {% endif %}
-                                <button type="button" class="btn btn-primary btn-sm aky-filemanager-modal-edit-file-btn" data-toggle="modal" data-target="#aky-filemanager-modal-edit-file" data-path="{{ file.path }}" data-url="{{ path('file_edit', { 'path' : file.path, 'secured': secured, 'shared' : shared, 'previous_path' : previousFile }) }}">
+                                <button type="button" class="btn btn-primary btn-sm aky-filemanager-modal-edit-file-btn" data-toggle="modal" data-target="#aky-filemanager-modal-edit-file" data-path="{{ file.path }}" data-url="{{ path('file_edit', { 'path' : file.path, 'view': view, 'private_space': private_space ? private_space.id : null }) }}">
                                     <i class="fas fa-pen"></i>
                                 </button>
-                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#aky-filemanager-modal-move-manager" data-file="{{ file.path }}" data-type="FILE">
+                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#aky-filemanager-modal-move-manager" data-file="{{ file.absolutePath }}" data-type="FILE">
                                     <i class="fas fa-hand-point-right"></i>
                                 </button>
                             </div>
                         </div>
                         <div class="aky-file-collection-remove">
-                            <form method="post" class="not-submit index-delete" action="{{ path('file_delete', {'path' : app.request.get('path'), 'secured': secured, 'shared' : shared, 'previous_path' : previousFile}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet élément ?');">
+                            <form method="post" class="not-submit index-delete" action="{{ path('file_delete', {'path' : app.request.get('path'), 'view': view, 'private_space': private_space ? private_space.id : null}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce fichier ? Il sera définitivement perdu.');">
                                 <input type="hidden" name="_method" value="DELETE">
                                 <input type="hidden" name="_file" value="{{ file.path }}">
                                 <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ file.name) }}">
