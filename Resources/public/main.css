@@ -13791,3 +13791,7 @@ body #file-manager-access-denied img {
   height: 80px;
   display: block;
 }
+
+.aky-filemanager-iframe {
+  height: 60vh !important;
+}

@@ -9,7 +9,7 @@
             <li class="nav-item">
                 <a class="nav-link {{ not view or view == "public"  ? "active" : "" }}" href="{{ path('file_index') }}">Espace public</a>
             </li>
-            {% if file_manager_options.privateSpaces|length %}
+            {% if file_manager_options.privateSpaces is defined and file_manager_options.privateSpaces|length %}
                 {% set isGrantedForAtLeastOnePrivateSpace = false %}
                 {% for privateSpace in file_manager_options.privateSpaces %}
                     {% if is_granted(privateSpace.roles) %}{% set isGrantedForAtLeastOnePrivateSpace = true %}{% endif %}
@@ -33,13 +33,13 @@
             </li>
         </ul>
         {% if view =="public" %}
-            <div class="small mt-1">Les dossiers et fichiers de ce dossier sont visibles et modifiables par <b>tous les utilisateurs ayant accès au gestionnaire de fichiers</b>. Tout le monde peut voir ces fichiers et les trouver avec le lien, même s'ils ne sont affichés nulle part sur le site.</div>
+            <div class="small mt-1">Les dossiers et fichiers de ce dossier sont visibles et modifiables par <b>tous les utilisateurs ayant accès au gestionnaire de fichiers</b>. Même s'ils ne sont affichés nulle part sur le site, toute personne qui connait le lien vers un de ces fichiers peut le voir.</div>
         {% endif %}
         {% if view =="private_space" %}
-            <div class="small mt-1">Les dossiers et fichiers de ce dossier sont visibles et modifiables <b>uniquement par les utilisateurs ayant accès à cet espace partagé</b>. Les fichiers de cet espace sont protégés: leur visibilité dépend de ce que vous sélectionnez. Même avec le lien, quelqu'un qui n'est pas autorisé à accéder au fichier ne pourra pas le voir. </div>
+            <div class="small mt-1">Les dossiers et fichiers de ce dossier sont visibles et modifiables <b>uniquement par les utilisateurs ayant accès à cet espace partagé</b>. Les fichiers de cet espace sont protégés: <b>seuls les utilisateurs ayant accès à cet espace partagé</b> peuvent les voir, sauf si vous modifiez leur visibilité en éditant le fichier. Même avec le lien, quelqu'un qui n'est pas autorisé à accéder au fichier ne pourra pas le voir. </div>
         {% endif %}
         {% if view =="secured" %}
-            <div class="small mt-1">Les dossiers et fichiers de ce dossier sont visibles et modifiables <b>uniquement par vous et le super-admin du site</b>. Les fichiers de cet espace sont protégés: leur visibilité dépend de ce que vous sélectionnez. Même avec le lien, quelqu'un qui n'est pas autorisé à accéder au fichier ne pourra pas le voir.</div>
+            <div class="small mt-1">Les dossiers et fichiers de ce dossier sont visibles et modifiables <b>uniquement par vous et le super-admin du site</b>. Les fichiers de cet espace sont protégés: <b>seuls vous et le super-admin du site</b> pouvez les voir, sauf si vous modifiez leur visibilité en éditant le fichier. Même avec le lien, quelqu'un qui n'est pas autorisé à accéder au fichier ne pourra pas le voir.</div>
         {% endif %}
     </section>
 
@@ -96,12 +96,16 @@
                             <div class="aky-file-btnmanager">
                                 <div class="btn-group" role="group">
                                     <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#aky-filemanager-modal-manage-folder" data-action="EDIT" data-folder="{{ app.request.get('path')~'/'~directory.name }}">
-                                        <i class="fas fa-pen"></i>
+                                        <span data-toggle="tooltip" title="Modifier le nom du dossier">
+                                            <i class="fas fa-pen"></i>
+                                        </span>
                                     </button>
                                     <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#aky-filemanager-modal-move-manager" data-file="{{ directory.absolutePath }}" data-type="FOLDER">
-                                        <i class="fas fa-hand-point-right"></i>
+                                        <span data-toggle="tooltip" title="Déplacer">
+                                            <i class="fas fa-hand-point-right"></i>
+                                        </span>
                                     </button>
-                                    <a class="btn btn-danger btn-sm" href="{{ path('file_remove_folder', { 'folder' : app.request.get('path')~'/'~directory.name, 'path' : app.request.get('path'), 'view': view, 'private_space': private_space ? private_space.id : null }) }}" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce dossier ? Tous les dossiers et fichiers qu\'il contient seront définitivement perdus.');"><i class="fas fa-times"></i></a>
+                                    <a class="btn btn-danger btn-sm" data-toggle="tooltip" title="Supprimer" href="{{ path('file_remove_folder', { 'folder' : app.request.get('path')~'/'~directory.name, 'path' : app.request.get('path'), 'view': view, 'private_space': private_space ? private_space.id : null }) }}" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce dossier ? Tous les dossiers et fichiers qu\'il contient seront définitivement perdus.');"><i class="fas fa-times"></i></a>
                                 </div>
                             </div>
                         </div>
@@ -131,20 +135,24 @@
                         <div class="aky-file-btnmanager">
                             <div class="btn-group" role="group">
                                 {% if view != "public" %}
-                                    <a href="{{ path('file_download_secured_file', {'path': file.path}) }}" class="btn btn-primary btn-sm"><i class="fas fa-file-download"></i></a>
+                                    <a href="{{ path('file_download_secured_file', {'path': file.path}) }}" class="btn btn-primary btn-sm" data-toggle="tooltip" title="Télécharger"><i class="fas fa-file-download"></i></a>
                                 {% else %}
-                                    <a href="{{ renderFileManagerUrl(file.path) }}" class="btn btn-primary btn-sm" target="_blank" rel="noopener noreferrer"><i class="fas fa-external-link-alt"></i></a>
+                                    <a href="{{ renderFileManagerUrl(file.path) }}" class="btn btn-primary btn-sm" target="_blank" rel="noopener noreferrer" data-toggle="tooltip" title="Ouvrir dans un  nouvel onglet"><i class="fas fa-external-link-alt"></i></a>
                                 {% endif %}
                                 <button type="button" class="btn btn-primary btn-sm aky-filemanager-modal-edit-file-btn" data-toggle="modal" data-target="#aky-filemanager-modal-edit-file" data-path="{{ file.path }}" data-url="{{ path('file_edit', { 'path' : file.path, 'view': view, 'private_space': private_space ? private_space.id : null }) }}">
-                                    <i class="fas fa-pen"></i>
+                                    <span data-toggle="tooltip" title="Modifier la description ou la visibilité du fichier">
+                                        <i class="fas fa-pen"></i>
+                                    </span>
                                 </button>
                                 <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#aky-filemanager-modal-move-manager" data-file="{{ file.absolutePath }}" data-type="FILE">
-                                    <i class="fas fa-hand-point-right"></i>
+                                    <span data-toggle="tooltip" title="Déplacer">
+                                        <i class="fas fa-hand-point-right"></i>
+                                    </span>
                                 </button>
                             </div>
                         </div>
                         <div class="aky-file-collection-remove">
-                            <form method="post" class="not-submit index-delete" action="{{ path('file_delete', {'path' : app.request.get('path'), 'view': view, 'private_space': private_space ? private_space.id : null}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce fichier ? Il sera définitivement perdu.');">
+                            <form method="post" class="not-submit index-delete" action="{{ path('file_delete', {'path' : app.request.get('path'), 'view': view, 'private_space': private_space ? private_space.id : null}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce fichier ? Il sera définitivement perdu.');" data-toggle="tooltip" title="Supprimer">
                                 <input type="hidden" name="_method" value="DELETE">
                                 <input type="hidden" name="_file" value="{{ file.path }}">
                                 <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ file.name) }}">

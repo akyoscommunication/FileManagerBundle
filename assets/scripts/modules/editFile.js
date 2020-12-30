@@ -10,7 +10,6 @@ class EditFile {
                 .then(function (res) {
                     return res.text()
                         .then(function (response) {
-                            console.log(response);
                             const modal = $('#aky-filemanager-modal-edit-file-body');
                             modal.html(response);
                         })

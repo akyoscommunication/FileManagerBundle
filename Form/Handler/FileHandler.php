@@ -153,23 +153,38 @@ class FileHandler extends AbstractController
 		
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $destination = $form->get('tree')->getData();
+            $destination = $form->get('tree')->getData() ? $form->get('tree')->getData() : null;
+            if(!$destination && $form->has('public')) {
+				$destination = $form->get('public')->getData() ? $form->get('public')->getData() : null;
+			}
+			if(!$destination && $form->has('private_space')) {
+				$destination = $form->get('private_space')->getData() ? $form->get('private_space')->getData() : null;
+			}
+			if(!$destination && $form->has('secured')) {
+				$destination = $form->get('secured')->getData() ? $form->get('secured')->getData() : null;
+			}
+			if(!$destination) {
+				return false;
+			}
             $source = $form->get('file')->getData();
             $type = $form->get('type')->getData();
             
+            // GET SOURCE AS IT IS STORED IN DATABASE IF PUBLIC FILE ($file->getFile)
             if(strpos($source, '/public') !== false) {
-				$filePath = explode('/public', $source);
-				$filePath = $filePath[count($filePath)-1];
+				$sourceRelativeFilePath = explode('/public', $source);
+				$sourceRelativeFilePath = $sourceRelativeFilePath[count($sourceRelativeFilePath)-1];
 			}
 	
+			// GET SOURCE AS IT IS STORED IN DATABASE IF SECURED FILE ($file->getFile)
 			if(strpos($source, '/secured_files') !== false) {
-				$filePath = explode('/secured_files', $source);
-				$filePath = '/secured_files'.$filePath[count($filePath)-1];
+				$sourceRelativeFilePath = explode('/secured_files', $source);
+				$sourceRelativeFilePath = '/secured_files'.$sourceRelativeFilePath[count($sourceRelativeFilePath)-1];
 			}
 	
+			// GET SOURCE AS IT IS STORED IN DATABASE IF PRIVATE FILE ($file->getFile)
 			if(strpos($source, '/private_spaces_files') !== false) {
-				$filePath = explode('/private_spaces_files', $source);
-				$filePath = '/private_spaces_files'.$filePath[count($filePath)-1];
+				$sourceRelativeFilePath = explode('/private_spaces_files', $source);
+				$sourceRelativeFilePath = '/private_spaces_files'.$sourceRelativeFilePath[count($sourceRelativeFilePath)-1];
 			}
             
             if ($type === 'FILE') {
@@ -179,14 +194,32 @@ class FileHandler extends AbstractController
                 $this->fs->copy($source, $destination.$fileName);
                 $this->fs->remove($source);
 
-                $file = $this->em->getRepository(File::class)->findOneBy(['file' => $filePath]);
+                $file = $this->em->getRepository(File::class)->findOneBy(['file' => $sourceRelativeFilePath]);
 
                 if (!$file) {
                     $file = new File();
                     $file->setName($fileName);
                 }
+	
+				// GET NEW FILE PATH TO STORE IN DATABASE IF PUBLIC FILE ($file->setFile)
+				if(strpos($destination, '/public') !== false) {
+					$destinationRelativeFilePath = explode('/public', $destination);
+					$destinationRelativeFilePath = $destinationRelativeFilePath[count($destinationRelativeFilePath)-1].$fileName;
+				}
+	
+				// GET NEW FILE PATH TO STORE IN DATABASE IF SECURED FILE ($file->setFile)
+				if(strpos($destination, '/secured_files') !== false) {
+					$destinationRelativeFilePath = explode('/secured_files', $destination);
+					$destinationRelativeFilePath = '/secured_files'.$destinationRelativeFilePath[count($destinationRelativeFilePath)-1].$fileName;
+				}
+	
+				// GET NEW FILE PATH TO STORE IN DATABASE IF PRIVATE FILE ($file->setFile)
+				if(strpos($destination, '/private_spaces_files') !== false) {
+					$destinationRelativeFilePath = explode('/private_spaces_files', $destination);
+					$destinationRelativeFilePath = '/private_spaces_files'.$destinationRelativeFilePath[count($destinationRelativeFilePath)-1].$fileName;
+				}
 
-                $file->setFile($destination.$fileName);
+                $file->setFile($destinationRelativeFilePath);
                 $this->em->persist($file);
                 $this->em->flush();
                 
@@ -197,7 +230,7 @@ class FileHandler extends AbstractController
                 $this->fs->mirror($source, $destination.$folderName);
                 $this->fs->remove([$source, '*']);
 
-                $files = $this->em->getRepository(File::class)->findByFilePathBegin($filePath);
+                $files = $this->em->getRepository(File::class)->findByFilePathBegin($sourceRelativeFilePath);
 
                 foreach ($files as $file) {
                     if ($file instanceof File) {

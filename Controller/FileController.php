@@ -268,37 +268,4 @@ class FileController extends AbstractController
             'file' => $file,
         ]);
     }
-
-    /**
-     * @Route("/download-secured-file", name="download_secured_file", methods={"GET"})
-     * @param Request $request
-     * @param UploadsService $uploadsService
-     * @param FileRepository $fileRepository
-     * @param KernelInterface $kernel
-     * @return BinaryFileResponse
-     */
-    public function downloadSecuredFile(Request $request, UploadsService $uploadsService, FileRepository $fileRepository, KernelInterface $kernel): BinaryFileResponse
-    {
-        $path = $request->get('path');
-        $display = $request->get('display');
-        /* @var File|null $file */
-        $file = $fileRepository->findOneBy(['file' => $path]);
-        
-        $absolutePath = $uploadsService->getFilePathFromValue($path);
-
-        $splFile = new \SplFileInfo($absolutePath);
-
-        if ($splFile->isFile()) {
-            $stream = new Stream($absolutePath);
-            $response = new BinaryFileResponse($stream);
-            $response->headers->set('Cache-Control', 'private');
-            $response->headers->set('Content-Disposition', $response->headers->makeDisposition(
-                ($display ? ResponseHeaderBag::DISPOSITION_INLINE : ResponseHeaderBag::DISPOSITION_ATTACHMENT),
-                ($file ? $file->getName() : $splFile->getFilename())
-            ));
-            return $response;
-        } else {
-            throw $this->createNotFoundException("Le fichier n'existe pas.");
-        }
-    }
 }

@@ -34,6 +34,7 @@ class PrivateSpaceType extends AbstractType
 				'attr' => [
 					'class' => 'js-select2',
 				],
+				'required' => false,
 				'help' => 'Laissez vide pour que l\'espace soit accessible à tout ceux qui ont accès au gestionnaire de fichiers',
 			])
         ;

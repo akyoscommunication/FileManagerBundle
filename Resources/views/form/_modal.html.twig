@@ -8,12 +8,11 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body aky-filemanager-container pt-0">
+            <div class="modal-body aky-filemanager-container pt-0 pb-0">
                 <iframe class="aky-filemanager-iframe"
                         data-src="{{ path('file_index', {'view': form.vars.view ? form.vars.view : null, 'private_space': form.vars.private_space ? form.vars.private_space : null}) }}"
                         data-target="{{ form.vars.id }}"
                         width="100%"
-                        height="500"
                         frameborder="0"></iframe>
             </div>
             <div class="modal-footer">

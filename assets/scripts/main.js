@@ -6,6 +6,7 @@ import manageFolder from "./modules/manageFolder";
 import moveManager from "./modules/moveManager";
 import utils from "./common/utils";
 
+
 import '@grafikart/drop-files-element';
 
 import 'symfony-collection';

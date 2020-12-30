@@ -49,9 +49,9 @@ class File
     private $file;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="simple_array", nullable=true)
      */
-    private $shared;
+    private $visibility = [];
 
     public function getId(): ?int
     {
@@ -123,14 +123,14 @@ class File
         return $this->name;
     }
 
-    public function getShared(): ?int
+    public function getVisibility(): ?array
     {
-        return $this->shared;
+        return $this->visibility;
     }
 
-    public function setShared(?int $shared): self
+    public function setVisibility(?array $visibility): self
     {
-        $this->shared = $shared;
+        $this->visibility = $visibility;
 
         return $this;
     }
