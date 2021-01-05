@@ -222,7 +222,7 @@ class FileExtension extends AbstractExtension
         $ytPattern = '~^(?:https?://)?(?:www[.])?(?:youtube[.]com/watch[?]v=|youtu[.]be/)([^&]{11})~x';
         $urlPattern = '#((https?|ftp)://(\S*?\.\S*?))([\s)\[\]{},;"\':<]|\.\s|$)#i';
         $intPattern = '/^\d+$/';
-        $pathPattern = "/^\/".substr($this->parameterBag->get('web_dir'), 1)."|".substr($this->parameterBag->get('secured_dir'), 1)."\//";
+        $pathPattern = "/^\/".substr($this->parameterBag->get('web_dir'), 1)."|".substr($this->parameterBag->get('secured_dir'), 1)."|".substr($this->parameterBag->get('private_spaces_dir'), 1)."\//";
         $file = null;
 
         if (preg_match($intPattern, $value)) {
