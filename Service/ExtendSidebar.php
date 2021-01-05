@@ -6,7 +6,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Security;
 
-class ExtendSidebar
+class   ExtendSidebar
 {
     private $router;
     private $security;
@@ -30,7 +30,10 @@ class ExtendSidebar
 	
 	public function getOptionsTemplate($route)
 	{
-		$template = '<li class="'.(strpos($route,"file_manager_options") !== false ? "active" : "").'"><a href="'.$this->router->generate('file_manager_options').'">FileManager</a></li>';
+        $template ='';
+	    if ($this->security->isGranted('options-du-gestionnaire-de-fichier')){
+            $template = '<li class="'.(strpos($route,"file_manager_options") !== false ? "active" : "").'"><a href="'.$this->router->generate('file_manager_options').'">FileManager</a></li>';
+        }
 		return new Response($template);
 	}
 }
