@@ -67,6 +67,13 @@ class FileExtension extends AbstractExtension
 		}
         return $file ? $file->getFile() : false;
     }
+	
+	public function getImageVisibilityById($id)
+	{
+		/* @var File|null $file */
+		$file = $this->fileRepository->find($id);
+		return $file ? $file->getVisibility() : false;
+	}
 
     public function getImageAltById($id)
     {
