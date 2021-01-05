@@ -47,6 +47,7 @@ class FileExtension extends AbstractExtension
     {
         return [
             new TwigFunction('getImagePathById', [$this, 'getImagePathById']),
+            new TwigFunction('getImageVisibilityById', [$this, 'getImageVisibilityById']),
             new TwigFunction('getImageAltById', [$this, 'getImageAltById']),
             new TwigFunction('getImageNameById', [$this, 'getImageNameById']),
             new TwigFunction('getImageDescById', [$this, 'getImageDescById']),
