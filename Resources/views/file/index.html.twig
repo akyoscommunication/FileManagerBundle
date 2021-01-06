@@ -73,7 +73,7 @@
                 {% endfor %}
                 {% if value %}
                     {% if key < (pathDirs|length - 1) %}
-                        / <a href="{{ path('file_index', { 'path' : pathString, 'view': view, 'private_space': private_space }) }}">{{ value }}</a>
+                        / <a href="{{ path('file_index', { 'path' : pathString, 'view': view, 'private_space': private_space ? private_space.id : null }) }}">{{ value }}</a>
                     {% else %}
                         / <span>{{ value }}</span>
                     {% endif %}
