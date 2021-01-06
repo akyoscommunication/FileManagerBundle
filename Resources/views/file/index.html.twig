@@ -7,7 +7,7 @@
     <section class="spaces mb-2 pt-2 pb-2 border-bottom">
         <ul class="nav nav-pills nav-fill">
             <li class="nav-item">
-                <a class="nav-link {{ not view or view == "public"  ? "active" : "" }}" href="{{ path('file_index') }}">Espace public</a>
+                <a class="nav-link {{ not view or view == "public"  ? "active" : "" }}" href="{{ path('file_index') }}">{{ file_manager_options.publicTab ? file_manager_options.publicTab : 'Espace public' }}</a>
             </li>
             {% if file_manager_options.privateSpaces is defined and file_manager_options.privateSpaces|length %}
                 {% set isGrantedForAtLeastOnePrivateSpace = false %}
@@ -16,7 +16,7 @@
                 {% endfor %}
                 {% if isGrantedForAtLeastOnePrivateSpace %}
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle {{ view == "private_space" ? "active" : "" }}" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Espaces partagés</a>
+                        <a class="nav-link dropdown-toggle {{ view == "private_space" ? "active" : "" }}" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">{{ file_manager_options.privateSpacesTab ? file_manager_options.privateSpacesTab : 'Espaces partagés' }}</a>
                         <div class="dropdown-menu w-100">
                             {% for key, privateSpace in file_manager_options.privateSpaces %}
                                 {% if is_granted(privateSpace.roles) %}
@@ -29,7 +29,7 @@
                 {% endif %}
             {% endif %}
             <li class="nav-item">
-                <a class="nav-link {{ view == "secured" ? "active" : "" }}" href="{{ path('file_index', {'view': "secured"}) }}">Espace privé</a>
+                <a class="nav-link {{ view == "secured" ? "active" : "" }}" href="{{ path('file_index', {'view': "secured"}) }}">{{ file_manager_options.securedTab ? file_manager_options.securedTab : 'Espace privé' }}</a>
             </li>
         </ul>
         {% if view =="public" %}
@@ -65,7 +65,7 @@
     <section class="current-dir mb-3 mt-3">
         <h4>
             {% set pathDirs = currentPath|split('/') %}
-            <a href="{{ path('file_index', { 'path' : '/', 'view': view, 'private_space': private_space ? private_space.id : null }) }}">{{ view == "secured" ? 'Documents sécurisés' : ( view == "private_space" ? private_space.name : 'Documents publics')}} </a>
+            <a href="{{ path('file_index', { 'path' : '/', 'view': view, 'private_space': private_space ? private_space.id : null }) }}">{{ view == "secured" ? (file_manager_options.securedTab ? file_manager_options.securedTab : 'Espace privé') : ( view == "private_space" ? private_space.name : (file_manager_options.publicTab ? file_manager_options.publicTab : 'Espace public') )}} </a>
             {% for key, value in pathDirs|filter((v, k) => k > 0) %}
                 {% set pathString = "" %}
                 {% for i in 1..key %}

@@ -27,6 +27,21 @@ class FileManagerOptions
      */
     private $privateSpaces;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $publicTab;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $privateSpacesTab;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $securedTab;
+
     public function __construct()
     {
         $this->privateSpaces = new ArrayCollection();
@@ -63,6 +78,42 @@ class FileManagerOptions
                 $privateSpace->setFileManagerOptions(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getPublicTab(): ?string
+    {
+        return $this->publicTab;
+    }
+
+    public function setPublicTab(?string $publicTab): self
+    {
+        $this->publicTab = $publicTab;
+
+        return $this;
+    }
+
+    public function getPrivateSpacesTab(): ?string
+    {
+        return $this->privateSpacesTab;
+    }
+
+    public function setPrivateSpacesTab(?string $privateSpacesTab): self
+    {
+        $this->privateSpacesTab = $privateSpacesTab;
+
+        return $this;
+    }
+
+    public function getSecuredTab(): ?string
+    {
+        return $this->securedTab;
+    }
+
+    public function setSecuredTab(?string $securedTab): self
+    {
+        $this->securedTab = $securedTab;
 
         return $this;
     }
