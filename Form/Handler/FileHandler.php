@@ -50,7 +50,7 @@ class FileHandler extends AbstractController
                 if ($fileUploaded) {
                     $originalFilename = pathinfo($fileUploaded->getClientOriginalName(), PATHINFO_FILENAME);
 					$originalFilename = str_replace(' ', '_', $originalFilename);
-                    $safeFilename = transliterator_transliterate('Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()', $originalFilename);
+                    $safeFilename = transliterator_transliterate('Any-Latin; Latin-ASCII; Lower()', $originalFilename);
                     $extension = $fileUploaded->guessExtension();
                     if ($fileUploaded->getMimeType() === 'image/svg') {
                         $extension = 'svg';
