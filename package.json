@@ -32,6 +32,11 @@
   },
   "dependencies": {
     "@babel/plugin-proposal-class-properties": "^7.7.4",
+    "@fortawesome/fontawesome-free": "^5.15.2",
+    "@fortawesome/fontawesome-svg-core": "^1.2.34",
+    "@fortawesome/free-brands-svg-icons": "^5.15.2",
+    "@fortawesome/free-regular-svg-icons": "^5.15.2",
+    "@fortawesome/free-solid-svg-icons": "^5.15.2",
     "@grafikart/drop-files-element": "^1.0.7",
     "@grafikart/spinning-dots-element": "^0.0.3",
     "@uppy/core": "^1.6.0",
