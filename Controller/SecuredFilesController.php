@@ -40,7 +40,7 @@ class SecuredFilesController extends AbstractController
 	 */
 	public function downloadSecuredFile(Request $request, UploadsService $uploadsService, FileRepository $fileRepository, PrivateSpaceRepository $privateSpaceRepository)
 	{
-		$path = $request->get('path');
+		$path = urldecode($request->get('path'));
 		$display = $request->get('display');
 		/* @var File|null $file */
 		$file = $fileRepository->findOneBy(['file' => $path]);

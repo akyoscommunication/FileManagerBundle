@@ -61,6 +61,10 @@ class FileExtension extends AbstractExtension
 
     public function getImagePathById($id, bool $display = true)
     {
+        if (!$id) {
+            return $id;
+        }
+
         /* @var File|null $file */
         $file = $this->fileRepository->find($id);
 		if (strpos($file->getFile(), $this->parameterBag->get('secured_dir')) !== false || strpos($file->getFile(), $this->parameterBag->get('private_spaces_dir')) !== false) {
@@ -71,6 +75,10 @@ class FileExtension extends AbstractExtension
 	
 	public function getImageVisibilityById($id)
 	{
+        if (!$id) {
+            return $id;
+        }
+
 		/* @var File|null $file */
 		$file = $this->fileRepository->find($id);
 		return $file ? $file->getVisibility() : false;
@@ -78,6 +86,10 @@ class FileExtension extends AbstractExtension
 
     public function getImageAltById($id)
     {
+        if (!$id) {
+            return $id;
+        }
+
         /* @var File|null $file */
         $file = $this->fileRepository->find($id);
         return $file ? $file->getAlt() : false;
@@ -85,6 +97,10 @@ class FileExtension extends AbstractExtension
 
     public function getImageNameById($id)
     {
+        if (!$id) {
+            return $id;
+        }
+
         /* @var File|null $file */
         $file = $this->fileRepository->find($id);
         return $file ? $file->getName() : false;
@@ -92,6 +108,10 @@ class FileExtension extends AbstractExtension
 
     public function getImageDescById($id)
     {
+        if (!$id) {
+            return $id;
+        }
+
         /* @var File|null $file */
         $file = $this->fileRepository->find($id);
         return $file ? $file->getDescription() : false;
@@ -99,6 +119,10 @@ class FileExtension extends AbstractExtension
 
     public function isFileShared($path)
     {
+        if (!$path) {
+            return $path;
+        }
+
         /* @var File|null $file */
         $file = $this->fileRepository->findOneBy(['file' => $path]);
         return $file ? $file->getShared() : false;
