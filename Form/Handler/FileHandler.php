@@ -86,6 +86,7 @@ class FileHandler extends AbstractController
 	{
 		$form->handleRequest($request);
 		if ($form->isSubmitted() && $form->isValid()) {
+
 			$view = $request->get('view') ? $request->get('view') : "public";
 
 			$pathOrigin = $this->kernel->getProjectDir() . ($view !== "public" ? '' : '/public') . $pathOrigin;

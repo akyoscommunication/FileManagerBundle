@@ -1,5 +1,5 @@
-import 'bootstrap';
 import loadPreview from "./loadPreview";
+import 'bootstrap'
 
 class IframeAdd {
 
@@ -97,6 +97,9 @@ class IframeAdd {
                 iframeContent.find('#Loader').remove();
                 $(input).val(res);
                 $(target).modal('hide');
+                $(target).on('shown.bs.modal', function (e) {
+                    $(target).css('display', 'block');
+                })
                 $('.modal-backdrop').remove();
                 loadPreview.loadPreview($(input), pathFile);
             },

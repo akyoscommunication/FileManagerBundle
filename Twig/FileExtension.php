@@ -71,6 +71,10 @@ class FileExtension extends AbstractExtension
 	
 	public function getImageVisibilityById($id)
 	{
+        if (!$id) {
+            return $id;
+        }
+
 		/* @var File|null $file */
 		$file = $this->fileRepository->find($id);
 		return $file ? $file->getVisibility() : false;
