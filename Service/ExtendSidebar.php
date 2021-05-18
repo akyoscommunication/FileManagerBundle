@@ -8,32 +8,32 @@ use Symfony\Component\Security\Core\Security;
 
 class   ExtendSidebar
 {
-    private $router;
-    private $security;
+	private $router;
+	private $security;
 
-    public function __construct(UrlGeneratorInterface $router, Security $security)
-    {
-        $this->router = $router;
-        $this->security = $security;
-    }
+	public function __construct(UrlGeneratorInterface $router, Security $security)
+	{
+		$this->router = $router;
+		$this->security = $security;
+	}
 
-    public function getTemplate($route)
-    {
-        $template ='';
-        if($this->security->isGranted('gestion-des-fichiers')){
-            $template = '<li class="'.(strpos($route,"file_show") !== false ? "active" : "").'">
-                            <a href="'.$this->router->generate('file_show').'">Gestion des fichiers</a>
+	public function getTemplate($route)
+	{
+		$template = '';
+		if ($this->security->isGranted('gestion-des-fichiers')) {
+			$template = '<li class="' . (strpos($route, "file_show") !== false ? "active" : "") . '">
+                            <a href="' . $this->router->generate('file_show') . '">Gestion des fichiers</a>
                         </li>';
-        }
-        return new Response($template);
-    }
+		}
+		return new Response($template);
+	}
 	
 	public function getOptionsTemplate($route)
 	{
-        $template ='';
-	    if ($this->security->isGranted('options-du-gestionnaire-de-fichier')){
-            $template = '<li class="'.(strpos($route,"file_manager_options") !== false ? "active" : "").'"><a href="'.$this->router->generate('file_manager_options').'">FileManager</a></li>';
-        }
+		$template = '';
+		if ($this->security->isGranted('options-du-gestionnaire-de-fichier')) {
+			$template = '<li class="' . (strpos($route, "file_manager_options") !== false ? "active" : "") . '"><a href="' . $this->router->generate('file_manager_options') . '">FileManager</a></li>';
+		}
 		return new Response($template);
 	}
 }

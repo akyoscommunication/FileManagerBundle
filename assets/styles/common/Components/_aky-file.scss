@@ -5,7 +5,7 @@
     width: 150px;
     border-radius: 4px;
     background-color: color(lightgray);
-    box-shadow: 0 14px 28px rgba(0,0,0,0.1), 0 10px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(0, 0, 0, 0.1);
     overflow: hidden;
 
     &.selected {
@@ -45,7 +45,7 @@
 
                 &:hover {
                     text-decoration: none;
-                    box-shadow: 0 14px 28px rgba(0,0,0,0.1), 0 10px 10px rgba(0,0,0,0.1);
+                    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(0, 0, 0, 0.1);
                 }
             }
         }
@@ -75,7 +75,7 @@
 
         img {
             @include objectFit(contain, center, 100%, 100%);
-            background-color: rgba(0,0,0,0.1);
+            background-color: rgba(0, 0, 0, 0.1);
         }
     }
 
@@ -112,17 +112,17 @@
         font-size: 0.75rem;
     }
 
-    &-infos{
+    &-infos {
         @include flex(row, nowrap, space-between, flex-start);
         font-size: 10px;
         padding: 5px;
         width: 150px;
 
-        &__name{
+        &__name {
             word-break: break-all;
         }
 
-        &__size{
+        &__size {
             word-break: keep-all;
             margin-left: 3px;
         }

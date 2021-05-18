@@ -10,7 +10,7 @@ import utils from "./common/utils";
 import '@grafikart/drop-files-element';
 
 import 'symfony-collection';
-import initCollectionType from "../../../CoreBundle/assets/scripts/modules/collectionType";
+// import initCollectionType from "../../../CoreBundle/assets/scripts/modules/collectionType";
 import SpinningDots from "@grafikart/spinning-dots-element";
 
 class FileManager {
@@ -21,13 +21,13 @@ class FileManager {
         editFile.init();
         manageFolder.init();
         moveManager.init();
-        initCollectionType.initDataPrototype('.aky-file-collection', '.aky-file');
-        
+        // initCollectionType.initDataPrototype('.aky-file-collection', '.aky-file');
+
         this.initFileCollection();
     }
-    
+
     static initFileCollection() {
-        if($('.aky-file-collection').length) {
+        if ($('.aky-file-collection').length) {
             $('.aky-file-collection').each(function () {
                 const $this = $(this);
                 $this.collection({

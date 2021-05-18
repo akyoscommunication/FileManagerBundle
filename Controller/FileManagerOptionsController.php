@@ -26,7 +26,7 @@ class FileManagerOptionsController extends AbstractController
 	public function index(FileManagerOptionsRepository $fileManagerOptionsRepository, Request $request): Response
 	{
 		$fileManagerOptions = $fileManagerOptionsRepository->findAll();
-		if(!$fileManagerOptions) {
+		if (!$fileManagerOptions) {
 			$fileManagerOptions = new FileManagerOptions();
 		} else {
 			$fileManagerOptions = $fileManagerOptions[0];

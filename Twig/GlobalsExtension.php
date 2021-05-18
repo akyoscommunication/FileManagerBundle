@@ -18,7 +18,7 @@ class GlobalsExtension extends AbstractExtension implements GlobalsInterface
 	public function getGlobals(): array
 	{
 		$fileManagerOptions = $this->fileManagerOptionsRepository->findAll();
-		if($fileManagerOptions) {
+		if ($fileManagerOptions) {
 			$fileManagerOptions = $fileManagerOptions[0];
 		}
 		return [

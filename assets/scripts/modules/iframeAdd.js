@@ -20,7 +20,7 @@ class IframeAdd {
             _this.akyTarget = $(this).data('target');
 
             const $iframe = $(_this.akyTarget).find('.aky-filemanager-iframe');
-            if(!$iframe.attr('src')) {
+            if (!$iframe.attr('src')) {
                 $iframe.attr('src', $iframe.data('src'));
             }
             _this.clickButton($iframe);
@@ -32,28 +32,28 @@ class IframeAdd {
             e.preventDefault();
             let valid = false;
             const inputs = $(this).find('.aky-file-container .aky-file-input input');
-            inputs.each(function() {
+            inputs.each(function () {
                 $(this).parents('.aky-file-container').find('.empty-field').remove();
-                if($(this)[0].hasAttribute('data-required') && !$(this).val()) {
+                if ($(this)[0].hasAttribute('data-required') && !$(this).val()) {
                     $(this).parents('.aky-file-container').after('<div class="empty-field small text-danger">Ce champ est obligatoire!</div>');
                 } else {
                     $.ajax({
                         method: 'GET',
                         url: $(this).data('previous-value-url'),
                         data: {
-                            new_value : $(this).val()
+                            new_value: $(this).val()
                         },
                         success: function (res) {
                             console.log(res);
                         },
-                        error: function(er) {
+                        error: function (er) {
                             console.log(er, 'error');
                         }
                     });
                     valid = true;
                 }
             })
-            if(valid) {
+            if (valid) {
                 $(this).off('submit');
                 $(this).submit();
             }
@@ -91,7 +91,7 @@ class IframeAdd {
             method: 'GET',
             url: url,
             data: {
-                path : pathFile
+                path: pathFile
             },
             success: function (res) {
                 iframeContent.find('#Loader').remove();
@@ -100,7 +100,7 @@ class IframeAdd {
                 $('.modal-backdrop').remove();
                 loadPreview.loadPreview($(input), pathFile);
             },
-            error: function(er) {
+            error: function (er) {
                 console.log(er, 'error');
             }
         });

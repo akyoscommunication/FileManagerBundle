@@ -13,7 +13,7 @@ security:
 
         file_manager_provider:
             chain:
-                providers: [core_user_provider]
+                providers: [ core_user_provider ]
 
         users_in_memory: { memory: null }
 
@@ -35,9 +35,9 @@ security:
                 path: app_logout
                 target: 'home'
             remember_me:
-                secret:   '%kernel.secret%'
+                secret: '%kernel.secret%'
                 lifetime: 604800 # 1 week in seconds
-                path:     /
+                path: /
 
         file_manager:
             pattern: ^/(file-manager)
@@ -51,9 +51,9 @@ security:
                 path: file_manager_logout
                 target: 'home'
             remember_me:
-                secret:   '%kernel.secret%'
+                secret: '%kernel.secret%'
                 lifetime: 604800 # 1 week in seconds
-                path:     /
+                path: /
 
         main:
             anonymous: lazy
@@ -67,9 +67,9 @@ security:
 
     role_hierarchy:
         #CMS
-        ROLE_ADMIN:       [ROLE_USER, ROLE_FILE_MANAGER, ROLE_FILE_MANAGER_SELF]
-        ROLE_SUPER_ADMIN: [ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
-        ROLE_AKYOS: [ROLE_SUPER_ADMIN, ROLE_ALLOWED_TO_SWITCH]
+        ROLE_ADMIN: [ ROLE_USER, ROLE_FILE_MANAGER, ROLE_FILE_MANAGER_SELF ]
+        ROLE_SUPER_ADMIN: [ ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH ]
+        ROLE_AKYOS: [ ROLE_SUPER_ADMIN, ROLE_ALLOWED_TO_SWITCH ]
 
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used

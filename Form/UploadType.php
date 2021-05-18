@@ -10,24 +10,23 @@ use Symfony\Component\Form\Extension\Core\Type\FileType;
 
 class UploadType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
-    {
-        $builder
-            ->add('file', FileType::class, [
-                'label' => false,
-                'multiple' => true,
-                'attr' => [
-                    'is' => 'drop-files',
-                    'label' => 'Déposer vos fichiers ici',
-                    'help' => 'ou cliquer pour ouvrir le gestionnaire de fichiers',
-                ]
-            ])
-        ;
-    }
+	public function buildForm(FormBuilderInterface $builder, array $options)
+	{
+		$builder
+			->add('file', FileType::class, [
+				'label' => false,
+				'multiple' => true,
+				'attr' => [
+					'is' => 'drop-files',
+					'label' => 'Déposer vos fichiers ici',
+					'help' => 'ou cliquer pour ouvrir le gestionnaire de fichiers',
+				]
+			]);
+	}
 
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setDefaults([
-        ]);
-    }
+	public function configureOptions(OptionsResolver $resolver)
+	{
+		$resolver->setDefaults([
+		]);
+	}
 }

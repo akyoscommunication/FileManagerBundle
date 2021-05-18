@@ -10,86 +10,86 @@ use Doctrine\Common\Annotations\AnnotationRegistry;
 
 class PathAnnotationListener
 {
-    public function prePersist(LifecycleEventArgs $args)
-    {
-        $entity = $args->getEntity();
+	public function prePersist(LifecycleEventArgs $args)
+	{
+		$entity = $args->getEntity();
 
-        // Using reflection so we can inspect properties and their annotations later
-        $reflectionObject = new \ReflectionObject($entity);
+		// Using reflection so we can inspect properties and their annotations later
+		$reflectionObject = new \ReflectionObject($entity);
 
-        AnnotationRegistry::registerUniqueLoader('class_exists');
+		AnnotationRegistry::registerUniqueLoader('class_exists');
 
-        $reader = new AnnotationReader;
+		$reader = new AnnotationReader;
 
-        // Iterate over properties to find those targeted by a @PathAnnotation
-        foreach ($reflectionObject->getProperties() as $entityTargetProperty) {
+		// Iterate over properties to find those targeted by a @PathAnnotation
+		foreach ($reflectionObject->getProperties() as $entityTargetProperty) {
 
-            // This will be null if the property does not have an @PathAnnotation on it
-            $pathAnnotation = $reader->getPropertyAnnotation($entityTargetProperty, PathAnnotation::class);
+			// This will be null if the property does not have an @PathAnnotation on it
+			$pathAnnotation = $reader->getPropertyAnnotation($entityTargetProperty, PathAnnotation::class);
 
-            if (null !== $pathAnnotation) {
-                $sourcePropertyName = $pathAnnotation->getField();
+			if (null !== $pathAnnotation) {
+				$sourcePropertyName = $pathAnnotation->getField();
 
-                $fileIdGetterName = 'get' . ucfirst($sourcePropertyName);
-                $targetPropertySetterName = 'set' . $entityTargetProperty->getName();
+				$fileIdGetterName = 'get' . ucfirst($sourcePropertyName);
+				$targetPropertySetterName = 'set' . $entityTargetProperty->getName();
 
-                $fileId = $entity->{$fileIdGetterName}();
+				$fileId = $entity->{$fileIdGetterName}();
 
-                $em = $args->getEntityManager();
-                $file = $em->getRepository(File::class)->findOneBy(['id' => $fileId]);
+				$em = $args->getEntityManager();
+				$file = $em->getRepository(File::class)->findOneBy(['id' => $fileId]);
 
-                if ($file) {
-                    $entity->{$targetPropertySetterName}($file->getFile());
-                }
-            }
-        }
+				if ($file) {
+					$entity->{$targetPropertySetterName}($file->getFile());
+				}
+			}
+		}
 
-        return true;
-    }
+		return true;
+	}
 
-    public function postUpdate(LifecycleEventArgs $args)
-    {
-        $entity = $args->getEntity();
+	public function postUpdate(LifecycleEventArgs $args)
+	{
+		$entity = $args->getEntity();
 
-        // Using reflection so we can inspect properties and their annotations later
-        $reflectionObject = new \ReflectionObject($args->getObject());
+		// Using reflection so we can inspect properties and their annotations later
+		$reflectionObject = new \ReflectionObject($args->getObject());
 
-        AnnotationRegistry::registerUniqueLoader('class_exists');
+		AnnotationRegistry::registerUniqueLoader('class_exists');
 
-        $reader = new AnnotationReader;
+		$reader = new AnnotationReader;
 
-        // Iterate over properties to find those targeted by a @PathAnnotation
-        foreach ($reflectionObject->getProperties() as $entityTargetProperty) {
+		// Iterate over properties to find those targeted by a @PathAnnotation
+		foreach ($reflectionObject->getProperties() as $entityTargetProperty) {
 
-            // This will be null if the property does not have an @PathAnnotation on it
-            $pathAnnotation = $reader->getPropertyAnnotation($entityTargetProperty, PathAnnotation::class);
+			// This will be null if the property does not have an @PathAnnotation on it
+			$pathAnnotation = $reader->getPropertyAnnotation($entityTargetProperty, PathAnnotation::class);
 
-            if (null !== $pathAnnotation) {
+			if (null !== $pathAnnotation) {
 
-                $em = $args->getEntityManager();
-                $unitOfWork = $em->getUnitOfWork();
-                $changeSet = $unitOfWork->getEntityChangeSet($entity);
+				$em = $args->getEntityManager();
+				$unitOfWork = $em->getUnitOfWork();
+				$changeSet = $unitOfWork->getEntityChangeSet($entity);
 
-                $sourcePropertyName = $pathAnnotation->getField();
-                $isPropertyUpdated = array_key_exists($sourcePropertyName, $changeSet);
+				$sourcePropertyName = $pathAnnotation->getField();
+				$isPropertyUpdated = array_key_exists($sourcePropertyName, $changeSet);
 
-                if ($isPropertyUpdated) {
-                    $getterName = 'get' . ucfirst($pathAnnotation->getField());
-                    $setterName = 'set' . $entityTargetProperty->getName();
+				if ($isPropertyUpdated) {
+					$getterName = 'get' . ucfirst($pathAnnotation->getField());
+					$setterName = 'set' . $entityTargetProperty->getName();
 
-                    $fileId = $entity->{$getterName}();
+					$fileId = $entity->{$getterName}();
 
-                    $file = $em->getRepository(File::class)->findOneBy(['id' => $fileId]);
+					$file = $em->getRepository(File::class)->findOneBy(['id' => $fileId]);
 
-                    if ($file) {
-                        $entity->{$setterName}($file->getFile());
+					if ($file) {
+						$entity->{$setterName}($file->getFile());
 
-                        $em->flush();
-                    }
-                }
-            }
-        }
+						$em->flush();
+					}
+				}
+			}
+		}
 
-        return true;
-    }
+		return true;
+	}
 }

@@ -8,4 +8,5 @@ class MoveManager {
         });
     }
 }
+
 export default MoveManager

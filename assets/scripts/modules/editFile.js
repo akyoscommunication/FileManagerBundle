@@ -1,7 +1,7 @@
 import Toast from "../../../../CoreBundle/assets/scripts/modules/Toast";
 
 class EditFile {
-    static init() {
+    static init() {
         $(document).on('click', '.aky-filemanager-modal-edit-file-btn', function () {
             const path = $(this).data('path');
             const url = $(this).data('url');
@@ -24,7 +24,7 @@ class EditFile {
                                     success: function (res) {
                                         window.location.reload();
                                     },
-                                    error: function(er) {
+                                    error: function (er) {
                                         console.log(er, 'error');
                                     }
                                 });

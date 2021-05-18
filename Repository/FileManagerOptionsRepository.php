@@ -14,37 +14,37 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class FileManagerOptionsRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct($registry, FileManagerOptions::class);
-    }
+	public function __construct(ManagerRegistry $registry)
+	{
+		parent::__construct($registry, FileManagerOptions::class);
+	}
 
-    // /**
-    //  * @return FileManagerOptions[] Returns an array of FileManagerOptions objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('f')
-            ->andWhere('f.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('f.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+	// /**
+	//  * @return FileManagerOptions[] Returns an array of FileManagerOptions objects
+	//  */
+	/*
+	public function findByExampleField($value)
+	{
+		return $this->createQueryBuilder('f')
+			->andWhere('f.exampleField = :val')
+			->setParameter('val', $value)
+			->orderBy('f.id', 'ASC')
+			->setMaxResults(10)
+			->getQuery()
+			->getResult()
+		;
+	}
+	*/
 
-    /*
-    public function findOneBySomeField($value): ?FileManagerOptions
-    {
-        return $this->createQueryBuilder('f')
-            ->andWhere('f.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
+	/*
+	public function findOneBySomeField($value): ?FileManagerOptions
+	{
+		return $this->createQueryBuilder('f')
+			->andWhere('f.exampleField = :val')
+			->setParameter('val', $value)
+			->getQuery()
+			->getOneOrNullResult()
+		;
+	}
+	*/
 }

@@ -1,19 +1,19 @@
 {
-    "_readme": [
-        "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
-        "This file is @generated automatically"
-    ],
-    "content-hash": "3f1ee03726ecf099a5ca01f529f28d4e",
-    "packages": [],
-    "packages-dev": [],
-    "aliases": [],
-    "minimum-stability": "dev",
-    "stability-flags": [],
-    "prefer-stable": false,
-    "prefer-lowest": false,
-    "platform": {
-        "php": "^7.2"
-    },
-    "platform-dev": []
+	"_readme": [
+		"This file locks the dependencies of your project to a known state",
+		"Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+		"This file is @generated automatically"
+	],
+	"content-hash": "3f1ee03726ecf099a5ca01f529f28d4e",
+	"packages": [],
+	"packages-dev": [],
+	"aliases": [],
+	"minimum-stability": "dev",
+	"stability-flags": [],
+	"prefer-stable": false,
+	"prefer-lowest": false,
+	"platform": {
+		"php": "^7.2"
+	},
+	"platform-dev": []
 }

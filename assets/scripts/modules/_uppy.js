@@ -30,14 +30,14 @@ class AkyUppyInit {
                 note: 'Images and video only, 2–3 files, up to 1 MB',
                 height: 470,
                 metaFields: [
-                    { id: 'name', name: 'Name', placeholder: 'file name' },
-                    { id: 'caption', name: 'Caption', placeholder: 'describe what the image is about' }
+                    {id: 'name', name: 'Name', placeholder: 'file name'},
+                    {id: 'caption', name: 'Caption', placeholder: 'describe what the image is about'}
                 ],
                 browserBackButtonClose: true
             })
-            .use(GoogleDrive, { target: Dashboard, companionUrl: 'https://companion.uppy.io' })
-            .use(Instagram, { target: Dashboard, companionUrl: 'https://companion.uppy.io' })
-            .use(Webcam, { target: Dashboard });
+            .use(GoogleDrive, {target: Dashboard, companionUrl: 'https://companion.uppy.io'})
+            .use(Instagram, {target: Dashboard, companionUrl: 'https://companion.uppy.io'})
+            .use(Webcam, {target: Dashboard});
 
         uppy.on('complete', result => {
             console.log('successful files:', result.successful);

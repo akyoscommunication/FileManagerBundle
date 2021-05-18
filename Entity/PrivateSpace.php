@@ -14,85 +14,85 @@ class PrivateSpace
 {
 	use TimestampableEntity;
 	
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+	/**
+	 * @ORM\Id
+	 * @ORM\GeneratedValue
+	 * @ORM\Column(type="integer")
+	 */
+	private $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $name;
+	/**
+	 * @ORM\Column(type="string", length=255)
+	 */
+	private $name;
 
-    /**
-     * @ORM\Column(type="simple_array")
-     */
-    private $roles = [];
+	/**
+	 * @ORM\Column(type="simple_array")
+	 */
+	private $roles = [];
 
-    /**
-     * @ORM\ManyToOne(targetEntity=FileManagerOptions::class, inversedBy="privateSpaces")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $fileManagerOptions;
+	/**
+	 * @ORM\ManyToOne(targetEntity=FileManagerOptions::class, inversedBy="privateSpaces")
+	 * @ORM\JoinColumn(nullable=false)
+	 */
+	private $fileManagerOptions;
 
-    /**
+	/**
 	 * @Gedmo\Slug(fields={"name"}, updatable=false)
-     * @ORM\Column(type="string", length=255)
-     */
-    private $slug;
+	 * @ORM\Column(type="string", length=255)
+	 */
+	private $slug;
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
+	public function getId(): ?int
+	{
+		return $this->id;
+	}
 
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
+	public function getName(): ?string
+	{
+		return $this->name;
+	}
 
-    public function setName(string $name): self
-    {
-        $this->name = $name;
+	public function setName(string $name): self
+	{
+		$this->name = $name;
 
-        return $this;
-    }
+		return $this;
+	}
 
-    public function getRoles(): ?array
-    {
-        return $this->roles;
-    }
+	public function getRoles(): ?array
+	{
+		return $this->roles;
+	}
 
-    public function setRoles(array $roles): self
-    {
-        $this->roles = $roles;
+	public function setRoles(array $roles): self
+	{
+		$this->roles = $roles;
 
-        return $this;
-    }
+		return $this;
+	}
 
-    public function getFileManagerOptions(): ?FileManagerOptions
-    {
-        return $this->fileManagerOptions;
-    }
+	public function getFileManagerOptions(): ?FileManagerOptions
+	{
+		return $this->fileManagerOptions;
+	}
 
-    public function setFileManagerOptions(?FileManagerOptions $fileManagerOptions): self
-    {
-        $this->fileManagerOptions = $fileManagerOptions;
+	public function setFileManagerOptions(?FileManagerOptions $fileManagerOptions): self
+	{
+		$this->fileManagerOptions = $fileManagerOptions;
 
-        return $this;
-    }
+		return $this;
+	}
 
-    public function getSlug(): ?string
-    {
-        return $this->slug;
-    }
+	public function getSlug(): ?string
+	{
+		return $this->slug;
+	}
 
-    public function setSlug(string $slug): self
-    {
-        $this->slug = $slug;
+	public function setSlug(string $slug): self
+	{
+		$this->slug = $slug;
 
-        return $this;
-    }
+		return $this;
+	}
 }

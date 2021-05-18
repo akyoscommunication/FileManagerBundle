@@ -1,8 +1,8 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
-  web_dir: '/uploads'
-  secured_dir: '/secured_files'
-  private_spaces_dir: '/private_spaces_files'
+    web_dir: '/uploads'
+    secured_dir: '/secured_files'
+    private_spaces_dir: '/private_spaces_files'
 
 services:
     # default configuration for services in *this* file
@@ -15,7 +15,7 @@ services:
 
     Akyos\FileManagerBundle\:
         resource: '../../../../lib/FileManagerBundle/*'
-        tags: ['controller.service_arguments']
+        tags: [ 'controller.service_arguments' ]
         public: true
 
     Akyos\FileManagerBundle\Annotations\PathAnnotation:

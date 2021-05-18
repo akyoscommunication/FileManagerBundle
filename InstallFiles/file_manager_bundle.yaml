@@ -1,0 +1,4 @@
+file_manager_bundle:
+    file_manager_spaces_roles:
+        'Utilisateur': 'ROLE_USER'
+        'Admin': 'ROLE_ADMIN'

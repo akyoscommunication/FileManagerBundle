@@ -46,11 +46,11 @@ class SecuredFilesController extends AbstractController
 		$file = $fileRepository->findOneBy(['file' => $path]);
 		$absolutePath = $uploadsService->getFilePathFromValue($path);
 		
-		if($file) {
+		if ($file) {
 			
-			if(strpos($file->getFile(), '/secured_files') !== false) {
-				if(
-					strpos(substr(base64_encode($this->getUser() ? $this->getUser()->getUsername().$this->getUser()->getSalt() : 'null'), 0, -2), $absolutePath) === false
+			if (strpos($file->getFile(), '/secured_files') !== false) {
+				if (
+					strpos(substr(base64_encode($this->getUser() ? $this->getUser()->getUsername() . $this->getUser()->getSalt() : 'null'), 0, -2), $absolutePath) === false
 					&&
 					!$this->isGranted('ROLE_SUPER_ADMIN')
 					&&
@@ -67,13 +67,13 @@ class SecuredFilesController extends AbstractController
 					]);
 				}
 			}
-			if(strpos($file->getFile(), '/private_spaces_files') !== false) {
+			if (strpos($file->getFile(), '/private_spaces_files') !== false) {
 				$explodeOnPrivateSpacesFiles = explode('/private_spaces_files/', $file->getFile());
 				$explodeOnSlashes = explode('/', $explodeOnPrivateSpacesFiles[count($explodeOnPrivateSpacesFiles) - 1]);
 				$privateSpaceSlug = $explodeOnSlashes[0];
 				$privateSpace = $privateSpaceRepository->findOneBy(['slug' => $privateSpaceSlug]);
-				if($privateSpace) {
-					if(
+				if ($privateSpace) {
+					if (
 						!$this->isGranted($privateSpace->getRoles())
 						&&
 						(

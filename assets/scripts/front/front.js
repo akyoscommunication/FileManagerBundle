@@ -4,11 +4,11 @@ import 'jquery';
 import LazyLoad from "./modules/lazyLoad";
 
 class Front {
-	static init() {
-		LazyLoad.init();
-	}
+    static init() {
+        LazyLoad.init();
+    }
 }
 
 jQuery(document).ready(function () {
-	Front.init();
+    Front.init();
 });
