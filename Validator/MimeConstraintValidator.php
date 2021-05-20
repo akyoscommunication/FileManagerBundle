@@ -54,13 +54,20 @@ class MimeConstraintValidator extends ConstraintValidator
             if ($mime && !in_array($mime, $constraint->types)) {
                 $this->context->buildViolation($constraint->message)
                     ->setParameter('{{ value }}', $file->getName())
+                    ->setParameter('{{ types }}', implode(',', $constraint->types))
                     ->addViolation();
             }
             if (!$mime) {
                 $this->context->buildViolation($constraint->message)
                     ->setParameter('{{ value }}', $file->getName())
+                    ->setParameter('{{ types }}', implode(',', $constraint->types))
                     ->addViolation();
             }
+        } else {
+            $this->context->buildViolation($constraint->message)
+                ->setParameter('{{ value }}', $file->getName())
+                ->setParameter('{{ types }}', implode(',', $constraint->types))
+                ->addViolation();
         }
     }
 }

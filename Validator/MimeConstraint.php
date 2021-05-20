@@ -16,7 +16,7 @@ class MimeConstraint extends Constraint
      * Then, use these is your validator class.
      * @var string
      */
-    public $message = 'The value "{{ value }}" is not valid.';
+    public $message = 'Le fichier "{{ value }}" n\'est pas un fichier valide. Types de fichiers autorisés : {{ types }}.';
 
     public $types = [];
 
