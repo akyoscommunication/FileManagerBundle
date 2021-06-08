@@ -61,7 +61,6 @@ class FileExtension extends AbstractExtension
 	
 	public function getImagePathById($id, bool $display = true)
 	{
-		dump($id);
 		/* @var File|null $file */
 		$file = $this->fileRepository->find($id);
 		if($file) {
