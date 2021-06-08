@@ -61,10 +61,13 @@ class FileExtension extends AbstractExtension
 	
 	public function getImagePathById($id, bool $display = true)
 	{
+		dump($id);
 		/* @var File|null $file */
 		$file = $this->fileRepository->find($id);
-		if (strpos($file->getFile(), $this->parameterBag->get('secured_dir')) !== false || strpos($file->getFile(), $this->parameterBag->get('private_spaces_dir')) !== false) {
-			return $file ? $this->urlGenerator->generate('file_download_secured_file', ['path' => $file->getFile(), 'display' => $display]) : false;
+		if($file) {
+			if (strpos($file->getFile(), $this->parameterBag->get('secured_dir')) !== false || strpos($file->getFile(), $this->parameterBag->get('private_spaces_dir')) !== false) {
+				return $this->urlGenerator->generate('file_download_secured_file', ['path' => $file->getFile(), 'display' => $display]);
+			}
 		}
 		return $file ? $file->getFile() : false;
 	}
