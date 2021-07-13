@@ -15,9 +15,9 @@ use Symfony\Component\Validator\ConstraintValidator;
 class MimeConstraintValidator extends ConstraintValidator
 {
     /** @var EntityManagerInterface */
-    private EntityManagerInterface $em;
+    private $em;
     /** @var KernelInterface */
-    private KernelInterface $kernel;
+    private $kernel;
 
     public function __construct(EntityManagerInterface $em, KernelInterface $kernel)
     {

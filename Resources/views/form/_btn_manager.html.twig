@@ -1,3 +1,9 @@
+{% if form.vars.value %}
+    <a href="{{ getImagePathById(form.vars.value) }}" class="btn btn-secondary aky-filemanager-externaly btn-sm" target="_blank">
+        <i class="fas fa-eye"></i>
+    </a>
+{% endif %}
+
 {% if config == 'full' %}
     <button type="button" class="btn btn-secondary aky-filemanager-externaly btn-sm" data-toggle="modal"
             data-target="#aky-filemanager-modal-input-{{ form.vars.id }}" data-input="#{{ form.vars.id }}">
