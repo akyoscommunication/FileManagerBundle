@@ -157,7 +157,7 @@ class FileExtension extends AbstractExtension
 		}
 		
 		$result = '';
-		
+
 		if (preg_match($ytPattern, $value)) {
 			// YOUTUBE LINK
 			$result = '<iframe width="100%" height="100%" src="' . $value . '" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
@@ -174,6 +174,9 @@ class FileExtension extends AbstractExtension
 				} elseif (mime_content_type($pathToValue) === 'application/pdf' && $noEmbed) {
 					// FILE TYPE PDF (NO EMBED = TRUE)
 					$result = $this->twig->render('@AkyosFileManager/svg/pdf.html.twig', ['alt' => '']);
+                } elseif (pathinfo($pathToValue)['extension'] === 'csv') {
+                    // FILE TYPE PDF (NO EMBED = TRUE)
+                    $result = $this->twig->render('@AkyosFileManager/svg/csv.html.twig', ['alt' => '']);
 				} else {
 					if (substr($value, 0, 5) === "video") {
 						// FILE TYPE VIDEO
@@ -208,9 +211,12 @@ class FileExtension extends AbstractExtension
 						$result .= '<source src="' . $fileToDisplay . '" type="' . mime_content_type($pathToFile) . '">';
 						$result .= '</video>';
 					} elseif ($noEmbed && mime_content_type($pathToFile) === 'application/pdf') {
-						$result = $this->twig->render('@AkyosFileManager/svg/pdf.html.twig', [
-							'alt' => $file->getAlt(),
-						]);
+                        $result = $this->twig->render('@AkyosFileManager/svg/pdf.html.twig', [
+                            'alt' => $file->getAlt(),
+                        ]);
+                    } elseif (pathinfo($pathToFile)['extension'] === 'csv') {
+                            // FILE TYPE PDF (NO EMBED = TRUE)
+                        $result = $this->twig->render('@AkyosFileManager/svg/csv.html.twig', ['alt' => '']);
 					} else {
 						$result = '<embed width="100%" height="100%" src="' . $fileToDisplay . '" type="' . mime_content_type($pathToFile) . '"">';
 						$result .= '<style type="text/css">video {width: 100%; height: 100%}</style>';

@@ -55,6 +55,9 @@ class FileHandler extends AbstractController
 					if ($fileUploaded->getMimeType() === 'image/svg') {
 						$extension = 'svg';
 					}
+                    if ($fileUploaded->getClientMimeType() === 'text/csv') {
+                        $extension = 'csv';
+                    }
 					$newFilename = $safeFilename . '.' . $extension;
 
 					try {
