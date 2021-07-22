@@ -52,10 +52,11 @@ class FileHandler extends AbstractController
 					$originalFilename = str_replace(' ', '_', $originalFilename);
 					$safeFilename = transliterator_transliterate('Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()', $originalFilename);
 					$extension = $fileUploaded->guessExtension();
+
 					if ($fileUploaded->getMimeType() === 'image/svg') {
 						$extension = 'svg';
 					}
-                    if ($fileUploaded->getClientMimeType() === 'text/csv') {
+                    if (explode('.', $fileUploaded->getClientOriginalName())[1] === 'csv') {
                         $extension = 'csv';
                     }
 					$newFilename = $safeFilename . '.' . $extension;
