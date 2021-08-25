@@ -131,7 +131,7 @@ class UploadsService
 	// ABSOLUTE VALUE PATH, WHERE VALUE CAN BE ID OF FILE OBJECT OR RELATIVE PATH
 	public function getFilePathFromValue($value)
 	{
-		if (!is_string($value) and !is_int($value)) {
+		if (!is_string($value) && !is_int($value)) {
 			return false;
 		}
 		$intPattern = '/^\d+$/';
@@ -159,9 +159,8 @@ class UploadsService
 	{
 		$file = $this->fileRepository->find($fileId);
 		if ($file) {
-			if (strpos($file->getFile(), '/secured_files') !== false) {
-				if (
-					strpos(substr(base64_encode($this->security->getUser() ? $this->security->getUser()->getUsername() . $this->security->getUser()->getSalt() : 'null'), 0, -2), $file->getFile()) === false
+			if (strpos($file->getFile(), $this->parameterBag->get('secured_dir')) !== false) {
+				return !(strpos(substr(base64_encode($this->security->getUser() ? $this->security->getUser()->getUsername() . $this->security->getUser()->getSalt() : 'null'), 0, -2), $file->getFile()) === false
 					&&
 					!$this->authorizationChecker->isGranted('ROLE_SUPER_ADMIN')
 					&&
@@ -170,37 +169,34 @@ class UploadsService
 						||
 						!$file->getVisibility()
 						||
-						!($this->authorizationChecker->isGranted($file->getVisibility()) || in_array('ANONYMOUS', is_array($file->getVisibility()) ? $file->getVisibility() : []))
-					)
-				) {
-					return false;
-				}
-				return true;
+						!($this->authorizationChecker->isGranted($file->getVisibility()) || in_array('ANONYMOUS', is_array($file->getVisibility()) ? $file->getVisibility() : [], true))
+					));
 			}
-			if (strpos($file->getFile(), '/private_spaces_files') !== false) {
+			if (strpos($file->getFile(), $this->parameterBag->get('private_spaces_dir')) !== false) {
 				$explodeOnPrivateSpacesFiles = explode('/private_spaces_files/', $file->getFile());
 				$explodeOnSlashes = explode('/', $explodeOnPrivateSpacesFiles[count($explodeOnPrivateSpacesFiles) - 1]);
 				$privateSpaceSlug = $explodeOnSlashes[0];
 				$privateSpace = $this->privateSpaceRepository->findOneBy(['slug' => $privateSpaceSlug]);
 				if ($privateSpace) {
-					if (
-						!$this->authorizationChecker->isGranted($privateSpace->getRoles())
+					return !(!$this->authorizationChecker->isGranted($privateSpace->getRoles())
 						&&
 						(
 							empty($file->getVisibility())
 							||
 							!$file->getVisibility()
 							||
-							!($this->authorizationChecker->isGranted($file->getVisibility()) || in_array('ANONYMOUS', is_array($file->getVisibility()) ? $file->getVisibility() : []))
-						)
-					) {
-						return false;
-					}
-					return true;
+							!($this->authorizationChecker->isGranted($file->getVisibility()) || in_array('ANONYMOUS', is_array($file->getVisibility()) ? $file->getVisibility() : [], true))
+						));
 				}
 			}
 			return true;
 		}
 		return false;
+	}
+	
+	public function fixName(string $name) {
+		$name = str_replace(' ', '_', $name);
+		$name = transliterator_transliterate('Any-Latin; Latin-ASCII; [^A-Za-z0-9_-] remove;', $name);
+		return $name;
 	}
 }

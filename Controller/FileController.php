@@ -75,7 +75,8 @@ class FileController extends AbstractController
 		}
 		
 		if ($fileHandler->manageFolder($nameFolderFormType, $request)) {
-			return $this->redirectToRoute('file_index', ['path' => $relativePath . '/' . $nameFolderFormType->get('name')->getData(), 'view' => $view, 'private_space' => $privateSpaceId]);
+			$newFolderName = $uploadsService->fixName($nameFolderFormType->get('name')->getData());
+			return $this->redirectToRoute('file_index', ['path' => $relativePath . '/' . $newFolderName, 'view' => $view, 'private_space' => $privateSpaceId]);
 		}
 		
 		if ($fileHandler->moveManager($moveFormType, $request)) {

@@ -49,8 +49,7 @@ class FileHandler extends AbstractController
 
 				if ($fileUploaded) {
 					$originalFilename = pathinfo($fileUploaded->getClientOriginalName(), PATHINFO_FILENAME);
-					$originalFilename = str_replace(' ', '_', $originalFilename);
-					$safeFilename = transliterator_transliterate('Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()', $originalFilename);
+					$safeFilename = $this->uploadsService->fixName($originalFilename);
 					$extension = $fileUploaded->guessExtension();
 
 					if ($fileUploaded->getMimeType() === 'image/svg') {
@@ -123,16 +122,18 @@ class FileHandler extends AbstractController
 			$relativeRootFilesPath = $this->uploadsService->getRootFilesPath($view, true, $privateSpace);
 
 			if ($relativePath) {
-				$relativePath = $relativePath . '/';
+				$relativePath .= '/';
 			}
-			$newFolderName = $form->get('name')->getData();
+			$newFolderName = $this->uploadsService->fixName($form->get('name')->getData());
 			$folder = $form->get('folder')->getData();
 
 
 			if (!$folder) {
 				$this->fs->mkdir($absoluteRootFilesPath . '/' . $relativePath . $newFolderName);
 			} else {
-				$this->fs->rename($absoluteRootFilesPath . $folder, $absoluteRootFilesPath . $relativePath . '/' . $form->get('name')->getData());
+				if($absoluteRootFilesPath . $folder !== $absoluteRootFilesPath . $relativePath . $newFolderName) {
+					$this->fs->rename($absoluteRootFilesPath . $folder, $absoluteRootFilesPath . $relativePath . $newFolderName);
+				}
 
 				$filesToChange = $this->em->getRepository(File::class)->findByFilePathBegin($relativeRootFilesPath . $folder);
 				foreach ($filesToChange as $file) {
