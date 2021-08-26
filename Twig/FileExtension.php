@@ -71,17 +71,24 @@ class FileExtension extends AbstractExtension
 		return $file ? $file->getFile() : false;
 	}
 	
-	public function getImageVisibilityById($id)
+	/**
+	 * @param int|null $id
+	 * @return array|false
+	 */
+	public function getImageVisibilityById(int $id = null)
 	{
-        if (!$id) {
-            return $id;
+        if ($id) {
+			/* @var File|null $file */
+			$file = $this->fileRepository->find($id);
+			return $file ? $file->getVisibility() : false;
         }
-
-		/* @var File|null $file */
-		$file = $this->fileRepository->find($id);
-		return $file ? $file->getVisibility() : false;
+		return false;
 	}
 	
+	/**
+	 * @param $id
+	 * @return false|string|null
+	 */
 	public function getImageAltById($id)
 	{
 		/* @var File|null $file */
@@ -89,6 +96,10 @@ class FileExtension extends AbstractExtension
 		return $file ? $file->getAlt() : false;
 	}
 	
+	/**
+	 * @param $id
+	 * @return false|string|null
+	 */
 	public function getImageNameById($id)
 	{
 		/* @var File|null $file */
@@ -96,18 +107,15 @@ class FileExtension extends AbstractExtension
 		return $file ? $file->getName() : false;
 	}
 	
+	/**
+	 * @param $id
+	 * @return false|string|null
+	 */
 	public function getImageDescById($id)
 	{
 		/* @var File|null $file */
 		$file = $this->fileRepository->find($id);
 		return $file ? $file->getDescription() : false;
-	}
-	
-	public function isFileShared($path)
-	{
-		/* @var File|null $file */
-		$file = $this->fileRepository->findOneBy(['file' => $path]);
-		return $file ? $file->getShared() : false;
 	}
 	
 	/*
@@ -123,7 +131,7 @@ class FileExtension extends AbstractExtension
 	
 	public function renderFileManager($value, $lazy = true, $noEmbed = false)
 	{
-		if (!is_string($value) and !is_int($value)) {
+		if (!is_string($value) && !is_int($value)) {
 			return false;
 		}
 		
@@ -169,7 +177,7 @@ class FileExtension extends AbstractExtension
 		} elseif (preg_match($pathPattern, $value)) {
 			// FILE PATH
 			if (file_exists($pathToValue)) {
-				$valueToDisplay = ($streamedValue ? $streamedValue : $value);
+				$valueToDisplay = ($streamedValue ?: $value);
 				if (explode("/", mime_content_type($pathToValue))[0] === 'image') {
 					// FILE TYPE IMAGE
 					$result = '<img class="' . ($lazy ? 'lazy-load not-loaded' : '') . ' aky-img" src="' . ($lazy ? '' : $valueToDisplay) . '" ' . ($lazy ? 'data-src="' . $valueToDisplay . '"' : '') . ' alt=""/>';
@@ -179,22 +187,20 @@ class FileExtension extends AbstractExtension
                 } elseif (pathinfo($pathToValue)['extension'] === 'csv') {
                     // FILE TYPE PDF (NO EMBED = TRUE)
                     $result = $this->twig->render('@AkyosFileManager/svg/csv.html.twig', ['alt' => '']);
+				} else if (substr($value, 0, 5) === "video") {
+					// FILE TYPE VIDEO
+					$result = '<video controls width="100%">';
+					$result .= '<source src="' . $valueToDisplay . '" type="' . mime_content_type($pathToValue) . '">';
+					$result .= '</video>';
 				} else {
-					if (substr($value, 0, 5) === "video") {
-						// FILE TYPE VIDEO
-						$result = '<video controls width="100%">';
-						$result .= '<source src="' . $valueToDisplay . '" type="' . mime_content_type($pathToValue) . '">';
-						$result .= '</video>';
-					} else {
-						// OTHER FILE TYPES
-						$result = '<embed src="' . $valueToDisplay . '" width="100%" height="100%" type="' . mime_content_type($pathToValue) . '">';
-						$result .= '<style type="text/css">video {width: 100%; height: 100%}</style>';
-						$result .= '</embed>';
-					}
+					// OTHER FILE TYPES
+					$result = '<embed src="' . $valueToDisplay . '" width="100%" height="100%" type="' . mime_content_type($pathToValue) . '">';
+					$result .= '<style type="text/css">video {width: 100%; height: 100%}</style>';
+					$result .= '</embed>';
 				}
 			}
 		} elseif ($file) {
-			$fileToDisplay = ($streamedFile ? $streamedFile : $file->getFile());
+			$fileToDisplay = $streamedFile ?: $file->getFile();
 			// FILE ID
 			if (file_exists($pathToFile)) {
 				// SVG
@@ -208,7 +214,7 @@ class FileExtension extends AbstractExtension
 				elseif (explode("/", mime_content_type($pathToFile))[0] === 'image') {
 					$result = '<img class="' . ($lazy ? 'lazy-load not-loaded' : '') . ' aky-img" src="' . ($lazy ? '' : $fileToDisplay) . '" ' . ($lazy ? 'data-src="' . $fileToDisplay . '"' : '') . ' alt="' . $file->getAlt() . '"/>';
 				} else {
-					if (substr(mime_content_type($pathToFile), 0, 5) === "video") {
+					if (strpos(mime_content_type($pathToFile), "video") === 0) {
 						$result = '<video controls width="100%">';
 						$result .= '<source src="' . $fileToDisplay . '" type="' . mime_content_type($pathToFile) . '">';
 						$result .= '</video>';
@@ -235,7 +241,7 @@ class FileExtension extends AbstractExtension
 	
 	public function renderFileManagerUrl($value)
 	{
-		if (!is_string($value) and !is_int($value)) {
+		if (!is_string($value) && !is_int($value)) {
 			return false;
 		}
 		$ytPattern = '~^(?:https?://)?(?:www[.])?(?:youtube[.]com/watch[?]v=|youtu[.]be/)([^&]{11})~x';
@@ -263,7 +269,7 @@ class FileExtension extends AbstractExtension
 		return str_replace(' ', '%20', $result);
 	}
 	
-	function formatBytes($bytes, $precision = 2)
+	function formatBytes($bytes, $precision = 2): string
 	{
 		$units = array('B', 'KiB', 'MiB', 'GiB', 'TiB');
 		$bytes = max($bytes, 0);
