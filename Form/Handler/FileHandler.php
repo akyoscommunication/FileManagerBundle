@@ -32,6 +32,7 @@ class FileHandler extends AbstractController
 
 	public function uploadFile(FormInterface $form, Request $request): bool
 	{
+	    $fileRepository = $this->em->getRepository(File::class);
 		$privateSpaceId = $request->get('private_space');
 		$privateSpace = $this->privateSpaceRepository->find($privateSpaceId ? $privateSpaceId : 0);
 		$view = $request->get('view') ? $request->get('view') : "public";
@@ -42,7 +43,7 @@ class FileHandler extends AbstractController
 		$absoluteRootFilesPath = $this->uploadsService->getRootFilesPath($view, false, $privateSpace);
 		$relativeRootFilesPath = $this->uploadsService->getRootFilesPath($view, true, $privateSpace);
 
-		$form->handleRequest($request);
+        $form->handleRequest($request);
 		if ($form->isSubmitted() && $form->isValid()) {
 			foreach ($form['file']->getData() as $fileUploaded) {
 				$file = new File();
@@ -76,8 +77,10 @@ class FileHandler extends AbstractController
 					$file->setFile($relativeRootFilesPath . $relativePath . $newFilename);
 				}
 
-				$this->em->persist($file);
-			}
+				if ($file->getFile() && !$fileRepository->findOneBy(['file' => $file->getFile()])) {
+                    $this->em->persist($file);
+                }
+            }
 			$this->em->flush();
 
 			return true;
