@@ -58,7 +58,7 @@
                 {% endif %}
                 <div class="aky-file-preview">
                     {% if form.vars.value != '' %}
-                        {{ renderFileManager(form.vars.value, false, true) | raw }}
+                        {{ renderFileManager(form.vars.value, false, false) | raw }}
                     {% endif %}
                 </div>
                 <div class="modal fade aky-filemanager-modal" id="aky-filemanager-modal-input-{{ form.vars.id }}"
