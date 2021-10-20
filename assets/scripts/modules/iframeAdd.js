@@ -29,34 +29,14 @@ class IframeAdd {
         const fileManagerInputs = $('.aky-file-container .aky-file-input input');
         const forms = fileManagerInputs.parents('form');
         forms.on('submit', function (e) {
-            e.preventDefault();
-            let valid = false;
             const inputs = $(this).find('.aky-file-container .aky-file-input input');
+			$('.empty-field').remove();
             inputs.each(function () {
-                $(this).parents('.aky-file-container').find('.empty-field').remove();
                 if ($(this)[0].hasAttribute('data-required') && !$(this).val()) {
-                    $(this).parents('.aky-file-container').after('<div class="empty-field small text-danger">Ce champ est obligatoire!</div>');
-                } else {
-                    $.ajax({
-                        method: 'GET',
-                        url: $(this).data('previous-value-url'),
-                        data: {
-                            new_value: $(this).val()
-                        },
-                        success: function (res) {
-                            console.log(res);
-                        },
-                        error: function (er) {
-                            console.log(er, 'error');
-                        }
-                    });
-                    valid = true;
+                	e.preventDefault();
+                    $(this).parents('.aky-file').after('<div class="empty-field small text-danger mt-3">Ce champ est obligatoire!</div>');
                 }
             })
-            if (valid) {
-                $(this).off('submit');
-                $(this).submit();
-            }
         })
 
         $('[data-toggle="tooltip"]').tooltip();
