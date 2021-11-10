@@ -72,12 +72,10 @@ class FileManagerOptions
 
 	public function removePrivateSpace(PrivateSpace $privateSpace): self
 	{
-		if ($this->privateSpaces->removeElement($privateSpace)) {
-			// set the owning side to null (unless already changed)
-			if ($privateSpace->getFileManagerOptions() === $this) {
-				$privateSpace->setFileManagerOptions(null);
-			}
-		}
+        // set the owning side to null (unless already changed)
+        if ($this->privateSpaces->removeElement($privateSpace) && $privateSpace->getFileManagerOptions() === $this) {
+            $privateSpace->setFileManagerOptions(null);
+        }
 
 		return $this;
 	}

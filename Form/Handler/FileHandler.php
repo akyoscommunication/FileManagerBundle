@@ -15,11 +15,11 @@ use Symfony\Component\HttpKernel\KernelInterface;
 
 class FileHandler extends AbstractController
 {
-	private $em;
-	private $fs;
-	private $kernel;
-	private $uploadsService;
-	private $privateSpaceRepository;
+	private EntityManagerInterface $em;
+	private Filesystem $fs;
+	private KernelInterface $kernel;
+	private UploadsService $uploadsService;
+	private PrivateSpaceRepository $privateSpaceRepository;
 
 	public function __construct(EntityManagerInterface $em, KernelInterface $kernel, Filesystem $filesystem, UploadsService $uploadsService, PrivateSpaceRepository $privateSpaceRepository)
 	{
@@ -30,14 +30,19 @@ class FileHandler extends AbstractController
 		$this->privateSpaceRepository = $privateSpaceRepository;
 	}
 
+    /**
+     * @param FormInterface $form
+     * @param Request $request
+     * @return bool
+     */
 	public function uploadFile(FormInterface $form, Request $request): bool
 	{
 	    $fileRepository = $this->em->getRepository(File::class);
 		$privateSpaceId = $request->get('private_space');
-		$privateSpace = $this->privateSpaceRepository->find($privateSpaceId ? $privateSpaceId : 0);
-		$view = $request->get('view') ? $request->get('view') : "public";
+		$privateSpace = $this->privateSpaceRepository->find($privateSpaceId ?: 0);
+		$view = $request->get('view') ?: "public";
 		$relativePath = $request->get('path');
-		if (strlen($relativePath) && substr($relativePath, 0, 1) !== '/') {
+		if ($relativePath !== '' && strpos($relativePath, '/') !== 0) {
 			$relativePath = '/' . $relativePath;
 		}
 		$absoluteRootFilesPath = $this->uploadsService->getRootFilesPath($view, false, $privateSpace);
@@ -67,11 +72,11 @@ class FileHandler extends AbstractController
 							$newFilename
 						);
 					} catch (FileException $e) {
-						dd($e);
+//						dd($e);
 					}
 
 					$file->setName($newFilename);
-					if (strlen($newFilename) && substr($newFilename, 0, 1) !== '/') {
+					if ($newFilename !== '' && $newFilename[0] !== '/') {
 						$newFilename = '/' . $newFilename;
 					}
 					$file->setFile($relativeRootFilesPath . $relativePath . $newFilename);
@@ -88,12 +93,18 @@ class FileHandler extends AbstractController
 		return false;
 	}
 
+    /**
+     * @param FormInterface $form
+     * @param Request $request
+     * @param $pathOrigin
+     * @return bool
+     */
 	public function editFile(FormInterface $form, Request $request, $pathOrigin): bool
 	{
 		$form->handleRequest($request);
 		if ($form->isSubmitted() && $form->isValid()) {
 
-			$view = $request->get('view') ? $request->get('view') : "public";
+			$view = $request->get('view') ?: "public";
 
 			$pathOrigin = $this->kernel->getProjectDir() . ($view !== "public" ? '' : '/public') . $pathOrigin;
 			$newPath = explode('/', $pathOrigin);
@@ -113,14 +124,19 @@ class FileHandler extends AbstractController
 		return false;
 	}
 
+    /**
+     * @param FormInterface $form
+     * @param Request $request
+     * @return bool
+     */
 	public function manageFolder(FormInterface $form, Request $request): bool
 	{
 		$form->handleRequest($request);
 		if ($form->isSubmitted() && $form->isValid()) {
 			$relativePath = $request->get('path');
 			$privateSpaceId = $request->get('private_space');
-			$privateSpace = $this->privateSpaceRepository->find($privateSpaceId ? $privateSpaceId : 0);
-			$view = $request->get('view') ? $request->get('view') : "public";
+			$privateSpace = $this->privateSpaceRepository->find($privateSpaceId ?: 0);
+			$view = $request->get('view') ?: "public";
 			$absoluteRootFilesPath = $this->uploadsService->getRootFilesPath($view, false, $privateSpace);
 			$relativeRootFilesPath = $this->uploadsService->getRootFilesPath($view, true, $privateSpace);
 
@@ -154,23 +170,24 @@ class FileHandler extends AbstractController
 		return false;
 	}
 
+    /**
+     * @param FormInterface $form
+     * @param Request $request
+     * @return bool
+     */
 	public function moveManager(FormInterface $form, Request $request): bool
 	{
-		$privateSpaceId = $request->get('private_space');
-		$privateSpace = $this->privateSpaceRepository->find($privateSpaceId ? $privateSpaceId : 0);
-		$view = $request->get('view') ? $request->get('view') : "public";
-		
 		$form->handleRequest($request);
 		if ($form->isSubmitted() && $form->isValid()) {
-			$destination = $form->get('tree')->getData() ? $form->get('tree')->getData() : null;
+			$destination = $form->get('tree')->getData() ?: null;
 			if (!$destination && $form->has('public')) {
-				$destination = $form->get('public')->getData() ? $form->get('public')->getData() : null;
+				$destination = $form->get('public')->getData() ?: null;
 			}
 			if (!$destination && $form->has('private_space')) {
-				$destination = $form->get('private_space')->getData() ? $form->get('private_space')->getData() : null;
+				$destination = $form->get('private_space')->getData() ?: null;
 			}
 			if (!$destination && $form->has('secured')) {
-				$destination = $form->get('secured')->getData() ? $form->get('secured')->getData() : null;
+				$destination = $form->get('secured')->getData() ?: null;
 			}
 			if (!$destination) {
 				return false;
@@ -203,7 +220,11 @@ class FileHandler extends AbstractController
 				$this->fs->copy($source, $destination . $fileName);
 				$this->fs->remove($source);
 
-				$file = $this->em->getRepository(File::class)->findOneBy(['file' => $sourceRelativeFilePath]);
+				if(!isset($sourceRelativeFilePath)) {
+				    $file = null;
+                } else {
+				    $file = $this->em->getRepository(File::class)->findOneBy(['file' => $sourceRelativeFilePath]);
+                }
 
 				if (!$file) {
 					$file = new File();
@@ -228,7 +249,9 @@ class FileHandler extends AbstractController
 					$destinationRelativeFilePath = '/private_spaces_files' . $destinationRelativeFilePath[count($destinationRelativeFilePath) - 1] . $fileName;
 				}
 
-				$file->setFile($destinationRelativeFilePath);
+				if(isset($destinationRelativeFilePath)) {
+				    $file->setFile($destinationRelativeFilePath);
+                }
 				$this->em->persist($file);
 				$this->em->flush();
 
@@ -239,7 +262,11 @@ class FileHandler extends AbstractController
 				$this->fs->mirror($source, $destination . $folderName);
 				$this->fs->remove([$source, '*']);
 
-				$files = $this->em->getRepository(File::class)->findByFilePathBegin($sourceRelativeFilePath);
+				if(isset($sourceRelativeFilePath)) {
+			    	$files = $this->em->getRepository(File::class)->findByFilePathBegin($sourceRelativeFilePath);
+                } else {
+				    $files = [];
+                }
 
 				foreach ($files as $file) {
 					if ($file instanceof File) {
@@ -255,10 +282,14 @@ class FileHandler extends AbstractController
 		return false;
 	}
 
+    /**
+     * @param $file
+     * @param Request $request
+     * @return bool
+     */
 	public function removeFile($file, Request $request): bool
 	{
-		$privateSpaceId = $request->get('private_space');
-		$view = $request->get('view') ? $request->get('view') : "public";
+		$view = $request->get('view') ?: "public";
 		$fileToDelete = $request->request->get('_file');
 
 		// if there is file in DB
@@ -269,12 +300,10 @@ class FileHandler extends AbstractController
 				$this->em->flush();
 				return true;
 			}
-		} else {
-			if ($fileToDelete) {
-				$this->fs->remove($this->kernel->getProjectDir() . ($view !== "public" ? '' : '/public') . $fileToDelete);
-				return true;
-			}
-		}
+		} else if ($fileToDelete) {
+            $this->fs->remove($this->kernel->getProjectDir() . ($view !== "public" ? '' : '/public') . $fileToDelete);
+            return true;
+        }
 		return false;
 	}
 }

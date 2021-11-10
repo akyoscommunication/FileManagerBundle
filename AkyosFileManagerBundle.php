@@ -8,11 +8,17 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class AkyosFileManagerBundle extends Bundle
 {
-	public function getContainerExtension()
-	{
+    /**
+     * @return FileManagerBundleExtension
+     */
+	public function getContainerExtension(): FileManagerBundleExtension
+    {
 		return new FileManagerBundleExtension();
 	}
-	
+
+    /**
+     * @param ContainerBuilder $container
+     */
 	public function build(ContainerBuilder $container)
 	{
 		parent::build($container);

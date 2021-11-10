@@ -19,11 +19,12 @@ class FileRepository extends ServiceEntityRepository
 		parent::__construct($registry, File::class);
 	}
 
-	/**
-	 * @return File[] Returns an array of File objects
-	 */
-	public function findByFilePathBegin($begin)
-	{
+    /**
+     * @param string $begin
+     * @return File[] Returns an array of File objects
+     */
+	public function findByFilePathBegin(string $begin): array
+    {
 		return $this->createQueryBuilder('f')
 			->andWhere('f.file LIKE :begin')
 			->setParameter('begin', $begin . '%')

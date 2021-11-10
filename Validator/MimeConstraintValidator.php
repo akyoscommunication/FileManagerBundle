@@ -14,10 +14,8 @@ use Symfony\Component\Validator\ConstraintValidator;
  */
 class MimeConstraintValidator extends ConstraintValidator
 {
-    /** @var EntityManagerInterface */
-    private $em;
-    /** @var KernelInterface */
-    private $kernel;
+    private EntityManagerInterface $em;
+    private KernelInterface $kernel;
 
     public function __construct(EntityManagerInterface $em, KernelInterface $kernel)
     {
@@ -25,6 +23,10 @@ class MimeConstraintValidator extends ConstraintValidator
         $this->kernel = $kernel;
     }
 
+    /**
+     * @param mixed $value
+     * @param Constraint $constraint
+     */
     public function validate($value, Constraint $constraint)
     {
         /** FileManagerCollectionType */
@@ -39,6 +41,10 @@ class MimeConstraintValidator extends ConstraintValidator
         }
     }
 
+    /**
+     * @param $id
+     * @param Constraint $constraint
+     */
     public function findFile($id, Constraint $constraint)
     {
         $file = $this->em->getRepository(File::class)->find($id);
@@ -51,7 +57,7 @@ class MimeConstraintValidator extends ConstraintValidator
                 $mime = false;
             }
 
-            if ($mime && !in_array($mime, $constraint->types)) {
+            if ($mime && !in_array($mime, $constraint->types, true)) {
                 $this->context->buildViolation($constraint->message)
                     ->setParameter('{{ value }}', $file->getName())
                     ->setParameter('{{ types }}', implode(',', $constraint->types))

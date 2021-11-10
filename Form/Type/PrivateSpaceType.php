@@ -12,7 +12,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PrivateSpaceType extends AbstractType
 {
-	private $container;
+	private ContainerInterface $container;
 	
 	public function __construct(ContainerInterface $container)
 	{
@@ -36,7 +36,8 @@ class PrivateSpaceType extends AbstractType
 				],
 				'required' => false,
 				'help' => 'Laissez vide pour que l\'espace soit accessible à tout ceux qui ont accès au gestionnaire de fichiers',
-			]);
+			])
+        ;
 	}
 
 	public function configureOptions(OptionsResolver $resolver)

@@ -11,14 +11,8 @@ use Symfony\Component\Validator\Constraint;
  */
 class MimeConstraint extends Constraint
 {
-    /**
-     * Any public properties become valid options for the annotation.
-     * Then, use these is your validator class.
-     * @var string
-     */
-    public $message = 'Le fichier "{{ value }}" n\'est pas un fichier valide. Types de fichiers autorisés : {{ types }}.';
-
-    public $types = [];
+    public string $message = 'Le fichier "{{ value }}" n\'est pas un fichier valide. Types de fichiers autorisés : {{ types }}.';
+    public array $types = [];
 
     public function __construct($options = null)
     {

@@ -16,23 +16,13 @@ use Symfony\Component\HttpKernel\KernelInterface;
 
 class FixPathFiles extends Command
 {
-	protected static $defaultName = 'file-manager:fix-path-file';
-	/** @var EntityManagerInterface */
-	private $em;
-	/** @var ParameterBagInterface $parameterBag */
-	private $parameterBag;
-	/** @var KernelInterface $kernel */
-	private $kernel;
-	/** @var UploadsService $uploadsService */
-	private $uploadsService;
+	protected static string $defaultName = 'file-manager:fix-path-file';
+	private EntityManagerInterface $em;
 	
 	public function __construct(EntityManagerInterface $em, string $name = null, ParameterBagInterface $parameterBag, KernelInterface $kernel, UploadsService $uploadsService)
 	{
 		parent::__construct($name);
 		$this->em = $em;
-		$this->parameterBag = $parameterBag;
-		$this->kernel = $kernel;
-		$this->uploadsService = $uploadsService;
 	}
 	
 	protected function configure()
@@ -43,6 +33,9 @@ class FixPathFiles extends Command
 	
 	protected function execute(InputInterface $input, OutputInterface $output): int
 	{
+        // TODO => Finir le code
+        die();
+
 		$io = new SymfonyStyle($input, $output);
 
 		$fileRepository = $this->em->getRepository(File::class);
@@ -50,8 +43,8 @@ class FixPathFiles extends Command
 		foreach ($fileRepository->findAll() as $file) {
 		    if (
 		        (strpos($file->getFile(), '//') !== false)
-                or (strpos($file->getFile(), '///') !== false)
-                or (strpos($file->getFile(), '////') !== false)
+                || (strpos($file->getFile(), '///') !== false)
+                || (strpos($file->getFile(), '////') !== false)
             ) {
                 /**
                  * Problème

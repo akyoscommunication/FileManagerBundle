@@ -17,27 +17,25 @@ class FileManagerOptionsType extends AbstractType
 			->add('publicTab', TextType::class, [
 				'label' => 'Onglet "espace public"',
 				'help' => 'Choisissez le texte à afficher sur l\'onglet des documents publics, dans le gestionnaire de fichiers.',
-				'required' => false
+				'required' => false,
 			])
 			->add('privateSpacesTab', TextType::class, [
 				'label' => 'Onglet "espaces partagés"',
 				'help' => 'Choisissez le texte à afficher sur l\'onglet des documents partagés, dans le gestionnaire de fichiers.',
-				'required' => false
-
+				'required' => false,
 			])
 			->add('securedTab', TextType::class, [
 				'label' => 'Onglet "espace privé"',
 				'help' => 'Choisissez le texte à afficher sur l\'onglet des documents privés, dans le gestionnaire de fichiers.',
-				'required' => false
-
+				'required' => false,
 			])
 			->add('privateSpaces', CollectionType::class, [
 				'entry_type' => PrivateSpaceType::class,
 				'entry_options' => [
 					'label' => false,
 					'attr' => [
-						'class' => 'card-header__title'
-					]
+						'class' => 'card-header__title',
+					],
 				],
 				'allow_add' => true,
 				'allow_delete' => true,

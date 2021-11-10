@@ -10,6 +10,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use function count;
 
 class FileManagerCollectionType extends AbstractType implements DataTransformerInterface
 {
@@ -58,8 +59,8 @@ class FileManagerCollectionType extends AbstractType implements DataTransformerI
 		]);
 	}
 
-	public function getBlockPrefix()
-	{
+	public function getBlockPrefix(): string
+    {
 		return 'file_manager_collection';
 	}
 
@@ -68,21 +69,21 @@ class FileManagerCollectionType extends AbstractType implements DataTransformerI
 		return $value;
 	}
 
-	public function getParent()
-	{
+	public function getParent(): string
+    {
 		return CollectionType::class;
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public function reverseTransform($value)
-	{
-		if (\count($value) === 0) {
+	public function reverseTransform($value): ?array
+    {
+		if (count($value) === 0) {
 			return null;
 		}
 
-		return array_filter(($value instanceof Collection) ? $value->toArray() : $value, function ($path) {
+		return array_filter(($value instanceof Collection) ? $value->toArray() : $value, static function ($path) {
 			return $path !== null;
 		});
 	}

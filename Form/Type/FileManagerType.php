@@ -32,13 +32,13 @@ class FileManagerType extends AbstractType
 		]);
 	}
 
-	public function getBlockPrefix()
-	{
+	public function getBlockPrefix(): string
+    {
 		return 'file_manager';
 	}
 
-	public function getParent()
-	{
+	public function getParent(): string
+    {
 		return TextType::class;
 	}
 }

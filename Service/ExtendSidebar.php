@@ -8,8 +8,8 @@ use Symfony\Component\Security\Core\Security;
 
 class ExtendSidebar
 {
-	private $router;
-	private $security;
+	private UrlGeneratorInterface $router;
+	private Security $security;
 
 	public function __construct(UrlGeneratorInterface $router, Security $security)
 	{
@@ -17,8 +17,8 @@ class ExtendSidebar
 		$this->security = $security;
 	}
 
-	public function getTemplate($route)
-	{
+	public function getTemplate($route): Response
+    {
 		$template = '';
 		if ($this->security->isGranted('gestion-des-fichiers')) {
 			$template = '<li class="' . (strpos($route, "file_show") !== false ? "active" : "") . '">
@@ -28,8 +28,8 @@ class ExtendSidebar
 		return new Response($template);
 	}
 	
-	public function getOptionsTemplate($route)
-	{
+	public function getOptionsTemplate($route): Response
+    {
 		$template = '';
 		if ($this->security->isGranted('options-du-gestionnaire-de-fichier')) {
 			$template = '<li class="' . (strpos($route, "file_manager_options") !== false ? "active" : "") . '"><a href="' . $this->router->generate('file_manager_options') . '">FileManager</a></li>';

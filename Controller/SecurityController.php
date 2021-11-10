@@ -2,6 +2,8 @@
 
 namespace Akyos\FileManagerBundle\Controller;
 
+use Exception;
+use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -19,10 +21,6 @@ class SecurityController extends AbstractController
 	 */
 	public function login(AuthenticationUtils $authenticationUtils): Response
 	{
-		// if ($this->getUser()) {
-		//     return $this->redirectToRoute('target_path');
-		// }
-
 		// get the login error if there is one
 		$error = $authenticationUtils->getLastAuthenticationError();
 		// last username entered by the account
@@ -31,11 +29,12 @@ class SecurityController extends AbstractController
 		return $this->render('@AkyosCore/security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
 	}
 
-	/**
-	 * @Route("/logout", name="logout")
-	 */
-	public function logout()
-	{
-		throw new \Exception('This method can be blank - it will be intercepted by the logout key on your firewall');
+    /**
+     * @Route("/logout", name="logout")
+     * @throws Exception
+     */
+	public function logout(): void
+    {
+		throw new RuntimeException('This method can be blank - it will be intercepted by the logout key on your firewall');
 	}
 }

@@ -2,7 +2,6 @@
 
 namespace Akyos\FileManagerBundle\Form;
 
-use Akyos\FileManagerBundle\Entity\File;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -27,6 +26,7 @@ class UploadType extends AbstractType
 	public function configureOptions(OptionsResolver $resolver)
 	{
 		$resolver->setDefaults([
+
 		]);
 	}
 }

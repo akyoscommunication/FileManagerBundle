@@ -7,7 +7,6 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class FileManagerCompilerPass implements CompilerPassInterface
 {
-	
 	/**
 	 * @inheritDoc
 	 */

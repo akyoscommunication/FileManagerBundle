@@ -8,13 +8,16 @@ use Twig\Extension\GlobalsInterface;
 
 class GlobalsExtension extends AbstractExtension implements GlobalsInterface
 {
-	protected $fileManagerOptionsRepository;
+	protected FileManagerOptionsRepository $fileManagerOptionsRepository;
 	
 	public function __construct(FileManagerOptionsRepository $fileManagerOptionsRepository)
 	{
 		$this->fileManagerOptionsRepository = $fileManagerOptionsRepository;
 	}
-	
+
+    /**
+     * @return array
+     */
 	public function getGlobals(): array
 	{
 		$fileManagerOptions = $this->fileManagerOptionsRepository->findAll();

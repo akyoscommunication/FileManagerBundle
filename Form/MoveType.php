@@ -13,9 +13,9 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class MoveType extends AbstractType
 {
-	private $privateSpaceRepository;
-	private $authorizationChecker;
-	private $kernel;
+	private PrivateSpaceRepository $privateSpaceRepository;
+	private AuthorizationCheckerInterface $authorizationChecker;
+	private KernelInterface $kernel;
 	
 	public function __construct(PrivateSpaceRepository $privateSpaceRepository, AuthorizationCheckerInterface $authorizationChecker, KernelInterface $kernel)
 	{
@@ -69,7 +69,6 @@ class MoveType extends AbstractType
 			'Oui' => $this->kernel->getProjectDir() . '/secured_files/'
 		];
 
-
 		$builder
 			->add('tree', ChoiceType::class, [
 				'label' => 'Déplacer au sein de cet espace ?',
@@ -80,7 +79,7 @@ class MoveType extends AbstractType
 			->add('file', HiddenType::class)
 			->add('type', HiddenType::class);
 
-		if ($view !== "public") {
+		if (isset($view) && $view !== "public") {
 			$builder
 				->add('public', ChoiceType::class, [
 					'label' => 'Déplacer vers le dossier public ?',
@@ -100,7 +99,7 @@ class MoveType extends AbstractType
 				]);
 		}
 
-		if ($view !== "secured") {
+		if (isset($view) && $view !== "secured") {
 			$builder
 				->add('secured', ChoiceType::class, [
 					'label' => 'Déplacer vers votre dossier privé ?',
@@ -116,7 +115,6 @@ class MoveType extends AbstractType
 	public function configureOptions(OptionsResolver $resolver)
 	{
 		$resolver->setDefaults([
-			// Configure your form options here
 			'directories' => null,
 			'racine' => null
 		]);

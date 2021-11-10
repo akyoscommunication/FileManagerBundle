@@ -3,6 +3,7 @@
 namespace Akyos\FileManagerBundle\Controller;
 
 use Akyos\FileManagerBundle\Entity\File;
+use Akyos\FileManagerBundle\Entity\PrivateSpace;
 use Akyos\FileManagerBundle\Form\MoveType;
 use Akyos\FileManagerBundle\Form\NameFolderFormType;
 use Akyos\FileManagerBundle\Form\EditFileType;
@@ -16,12 +17,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Symfony\Component\HttpFoundation\File\Stream;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -30,26 +28,25 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class FileController extends AbstractController
 {
-	/**
-	 * @Route("/", name="index", methods={"GET","POST"})
-	 * @param FileHandler $fileHandler
-	 * @param Request $request
-	 * @param UploadsService $uploadsService
-	 * @param Filesystem $filesystem
-	 * @param FileRepository $fileRepository
-	 * @param PrivateSpaceRepository $privateSpaceRepository
-	 * @return Response
-	 */
-	public function index(FileHandler $fileHandler, Request $request, UploadsService $uploadsService, Filesystem $filesystem, FileRepository $fileRepository, PrivateSpaceRepository $privateSpaceRepository): Response
+    /**
+     * @Route("/", name="index", methods={"GET","POST"})
+     * @param FileHandler $fileHandler
+     * @param Request $request
+     * @param UploadsService $uploadsService
+     * @param Filesystem $filesystem
+     * @param PrivateSpaceRepository $privateSpaceRepository
+     * @return Response
+     */
+	public function index(FileHandler $fileHandler, Request $request, UploadsService $uploadsService, Filesystem $filesystem, PrivateSpaceRepository $privateSpaceRepository): Response
 	{
 		$files = null;
 		$directories = null;
 		$relativePath = $request->get('path');
 		
 		$privateSpaceId = $request->get('private_space');
-		$privateSpace = $privateSpaceRepository->find($privateSpaceId ? $privateSpaceId : 0);
+		$privateSpace = $privateSpaceRepository->find($privateSpaceId ?: 0);
 		
-		$view = $request->get('view') ? $request->get('view') : "public";
+		$view = $request->get('view') ?: "public";
 		
 		$rootFilesPath = $uploadsService->getRootFilesPath($view, false, $privateSpace);
 		$relativeRootFilesPath = $uploadsService->getRootFilesPath($view, true, $privateSpace);
@@ -65,10 +62,10 @@ class FileController extends AbstractController
 		$uploadFileForm = $this->createForm(UploadType::class);
 		$nameFolderFormType = $this->createForm(NameFolderFormType::class);
 		
-		$moveFormType = $this->createForm(MoveType::class, null, array(
+		$moveFormType = $this->createForm(MoveType::class, null, [
 			'directories' => $finder->files()->in($rootFilesPath)->directories(),
-			'racine' => $rootFilesPath
-		));
+			'racine' => $rootFilesPath,
+		]);
 		
 		if ($fileHandler->uploadFile($uploadFileForm, $request)) {
 			return $this->redirectToRoute('file_index', ['path' => $relativePath, 'view' => $view, 'private_space' => $privateSpaceId]);
@@ -94,20 +91,20 @@ class FileController extends AbstractController
 		$finder->files()->in($rootFilesPath . $relativePath);
 		
 		foreach ($finder->depth(0) as $file) {
-			$files[] = (object)array(
+			$files[] = (object)[
 				'name' => $file->getFilename(),
 				'size' => $file->getSize(),
 				'path' => $relativeRootFilesPath . $relativePath . '/' . $file->getRelativePathname(),
 				'absolutePath' => $file->getPath() . '/' . $file->getRelativePathname(),
-			);
+			];
 		}
 		foreach ($finder->directories()->depth(0) as $directory) {
-			$directories[] = (object)array(
+			$directories[] = (object)[
 				'name' => $directory->getFilename(),
 				'size' => $directory->getSize(),
 				'path' => $directory->getRelativePathname(),
 				'absolutePath' => $directory->getPath() . '/' . $directory->getRelativePathname() . '/',
-			);
+			];
 		}
 		
 		return $this->render('@AkyosFileManager/file/index.html.twig', [
@@ -126,8 +123,8 @@ class FileController extends AbstractController
 	/**
 	 * @Route("/show", name="show")
 	 */
-	public function show()
-	{
+	public function show(): Response
+    {
 		return $this->render('@AkyosFileManager/file/show.html.twig', [
 			'title' => 'Fichiers'
 		]);
@@ -145,12 +142,12 @@ class FileController extends AbstractController
 	public function edit(Request $request, FileHandler $fileHandler, FileRepository $fileRepository, EntityManagerInterface $em): Response
 	{
 		$privateSpaceId = $request->get('private_space');
-		$view = $request->get('view') ? $request->get('view') : "public";
+		$view = $request->get('view') ?: "public";
 		
 		$path = $request->get('path');
 		
 		/* @var File|null $file */
-		$file = $fileRepository->findOneBy(array('file' => $path));
+		$file = $fileRepository->findOneBy(['file' => $path]);
 		
 		if (!$file) {
 			$file = new File();
@@ -182,12 +179,12 @@ class FileController extends AbstractController
 	public function delete(Request $request, FileRepository $fileRepository, FileHandler $fileHandler): Response
 	{
 		$privateSpaceId = $request->get('private_space');
-		$view = $request->get('view') ? $request->get('view') : "public";
+		$view = $request->get('view') ?: "public";
 		$path = $request->get('path');
 		$fileToDelete = $request->request->get('_file');
 		
 		/* @var File|null $file */
-		$file = $fileRepository->findOneBy(array('file' => $fileToDelete));
+		$file = $fileRepository->findOneBy(['file' => $fileToDelete]);
 		
 		if ($fileHandler->removeFile($file, $request)) {
 			return $this->redirectToRoute('file_index', ['path' => $path, 'view' => $view, 'private_space' => $privateSpaceId]);
@@ -195,21 +192,23 @@ class FileController extends AbstractController
 		
 		return $this->redirectToRoute('file_index', ['path' => $path, 'view' => $view, 'private_space' => $privateSpaceId]);
 	}
-	
-	/**
-	 * @Route("/delete", name="remove_folder")
-	 * @param Request $request
-	 * @param FileRepository $fileRepository
-	 * @param EntityManagerInterface $em
-	 * @param Filesystem $filesystem
-	 * @param KernelInterface $kernel
-	 * @return Response
-	 */
+
+    /**
+     * @Route("/delete", name="remove_folder")
+     * @param Request $request
+     * @param FileRepository $fileRepository
+     * @param EntityManagerInterface $em
+     * @param PrivateSpaceRepository $privateSpaceRepository
+     * @param Filesystem $filesystem
+     * @param KernelInterface $kernel
+     * @return Response
+     */
 	public function removeFolder(Request $request, FileRepository $fileRepository, EntityManagerInterface $em, PrivateSpaceRepository $privateSpaceRepository, Filesystem $filesystem, KernelInterface $kernel): Response
 	{
 		$privateSpaceId = $request->get('private_space');
-		$privateSpace = $privateSpaceRepository->find($privateSpaceId ? $privateSpaceId : 0);
-		$view = $request->get('view') ? $request->get('view') : "public";
+		/** @var PrivateSpace $privateSpace */
+		$privateSpace = $privateSpaceRepository->find($privateSpaceId ?: 0);
+		$view = $request->get('view') ?: "public";
 		$path = $request->get('path');
 		if ($view === "private_space") {
 			$folderPath = $this->getParameter("private_spaces_dir") . '/' . $privateSpace->getSlug() . $request->get('folder');
@@ -221,8 +220,8 @@ class FileController extends AbstractController
 		$filesystem->remove($absolutePath);
 		/* @var ArrayCollection $files */
 		$files = $fileRepository->findByFilePathBegin($folderPath);
+        /* @var File $file */
 		foreach ($files as $file) {
-			/* @var File $file */
 			$em->remove($file);
 		}
 		$em->flush();

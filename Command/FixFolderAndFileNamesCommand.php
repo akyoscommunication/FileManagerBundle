@@ -10,21 +10,20 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 class FixFolderAndFileNamesCommand extends Command
 {
-	protected static $defaultName = 'file-manager:fix-names';
+	protected static string $defaultName = 'file-manager:fix-names';
 	/** @var EntityManagerInterface */
-	private $em;
+	private EntityManagerInterface $em;
 	/** @var ParameterBagInterface $parameterBag */
-	private $parameterBag;
+	private ParameterBagInterface $parameterBag;
 	/** @var KernelInterface $kernel */
-	private $kernel;
+	private KernelInterface $kernel;
 	/** @var UploadsService $uploadsService */
-	private $uploadsService;
+	private UploadsService $uploadsService;
 	
 	public function __construct(EntityManagerInterface $em, string $name = null, ParameterBagInterface $parameterBag, KernelInterface $kernel, UploadsService $uploadsService)
 	{
@@ -45,7 +44,7 @@ class FixFolderAndFileNamesCommand extends Command
 	{
 		$io = new SymfonyStyle($input, $output);
 		
-		// Parcourir  récursivement les dossiers des 3 espaces du filemanager s'ils existent (espaces public, partagés et privé)
+		// Parcourir récursivement les dossiers des 3 espaces du filemanager s'ils existent (espaces public, partagés et privé)
 		
 		$securedDir = $this->kernel->getProjectDir() . $this->parameterBag->get('secured_dir');
 		$privateDir = $this->kernel->getProjectDir() . $this->parameterBag->get('private_spaces_dir');
@@ -68,15 +67,16 @@ class FixFolderAndFileNamesCommand extends Command
 			$finderPrivateFiles->directories()->in($privateDir);
 			$this->fixNamesInDirectory($finderPrivateFiles, $this->parameterBag->get('private_spaces_dir'));
 		}
-		
-		
+
 		$io->success('Changement terminé.');
 		
 		return 0;
 	}
 	
-	private function fixNamesInDirectory(Finder $finder, $baseFolder) {
-
+	private function fixNamesInDirectory(Finder $finder, $baseFolder): void
+    {
+        // TODO => Finir le code
+        die();
 		if ($finder->hasResults()) {
 			foreach ($finder as $directory) {
 				$filename = $directory->getFilename();
@@ -108,7 +108,7 @@ class FixFolderAndFileNamesCommand extends Command
 							str_replace($relativePathName, $relativePath.'/'.$fixedFilename, $newPath);
 							$file->setFile($newPath);
 							// Ca ne marche pas avec les accents....
-							dump($relativePathName, $relativePath.'/'.$fixedFilename, $newPath);
+//							dump($relativePathName, $relativePath.'/'.$fixedFilename, $newPath);
 						}
 						die();
 					}

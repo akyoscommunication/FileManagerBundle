@@ -5,44 +5,47 @@ namespace Akyos\FileManagerBundle\Twig;
 use Akyos\FileManagerBundle\Entity\File;
 use Akyos\FileManagerBundle\Repository\FileRepository;
 use Akyos\FileManagerBundle\Service\UploadsService;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
 
 class FileExtension extends AbstractExtension
 {
-	private $em;
-	private $fileRepository;
-	private $parameterBag;
-	private $filesystem;
-	private $uploadsService;
-	private $urlGenerator;
-	private $twig;
-	private $rootPath = __DIR__ . '/../../..';
+	private FileRepository $fileRepository;
+	private ParameterBagInterface $parameterBag;
+	private UploadsService $uploadsService;
+	private UrlGeneratorInterface $urlGenerator;
+	private Environment $twig;
+	private string $rootPath = __DIR__ . '/../../..';
 	
-	public function __construct(EntityManagerInterface $entityManager, FileRepository $fileRepository, ParameterBagInterface $parameterBag, Filesystem $filesystem, UploadsService $uploadsService, UrlGeneratorInterface $urlGenerator, Environment $twig)
+	public function __construct(FileRepository $fileRepository, ParameterBagInterface $parameterBag, UploadsService $uploadsService, UrlGeneratorInterface $urlGenerator, Environment $twig)
 	{
-		$this->em = $entityManager;
 		$this->fileRepository = $fileRepository;
 		$this->parameterBag = $parameterBag;
-		$this->filesystem = $filesystem;
 		$this->uploadsService = $uploadsService;
 		$this->urlGenerator = $urlGenerator;
 		$this->twig = $twig;
 	}
-	
+
+    /**
+     * @return TwigFilter[]
+     */
 	public function getFilters(): array
 	{
 		return [
 			new TwigFilter('format_bytes', [$this, 'formatBytes']),
 		];
 	}
-	
+
+    /**
+     * @return TwigFunction[]
+     */
 	public function getFunctions(): array
 	{
 		return [
@@ -58,7 +61,12 @@ class FileExtension extends AbstractExtension
 			new TwigFunction('hasFileAccessRight', [$this->uploadsService, 'hasFileAccessRight']),
 		];
 	}
-	
+
+    /**
+     * @param $id
+     * @param bool $display
+     * @return false|string|null
+     */
 	public function getImagePathById($id, bool $display = true)
 	{
 		/* @var File|null $file */
@@ -121,6 +129,18 @@ class FileExtension extends AbstractExtension
 	/*
 	 * @deprecated use renderFileManager() instead with second parameter to false, to disable lazy load
 	 */
+
+    /**
+     * @param $value
+     * @param null $height
+     * @param null $width
+     * @param false $noEmbed
+     * @return false|string
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     * @deprecated use renderFileManager() instead with second parameter to false, to disable lazy load
+     */
 	public function renderFileManagerNotLazy($value, $height = null, $width = null, $noEmbed = false)
 	{
 		/*
@@ -128,7 +148,16 @@ class FileExtension extends AbstractExtension
 		 */
 		return $this->renderFileManager($value, false, $noEmbed);
 	}
-	
+
+    /**
+     * @param $value
+     * @param bool $lazy
+     * @param false $noEmbed
+     * @return false|string
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     */
 	public function renderFileManager($value, $lazy = true, $noEmbed = false)
 	{
 		if (!is_string($value) && !is_int($value)) {
@@ -170,24 +199,24 @@ class FileExtension extends AbstractExtension
 
 		if (preg_match($ytPattern, $value)) {
 			// YOUTUBE LINK
-			$result = '<iframe width="100%" height="100%" src="' . $value . '" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
+			$result = '<iframe width="100%" height="100%" src="' . $value . '" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
 		} elseif (preg_match($urlPattern, $value)) {
 			// EXTERNAL IMAGE URL
 			$result = '<img class="' . ($lazy ? 'lazy-load not-loaded' : '') . ' aky-img" src="' . ($lazy ? '' : $value) . '" ' . ($lazy ? 'data-src="' . $value . '"' : '') . ' alt=""/>';
 		} elseif (preg_match($pathPattern, $value)) {
 			// FILE PATH
-			if (file_exists($pathToValue)) {
+			if (isset($pathToValue) && file_exists($pathToValue)) {
 				$valueToDisplay = ($streamedValue ?: $value);
 				if (explode("/", mime_content_type($pathToValue))[0] === 'image') {
 					// FILE TYPE IMAGE
 					$result = '<img class="' . ($lazy ? 'lazy-load not-loaded' : '') . ' aky-img" src="' . ($lazy ? '' : $valueToDisplay) . '" ' . ($lazy ? 'data-src="' . $valueToDisplay . '"' : '') . ' alt=""/>';
-				} elseif (mime_content_type($pathToValue) === 'application/pdf' && $noEmbed) {
+				} elseif ($noEmbed && mime_content_type($pathToValue) === 'application/pdf') {
 					// FILE TYPE PDF (NO EMBED = TRUE)
 					$result = $this->twig->render('@AkyosFileManager/svg/pdf.html.twig', ['alt' => '']);
                 } elseif (pathinfo($pathToValue)['extension'] === 'csv') {
                     // FILE TYPE PDF (NO EMBED = TRUE)
                     $result = $this->twig->render('@AkyosFileManager/svg/csv.html.twig', ['alt' => '']);
-				} else if (substr($value, 0, 5) === "video") {
+				} else if (strpos($value, "video") === 0) {
 					// FILE TYPE VIDEO
 					$result = '<video controls width="100%">';
 					$result .= '<source src="' . $valueToDisplay . '" type="' . mime_content_type($pathToValue) . '">';
@@ -202,7 +231,7 @@ class FileExtension extends AbstractExtension
 		} elseif ($file) {
 			$fileToDisplay = $streamedFile ?: $file->getFile();
 			// FILE ID
-			if (file_exists($pathToFile)) {
+			if (isset($pathToFile) && file_exists($pathToFile)) {
 				// SVG
 				if (mime_content_type($pathToFile) === 'image/svg') {
 					$svg_file = file_get_contents($pathToFile);
@@ -213,24 +242,22 @@ class FileExtension extends AbstractExtension
 				} // IMAGE
 				elseif (explode("/", mime_content_type($pathToFile))[0] === 'image') {
 					$result = '<img class="' . ($lazy ? 'lazy-load not-loaded' : '') . ' aky-img" src="' . ($lazy ? '' : $fileToDisplay) . '" ' . ($lazy ? 'data-src="' . $fileToDisplay . '"' : '') . ' alt="' . $file->getAlt() . '"/>';
-				} else {
-					if (strpos(mime_content_type($pathToFile), "video") === 0) {
-						$result = '<video controls width="100%">';
-						$result .= '<source src="' . $fileToDisplay . '" type="' . mime_content_type($pathToFile) . '">';
-						$result .= '</video>';
-					} elseif ($noEmbed && mime_content_type($pathToFile) === 'application/pdf') {
-                        $result = $this->twig->render('@AkyosFileManager/svg/pdf.html.twig', [
-                            'alt' => $file->getAlt(),
-                        ]);
-                    } elseif (pathinfo($pathToFile)['extension'] === 'csv') {
-                            // FILE TYPE PDF (NO EMBED = TRUE)
-                        $result = $this->twig->render('@AkyosFileManager/svg/csv.html.twig', ['alt' => '']);
-					} else {
-						$result = '<embed width="100%" height="100%" src="' . $fileToDisplay . '" type="' . mime_content_type($pathToFile) . '"">';
-						$result .= '<style type="text/css">video {width: 100%; height: 100%}</style>';
-						$result .= '</embed>';
-					}
-				}
+				} else if (strpos(mime_content_type($pathToFile), "video") === 0) {
+                    $result = '<video controls width="100%">';
+                    $result .= '<source src="' . $fileToDisplay . '" type="' . mime_content_type($pathToFile) . '">';
+                    $result .= '</video>';
+                } elseif ($noEmbed && mime_content_type($pathToFile) === 'application/pdf') {
+                    $result = $this->twig->render('@AkyosFileManager/svg/pdf.html.twig', [
+                        'alt' => $file->getAlt(),
+                    ]);
+                } elseif (pathinfo($pathToFile)['extension'] === 'csv') {
+                    // FILE TYPE PDF (NO EMBED = TRUE)
+                    $result = $this->twig->render('@AkyosFileManager/svg/csv.html.twig', ['alt' => '']);
+                } else {
+                    $result = '<embed width="100%" height="100%" src="' . $fileToDisplay . '" type="' . mime_content_type($pathToFile) . '"">';
+                    $result .= '<style type="text/css">video {width: 100%; height: 100%}</style>';
+                    $result .= '</embed>';
+                }
 			} else {
 				$result = '<img class="' . ($lazy ? 'lazy-load not-loaded' : '') . ' aky-img" src="' . ($lazy ? '' : $fileToDisplay) . '" ' . ($lazy ? 'data-src="' . $fileToDisplay . '"' : '') . ' alt="' . $file->getAlt() . '"/>';
 			}
@@ -238,7 +265,11 @@ class FileExtension extends AbstractExtension
 		
 		return $result;
 	}
-	
+
+    /**
+     * @param $value
+     * @return false|int|string|string[]
+     */
 	public function renderFileManagerUrl($value)
 	{
 		if (!is_string($value) && !is_int($value)) {
@@ -268,16 +299,21 @@ class FileExtension extends AbstractExtension
 		}
 		return str_replace(' ', '%20', $result);
 	}
-	
-	function formatBytes($bytes, $precision = 2): string
+
+    /**
+     * @param $bytes
+     * @param int $precision
+     * @return string
+     */
+	public function formatBytes($bytes, $precision = 2): string
 	{
-		$units = array('B', 'KiB', 'MiB', 'GiB', 'TiB');
+		$units = ['B', 'KiB', 'MiB', 'GiB', 'TiB'];
 		$bytes = max($bytes, 0);
 		$pow = floor(($bytes ? log($bytes) : 0) / log(1024));
 		$pow = min($pow, count($units) - 1);
 		
 		// Uncomment one of the following alternatives
-		$bytes /= pow(1024, $pow);
+		$bytes /= 1024 ** $pow;
 		
 		return round($bytes, $precision) . ' ' . $units[$pow];
 	}

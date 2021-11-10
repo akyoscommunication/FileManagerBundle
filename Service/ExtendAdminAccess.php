@@ -9,8 +9,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ExtendAdminAccess
 {
-    private $adminAccessRepository;
-    private $entityManager;
+    private AdminAccessRepository $adminAccessRepository;
+    private EntityManagerInterface $entityManager;
 
 	public function __construct(AdminAccessRepository $adminAccessRepository, EntityManagerInterface $entityManager)
 	{
@@ -18,9 +18,9 @@ class ExtendAdminAccess
 		$this->entityManager = $entityManager;
 	}
 
-	public function setDefaults()
-	{
-		if (!$this->adminAccessRepository->findOneByName("Gestion des fichiers")) {
+	public function setDefaults(): Response
+    {
+		if (!$this->adminAccessRepository->findOneBy(['name' => 'Gestion des fichiers'])) {
 			$adminAccess = new AdminAccess();
 			$adminAccess
 				->setName('Gestion des fichiers')
@@ -29,7 +29,7 @@ class ExtendAdminAccess
 			$this->entityManager->persist($adminAccess);
 			$this->entityManager->flush();
 		}
-		if (!$this->adminAccessRepository->findOneByName("Options du Gestionnaire de fichier")) {
+		if (!$this->adminAccessRepository->findOneBy(['name' => 'Options du Gestionnaire de fichier'])) {
 			$adminAccess = new AdminAccess();
 			$adminAccess
 				->setName('Options du Gestionnaire de fichier')
@@ -40,6 +40,5 @@ class ExtendAdminAccess
 		}
 
 		return new Response('true');
-
 	}
 }

@@ -7,16 +7,24 @@ use Akyos\FileManagerBundle\Entity\File;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\Exception\ORMException;
+use ReflectionObject;
 
 class PathAnnotationListener
 {
-	public function prePersist(LifecycleEventArgs $args)
-	{
+    /**
+     * @param LifecycleEventArgs $args
+     * @return bool
+     */
+	public function prePersist(LifecycleEventArgs $args): bool
+    {
 		$entity = $args->getEntity();
 
 		// Using reflection so we can inspect properties and their annotations later
-		$reflectionObject = new \ReflectionObject($entity);
+		$reflectionObject = new ReflectionObject($entity);
 
+		// TODO => Ca va être supprimé et autoloadé ça si j'ai bien compris mais pour l'instant faut laisser comme ça
 		AnnotationRegistry::registerUniqueLoader('class_exists');
 
 		$reader = new AnnotationReader;
@@ -47,13 +55,20 @@ class PathAnnotationListener
 		return true;
 	}
 
-	public function postUpdate(LifecycleEventArgs $args)
-	{
+    /**
+     * @param LifecycleEventArgs $args
+     * @return bool
+     * @throws ORMException
+     * @throws OptimisticLockException|\Doctrine\ORM\ORMException
+     */
+	public function postUpdate(LifecycleEventArgs $args): bool
+    {
 		$entity = $args->getEntity();
 
 		// Using reflection so we can inspect properties and their annotations later
-		$reflectionObject = new \ReflectionObject($args->getObject());
+		$reflectionObject = new ReflectionObject($args->getObject());
 
+        // TODO => Ca va être supprimé et autoloadé ça si j'ai bien compris mais pour l'instant faut laisser comme ça
 		AnnotationRegistry::registerUniqueLoader('class_exists');
 
 		$reader = new AnnotationReader;

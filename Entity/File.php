@@ -13,7 +13,7 @@ class File
 {
 	use TimestampableEntity;
 
-	const ENTITY_SLUG = "files";
+	public const ENTITY_SLUG = "files";
 
 	/**
 	 * @ORM\Id()
