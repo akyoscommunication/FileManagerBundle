@@ -15,7 +15,7 @@ use Symfony\Component\HttpKernel\KernelInterface;
 
 class FixFolderAndFileNamesCommand extends Command
 {
-	protected static string $defaultName = 'file-manager:fix-names';
+	protected static $defaultName = 'file-manager:fix-names';
 	/** @var EntityManagerInterface */
 	private EntityManagerInterface $em;
 	/** @var ParameterBagInterface $parameterBag */

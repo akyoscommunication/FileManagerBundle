@@ -16,7 +16,7 @@ use Symfony\Component\HttpKernel\KernelInterface;
 
 class FixPathFiles extends Command
 {
-	protected static string $defaultName = 'file-manager:fix-path-file';
+	protected static $defaultName = 'file-manager:fix-path-file';
 	private EntityManagerInterface $em;
 	
 	public function __construct(EntityManagerInterface $em, string $name = null, ParameterBagInterface $parameterBag, KernelInterface $kernel, UploadsService $uploadsService)
