@@ -157,7 +157,7 @@
     <section>
         <div class="small-title mb-2">Fichiers</div>
         <div class="aky-file-list">
-            {% for file in files %}
+            {% for file in files|sort((a,b) => a.name <=> b.name) %}
                 <div class="aky-file-container">
                     <div class="aky-file">
                         <a href="#" class="aky-file-preview aky-file-addto-btn" data-path="{{ file.path }}"
