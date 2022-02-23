@@ -4,6 +4,7 @@ namespace Akyos\FileManagerBundle\DoctrineListener;
 
 use Akyos\FileManagerBundle\Annotations\PathAnnotation;
 use Akyos\FileManagerBundle\Entity\File;
+use App\Entity\Media;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
@@ -21,7 +22,7 @@ class PathAnnotationListener
 
 		$reader = new AnnotationReader;
 
-		// Iterate over properties to find those targeted by a @PathAnnotation
+        // Iterate over properties to find those targeted by a @PathAnnotation
 		foreach ($reflectionObject->getProperties() as $entityTargetProperty) {
 
 			// This will be null if the property does not have an @PathAnnotation on it
@@ -52,21 +53,20 @@ class PathAnnotationListener
 		$entity = $args->getEntity();
 
 		// Using reflection so we can inspect properties and their annotations later
-		$reflectionObject = new \ReflectionObject($args->getObject());
-
-		AnnotationRegistry::registerUniqueLoader('class_exists');
+		$reflectionObject = new \ReflectionObject($entity);
 
 		$reader = new AnnotationReader;
 
-		// Iterate over properties to find those targeted by a @PathAnnotation
-		foreach ($reflectionObject->getProperties() as $entityTargetProperty) {
+		$class = $reflectionObject->getParentClass() ?: $reflectionObject;
+        // Iterate over properties to find those targeted by a @PathAnnotation
+		foreach ($class->getProperties() as $entityTargetProperty) {
 
 			// This will be null if the property does not have an @PathAnnotation on it
 			$pathAnnotation = $reader->getPropertyAnnotation($entityTargetProperty, PathAnnotation::class);
 
-			if (null !== $pathAnnotation) {
+            if (null !== $pathAnnotation) {
 
-				$em = $args->getEntityManager();
+                $em = $args->getEntityManager();
 				$unitOfWork = $em->getUnitOfWork();
 				$changeSet = $unitOfWork->getEntityChangeSet($entity);
 
@@ -90,6 +90,6 @@ class PathAnnotationListener
 			}
 		}
 
-		return true;
+        return true;
 	}
 }
