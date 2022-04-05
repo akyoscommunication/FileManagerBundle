@@ -13,7 +13,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 /**
  * @Route("/admin/file_manager/options", name="file_manager_options")
- * @isGranted("options-du-gestionnaire-de-fichier")
+ * @IsGranted("options-du-gestionnaire-de-fichier")
  */
 class FileManagerOptionsController extends AbstractController
 {
