@@ -19,9 +19,8 @@ class FixPathFiles extends Command
 	protected static $defaultName = 'file-manager:fix-path-file';
 	private EntityManagerInterface $em;
 	
-	public function __construct(EntityManagerInterface $em, string $name = null, ParameterBagInterface $parameterBag, KernelInterface $kernel, UploadsService $uploadsService)
+	public function __construct(EntityManagerInterface $em, ParameterBagInterface $parameterBag, KernelInterface $kernel, UploadsService $uploadsService)
 	{
-		parent::__construct($name);
 		$this->em = $em;
 	}
 	
