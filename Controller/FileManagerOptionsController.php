@@ -5,6 +5,7 @@ namespace Akyos\FileManagerBundle\Controller;
 use Akyos\FileManagerBundle\Entity\FileManagerOptions;
 use Akyos\FileManagerBundle\Form\Type\FileManagerOptionsType;
 use Akyos\FileManagerBundle\Repository\FileManagerOptionsRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,9 +22,10 @@ class FileManagerOptionsController extends AbstractController
 	 * @Route("/", name="", methods={"GET", "POST"})
 	 * @param FileManagerOptionsRepository $fileManagerOptionsRepository
 	 * @param Request $request
+	 * @param EntityManagerInterface $entityManager
 	 * @return Response
 	 */
-	public function index(FileManagerOptionsRepository $fileManagerOptionsRepository, Request $request): Response
+	public function index(FileManagerOptionsRepository $fileManagerOptionsRepository, Request $request, EntityManagerInterface $entityManager): Response
 	{
 		$fileManagerOptions = $fileManagerOptionsRepository->findAll();
 		if (!$fileManagerOptions) {
@@ -36,7 +38,6 @@ class FileManagerOptionsController extends AbstractController
 		$form->handleRequest($request);
 		
 		if ($form->isSubmitted() && $form->isValid()) {
-			$entityManager = $this->getDoctrine()->getManager();
 			$entityManager->persist($fileManagerOptions);
 			$entityManager->flush();
 			
