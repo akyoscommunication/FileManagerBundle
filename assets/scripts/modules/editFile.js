@@ -1,5 +1,3 @@
-import Toast from "../../../../CoreBundle/assets/scripts/modules/Toast";
-
 class EditFile {
     static init() {
         $(document).on('click', '.aky-filemanager-modal-edit-file-btn', function () {

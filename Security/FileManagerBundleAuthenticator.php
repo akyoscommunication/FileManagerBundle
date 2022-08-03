@@ -18,14 +18,8 @@ class FileManagerBundleAuthenticator extends AbstractLoginFormAuthenticator
 {
     use TargetPathTrait;
 
-    public function __construct(
-        private readonly UrlGeneratorInterface $urlGenerator,
-        private readonly CsrfTokenManagerInterface $csrfTokenManager,
-    ) {}
-
-    protected function getLoginUrl(Request $request): string
-    {
-        return $this->urlGenerator->generate('file_manager_login');
+    public function __construct(private readonly UrlGeneratorInterface $urlGenerator, private readonly CsrfTokenManagerInterface $csrfTokenManager,
+    ) {
     }
 
     public function authenticate(Request $request): Passport
@@ -34,11 +28,7 @@ class FileManagerBundleAuthenticator extends AbstractLoginFormAuthenticator
         $password = $request->request->get('password');
         $csrfToken = $request->request->get('_csrf_token');
 
-        return new Passport(
-            new UserBadge($username),
-            new PasswordCredentials($password),
-            [new CsrfTokenBadge('authenticate', $csrfToken)]
-        );
+        return new Passport(new UserBadge($username), new PasswordCredentials($password), [new CsrfTokenBadge('authenticate', $csrfToken)]);
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): RedirectResponse
@@ -48,5 +38,10 @@ class FileManagerBundleAuthenticator extends AbstractLoginFormAuthenticator
         }
 
         return new RedirectResponse($this->urlGenerator->generate('file_index'));
+    }
+
+    protected function getLoginUrl(Request $request): string
+    {
+        return $this->urlGenerator->generate('file_manager_login');
     }
 }

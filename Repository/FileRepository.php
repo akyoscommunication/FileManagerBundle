@@ -14,33 +14,28 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class FileRepository extends ServiceEntityRepository
 {
-	public function __construct(ManagerRegistry $registry)
-	{
-		parent::__construct($registry, File::class);
-	}
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, File::class);
+    }
 
     /**
      * @param string $begin
      * @return File[] Returns an array of File objects
      */
-	public function findByFilePathBegin(string $begin): array
+    public function findByFilePathBegin(string $begin): array
     {
-		return $this->createQueryBuilder('f')
-			->andWhere('f.file LIKE :begin')
-			->setParameter('begin', $begin . '%')
-			->getQuery()
-			->getResult();
-	}
-
-	/*
-	public function findOneBySomeField($value): ?File
-	{
-		return $this->createQueryBuilder('f')
-			->andWhere('f.exampleField = :val')
-			->setParameter('val', $value)
-			->getQuery()
-			->getOneOrNullResult()
-		;
-	}
-	*/
+        return $this->createQueryBuilder('f')->andWhere('f.file LIKE :begin')->setParameter('begin', $begin . '%')->getQuery()->getResult();
+    }
+    /*
+    public function findOneBySomeField($value): ?File
+    {
+        return $this->createQueryBuilder('f')
+            ->andWhere('f.exampleField = :val')
+            ->setParameter('val', $value)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
+    */
 }

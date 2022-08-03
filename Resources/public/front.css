@@ -1,9 +1,9 @@
 body #file-manager-access-denied {
-  height: 100vh;
+    height: 100vh;
 }
 
 body #file-manager-access-denied img {
-  width: auto;
-  height: 80px;
-  display: block;
+    width: auto;
+    height: 80px;
+    display: block;
 }

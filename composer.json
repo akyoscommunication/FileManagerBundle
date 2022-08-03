@@ -1,48 +1,48 @@
 {
-	"name": "akyos/file-manager-bundle",
-	"description": "AkyosCMS for Symfony - FileManager",
-	"type": "symfony-bundle",
-	"require": {
-		"php": ">=7.4"
-	},
-	"require-dev": {
-	},
-	"license": "proprietary",
-	"authors": [
-		{
-			"name": "Lilian Carneau",
-			"email": "lilian@akyos.com"
-		},
-		{
-			"name": "Johan JOULKVA",
-			"email": "johan@akyos.com"
-		},
-		{
-			"name": "Thomas Sebert",
-			"email": "thomas@akyos.com"
-		}
-	],
-	"scripts": {
-		"after-install-dependencies": [
-			"echo $'\n' >> config/routes.yaml",
-			"echo 'file_manager:' >> config/routes.yaml",
-			"echo '    resource: \"../lib/FileManagerBundle/Controller/\"' >> config/routes.yaml",
-			"echo '    type: annotation' >> config/routes.yaml",
-			"mv lib/FileManagerBundle/InstallFiles/Config/security.yaml config/packages",
-			"mv lib/FileManagerBundle/InstallFiles/Templates/front_layout.html.twig templates/bundles/AkyosCoreBundle/front/layouts",
-			"rm -rf lib/FileManagerBundle/InstallFiles",
-			"php bin/console asset:install --symlink",
-			"composer dump-autoload",
-			"php bin/console make:migration",
-			"php bin/console doctrine:migrations:migrate",
-			"mkdir secured_files",
-			"mkdir public/uploads"
-		]
-	},
-	"minimum-stability": "dev",
-	"autoload": {
-		"psr-4": {
-			"Akyos\\FileManagerBundle\\": ""
-		}
-	}
+  "name": "akyos/file-manager-bundle",
+  "description": "AkyosCMS for Symfony - FileManager",
+  "type": "symfony-bundle",
+  "require": {
+    "php": ">=7.4"
+  },
+  "require-dev": {
+  },
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Lilian Carneau",
+      "email": "lilian@akyos.com"
+    },
+    {
+      "name": "Johan JOULKVA",
+      "email": "johan@akyos.com"
+    },
+    {
+      "name": "Thomas Sebert",
+      "email": "thomas@akyos.com"
+    }
+  ],
+  "scripts": {
+    "after-install-dependencies": [
+      "echo $'\n' >> config/routes.yaml",
+      "echo 'file_manager:' >> config/routes.yaml",
+      "echo '    resource: \"../lib/FileManagerBundle/Controller/\"' >> config/routes.yaml",
+      "echo '    type: annotation' >> config/routes.yaml",
+      "mv lib/FileManagerBundle/InstallFiles/Config/security.yaml config/packages",
+      "mv lib/FileManagerBundle/InstallFiles/Templates/front_layout.html.twig templates/bundles/AkyosCoreBundle/front/layouts",
+      "rm -rf lib/FileManagerBundle/InstallFiles",
+      "php bin/console asset:install --symlink",
+      "composer dump-autoload",
+      "php bin/console make:migration",
+      "php bin/console doctrine:migrations:migrate",
+      "mkdir secured_files",
+      "mkdir public/uploads"
+    ]
+  },
+  "minimum-stability": "dev",
+  "autoload": {
+    "psr-4": {
+      "Akyos\\FileManagerBundle\\": ""
+    }
+  }
 }

@@ -12,6 +12,7 @@ use Symfony\Component\Validator\Constraint;
 class MimeConstraint extends Constraint
 {
     public string $message = 'Le fichier "{{ value }}" n\'est pas un fichier valide. Types de fichiers autorisés : {{ types }}.';
+
     public array $types = [];
 
     public function __construct($options = null)

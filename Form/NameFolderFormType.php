@@ -10,19 +10,15 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class NameFolderFormType extends AbstractType
 {
-	public function buildForm(FormBuilderInterface $builder, array $options)
-	{
-		$builder
-			->add('name', TextType::class, [
-				'label' => 'Nom du dossier',
-			])
-			->add('folder', HiddenType::class);
-	}
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder->add('name', TextType::class, ['label' => 'Nom du dossier',])->add('folder', HiddenType::class);
+    }
 
-	public function configureOptions(OptionsResolver $resolver)
-	{
-		$resolver->setDefaults([
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults([
 
-		]);
-	}
+        ]);
+    }
 }

@@ -15,6 +15,7 @@ use Symfony\Component\Validator\ConstraintValidator;
 class MimeConstraintValidator extends ConstraintValidator
 {
     private EntityManagerInterface $em;
+
     private KernelInterface $kernel;
 
     public function __construct(EntityManagerInterface $em, KernelInterface $kernel)
@@ -34,9 +35,7 @@ class MimeConstraintValidator extends ConstraintValidator
             foreach ($value as $i) {
                 $this->findFile($i, $constraint);
             }
-        }
-        /** FileManagerType */
-        else if (is_string($value)) {
+        } /** FileManagerType */ elseif (is_string($value)) {
             $this->findFile($value, $constraint);
         }
     }
@@ -49,31 +48,22 @@ class MimeConstraintValidator extends ConstraintValidator
     {
         $file = $this->em->getRepository(File::class)->find($id);
         if ($file) {
-            if (file_exists($this->kernel->getProjectDir().'/public'.$file->getFile())) {
-                $mime = mime_content_type($this->kernel->getProjectDir().'/public'.$file->getFile());
-            } else if (file_exists($this->kernel->getProjectDir().$file->getFile())) {
-                $mime = mime_content_type($this->kernel->getProjectDir().$file->getFile());
+            if (file_exists($this->kernel->getProjectDir() . '/public' . $file->getFile())) {
+                $mime = mime_content_type($this->kernel->getProjectDir() . '/public' . $file->getFile());
+            } elseif (file_exists($this->kernel->getProjectDir() . $file->getFile())) {
+                $mime = mime_content_type($this->kernel->getProjectDir() . $file->getFile());
             } else {
                 $mime = false;
             }
 
             if ($mime && !in_array($mime, $constraint->types, true)) {
-                $this->context->buildViolation($constraint->message)
-                    ->setParameter('{{ value }}', $file->getName())
-                    ->setParameter('{{ types }}', implode(',', $constraint->types))
-                    ->addViolation();
+                $this->context->buildViolation($constraint->message)->setParameter('{{ value }}', $file->getName())->setParameter('{{ types }}', implode(',', $constraint->types))->addViolation();
             }
             if (!$mime) {
-                $this->context->buildViolation($constraint->message)
-                    ->setParameter('{{ value }}', $file->getName())
-                    ->setParameter('{{ types }}', implode(',', $constraint->types))
-                    ->addViolation();
+                $this->context->buildViolation($constraint->message)->setParameter('{{ value }}', $file->getName())->setParameter('{{ types }}', implode(',', $constraint->types))->addViolation();
             }
         } else {
-            $this->context->buildViolation($constraint->message)
-                ->setParameter('{{ value }}', $file->getName())
-                ->setParameter('{{ types }}', implode(',', $constraint->types))
-                ->addViolation();
+            $this->context->buildViolation($constraint->message)->setParameter('{{ value }}', $file->getName())->setParameter('{{ types }}', implode(',', $constraint->types))->addViolation();
         }
     }
 }

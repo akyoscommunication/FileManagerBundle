@@ -7,92 +7,82 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 
-/**
- * @ORM\Entity(repositoryClass=PrivateSpaceRepository::class)
- */
+#[ORM\Entity(repositoryClass: PrivateSpaceRepository::class)]
 class PrivateSpace
 {
-	use TimestampableEntity;
-	
-	/**
-	 * @ORM\Id
-	 * @ORM\GeneratedValue
-	 * @ORM\Column(type="integer")
-	 */
-	private $id;
+    use TimestampableEntity;
 
-	/**
-	 * @ORM\Column(type="string", length=255)
-	 */
-	private $name;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
+    private $id;
 
-	/**
-	 * @ORM\Column(type="simple_array")
-	 */
-	private $roles = [];
+    #[ORM\Column(type: 'string', length: 255)]
+    private $name;
 
-	/**
-	 * @ORM\ManyToOne(targetEntity=FileManagerOptions::class, inversedBy="privateSpaces")
-	 * @ORM\JoinColumn(nullable=false)
-	 */
-	private $fileManagerOptions;
+    #[ORM\Column(type: 'simple_array')]
+    private $roles = [];
 
-	/**
-	 * @Gedmo\Slug(fields={"name"}, updatable=false)
-	 * @ORM\Column(type="string", length=255)
-	 */
-	private $slug;
+    #[ORM\ManyToOne(targetEntity: FileManagerOptions::class, inversedBy: 'privateSpaces')]
+    #[ORM\JoinColumn(nullable: false)]
+    private $fileManagerOptions;
 
-	public function getId(): ?int
-	{
-		return $this->id;
-	}
+    /**
+     * @Gedmo\Slug(fields={"name"}, updatable=false)
+     */
+    #[ORM\Column(type: 'string', length: 255)]
+    private $slug;
 
-	public function getName(): ?string
-	{
-		return $this->name;
-	}
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
 
-	public function setName(string $name): self
-	{
-		$this->name = $name;
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
 
-		return $this;
-	}
+    public function setName(string $name): self
+    {
+        $this->name = $name;
 
-	public function getRoles(): ?array
-	{
-		return $this->roles;
-	}
+        return $this;
+    }
 
-	public function setRoles(array $roles): self
-	{
-		$this->roles = $roles;
+    public function getRoles(): ?array
+    {
+        return $this->roles;
+    }
 
-		return $this;
-	}
+    public function setRoles(array $roles): self
+    {
+        $this->roles = $roles;
 
-	public function getFileManagerOptions(): ?FileManagerOptions
-	{
-		return $this->fileManagerOptions;
-	}
+        return $this;
+    }
 
-	public function setFileManagerOptions(?FileManagerOptions $fileManagerOptions): self
-	{
-		$this->fileManagerOptions = $fileManagerOptions;
+    public function getFileManagerOptions(): ?FileManagerOptions
+    {
+        return $this->fileManagerOptions;
+    }
 
-		return $this;
-	}
+    public function setFileManagerOptions(?FileManagerOptions $fileManagerOptions): self
+    {
+        $this->fileManagerOptions = $fileManagerOptions;
 
-	public function getSlug(): ?string
-	{
-		return $this->slug;
-	}
+        return $this;
+    }
 
-	public function setSlug(string $slug): self
-	{
-		$this->slug = $slug;
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
 
-		return $this;
-	}
+    public function setSlug(string $slug): self
+    {
+        $this->slug = $slug;
+
+        return $this;
+    }
 }

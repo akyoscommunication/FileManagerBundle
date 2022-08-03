@@ -5,133 +5,120 @@ namespace Akyos\FileManagerBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Akyos\FileManagerBundle\Repository\FileRepository;
 
-/**
- * @ORM\Entity(repositoryClass="Akyos\FileManagerBundle\Repository\FileRepository")
- */
+#[ORM\Entity(repositoryClass: FileRepository::class)]
 class File
 {
-	use TimestampableEntity;
+    use TimestampableEntity;
 
-	public const ENTITY_SLUG = "files";
+    public const ENTITY_SLUG = "files";
 
-	/**
-	 * @ORM\Id()
-	 * @ORM\GeneratedValue()
-	 * @ORM\Column(type="integer")
-	 */
-	private $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
+    private $id;
 
-	/**
-	 * @ORM\Column(type="string", length=255)
-	 */
-	private $name;
+    #[ORM\Column(type: 'string', length: 255)]
+    private $name;
 
-	/**
-	 * @Gedmo\Slug(fields={"name"})
-	 * @ORM\Column(type="string", length=255)
-	 */
-	private $slug;
+    /**
+     * @Gedmo\Slug(fields={"name"})
+     */
+    #[ORM\Column(type: 'string', length: 255)]
+    private $slug;
 
-	/**
-	 * @ORM\Column(type="string", length=255, nullable=true)
-	 */
-	private $alt;
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $alt;
 
-	/**
-	 * @ORM\Column(type="text", nullable=true)
-	 */
-	private $description;
+    #[ORM\Column(type: 'text', nullable: true)]
+    private $description;
 
-	/**
-	 * @ORM\Column(type="string", length=999)
-	 */
-	private $file;
+    #[ORM\Column(type: 'string', length: 999)]
+    private $file;
 
-	/**
-	 * @ORM\Column(type="simple_array", nullable=true)
-	 */
-	private $visibility = [];
+    #[ORM\Column(type: 'simple_array', nullable: true)]
+    private $visibility = [];
 
-	public function getId(): ?int
-	{
-		return $this->id;
-	}
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
 
-	public function getName(): ?string
-	{
-		return $this->name;
-	}
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
 
-	public function setName(string $name): self
-	{
-		$this->name = $name;
+    public function setName(string $name): self
+    {
+        $this->name = $name;
 
-		return $this;
-	}
+        return $this;
+    }
 
-	public function getSlug(): ?string
-	{
-		return $this->slug;
-	}
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
 
-	public function setSlug(string $slug): self
-	{
-		$this->slug = $slug;
+    public function setSlug(string $slug): self
+    {
+        $this->slug = $slug;
 
-		return $this;
-	}
+        return $this;
+    }
 
-	public function getAlt(): ?string
-	{
-		return $this->alt;
-	}
+    public function getAlt(): ?string
+    {
+        return $this->alt;
+    }
 
-	public function setAlt(?string $alt): self
-	{
-		$this->alt = $alt;
+    public function setAlt(?string $alt): self
+    {
+        $this->alt = $alt;
 
-		return $this;
-	}
+        return $this;
+    }
 
-	public function getDescription(): ?string
-	{
-		return $this->description;
-	}
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
 
-	public function setDescription(?string $description): self
-	{
-		$this->description = $description;
+    public function setDescription(?string $description): self
+    {
+        $this->description = $description;
 
-		return $this;
-	}
+        return $this;
+    }
 
-	public function getFile(): ?string
-	{
-		return $this->file;
-	}
+    public function getFile(): ?string
+    {
+        return $this->file;
+    }
 
-	public function setFile(string $file): self
-	{
-		$this->file = $file;
+    public function setFile(string $file): self
+    {
+        $this->file = $file;
 
-		return $this;
-	}
+        return $this;
+    }
 
-	public function __toString()
-	{
-		return $this->name;
-	}
+    public function __toString()
+    {
+        return $this->name;
+    }
 
-	public function getVisibility(): ?array
-	{
-		return $this->visibility;
-	}
+    public function getVisibility(): ?array
+    {
+        return $this->visibility;
+    }
 
-	public function setVisibility(?array $visibility): self
-	{
-		$this->visibility = $visibility;
+    public function setVisibility(?array $visibility): self
+    {
+        $this->visibility = $visibility;
 
-		return $this;
-	}
+        return $this;
+    }
 }

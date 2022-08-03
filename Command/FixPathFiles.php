@@ -16,42 +16,36 @@ use Symfony\Component\HttpKernel\KernelInterface;
 
 class FixPathFiles extends Command
 {
-	protected static $defaultName = 'file-manager:fix-path-file';
-	private EntityManagerInterface $em;
-	
-	public function __construct(EntityManagerInterface $em, ParameterBagInterface $parameterBag, KernelInterface $kernel, UploadsService $uploadsService)
-	{
-		$this->em = $em;
-	}
-	
-	protected function configure()
-	{
-		$this
-			->setDescription('Fix les path des files.');
-	}
-	
-	protected function execute(InputInterface $input, OutputInterface $output): int
-	{
+    protected static $defaultName = 'file-manager:fix-path-file';
+
+    private EntityManagerInterface $em;
+
+    public function __construct(EntityManagerInterface $em, ParameterBagInterface $parameterBag, KernelInterface $kernel, UploadsService $uploadsService)
+    {
+        $this->em = $em;
+    }
+
+    protected function configure()
+    {
+        $this->setDescription('Fix les path des files.');
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output): int
+    {
         // TODO => Finir le code
         die();
 
-		$io = new SymfonyStyle($input, $output);
+        $io = new SymfonyStyle($input, $output);
 
-		$fileRepository = $this->em->getRepository(File::class);
+        $fileRepository = $this->em->getRepository(File::class);
 
-		foreach ($fileRepository->findAll() as $file) {
-		    if (
-		        (strpos($file->getFile(), '//') !== false)
-                || (strpos($file->getFile(), '///') !== false)
-                || (strpos($file->getFile(), '////') !== false)
-            ) {
+        foreach ($fileRepository->findAll() as $file) {
+            if ((strpos($file->getFile(), '//') !== false) || (strpos($file->getFile(), '///') !== false) || (strpos($file->getFile(), '////') !== false)) {
                 /**
                  * Problème
                  *   - Il y a des entités qui on des files rattaché à ceux qu'on veut supprimer
                  *   - donc si on supprime, ça pète le site, le rendu des images puisqu'il y en a plus
-                 *
                  *   - il faudrait retrouver les champs qui on comme fonction la récupération de fichier et réassigné le bon fichier avec le bon path
-                 *
                  * Solution Possible
                  *   - parcourir tous les forms pour savoir quelles sont les propriétés des entités qui sont bind au fileManager (fileManagerType, fileManagerCollectionType)
                  *   - et re faire la manipulation de parcours de tous les paths qui sont pas bon en devinant celui qui est bon
@@ -61,9 +55,9 @@ class FixPathFiles extends Command
                 $this->em->flush();
             }
         }
-		
-		$io->success('Changement terminé.');
-		
-		return 0;
-	}
+
+        $io->success('Changement terminé.');
+
+        return 0;
+    }
 }

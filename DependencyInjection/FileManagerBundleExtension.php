@@ -16,18 +16,15 @@ class FileManagerBundleExtension extends Extension
      * @param ContainerBuilder $container
      * @throws Exception
      */
-	public function load(array $configs, ContainerBuilder $container)
-	{
-	    /** @var ConfigurationInterface $configuration */
-		$configuration = $this->getConfiguration($configs, $container);
-		$config = $this->processConfiguration($configuration, $configs);
-		
-		$loader = new YamlFileLoader(
-			$container,
-			new FileLocator(__DIR__ . '/../Resources/config')
-		);
-		$loader->load('services.yaml');
-		
-		$container->setParameter('file_manager_spaces_roles', $config['file_manager_spaces_roles']);
-	}
+    public function load(array $configs, ContainerBuilder $container)
+    {
+        /** @var ConfigurationInterface $configuration */
+        $configuration = $this->getConfiguration($configs, $container);
+        $config = $this->processConfiguration($configuration, $configs);
+
+        $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
+        $loader->load('services.yaml');
+
+        $container->setParameter('file_manager_spaces_roles', $config['file_manager_spaces_roles']);
+    }
 }

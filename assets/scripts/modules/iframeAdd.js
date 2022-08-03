@@ -30,10 +30,10 @@ class IframeAdd {
         const forms = fileManagerInputs.parents('form');
         forms.on('submit', function (e) {
             const inputs = $(this).find('.aky-file-container .aky-file-input input');
-			$('.empty-field').remove();
+            $('.empty-field').remove();
             inputs.each(function () {
                 if ($(this)[0].hasAttribute('data-required') && !$(this).val()) {
-                	e.preventDefault();
+                    e.preventDefault();
                     $(this).parents('.aky-file').after('<div class="empty-field small text-danger mt-3">Ce champ est obligatoire!</div>');
                 }
             })

@@ -10,16 +10,15 @@ use Doctrine\Common\Annotations\Annotation;
  */
 class PathAnnotation
 {
-	private $field;
+    private $field;
 
-	public function __construct(array $values)
-	{
-		$this->field = $values['field'];
-	}
+    public function __construct(array $values)
+    {
+        $this->field = $values['field'];
+    }
 
-	public function getField()
-	{
-		return $this->field;
-	}
-
+    public function getField()
+    {
+        return $this->field;
+    }
 }
