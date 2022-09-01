@@ -35,6 +35,7 @@ class FixFolderAndFileNamesCommand extends Command
         $this->parameterBag = $parameterBag;
         $this->kernel = $kernel;
         $this->uploadsService = $uploadsService;
+        parent::__construct();
     }
 
     protected function configure()
