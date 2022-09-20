@@ -1,5 +1,5 @@
 <?php
-
+/**
 namespace Akyos\FileManagerBundle\Service;
 
 use Akyos\CmsBundle\Entity\AdminAccess;
@@ -37,3 +37,4 @@ class ExtendAdminAccess
         return new Response('true');
     }
 }
+**/
