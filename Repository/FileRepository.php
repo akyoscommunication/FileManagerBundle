@@ -27,15 +27,22 @@ class FileRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('f')->andWhere('f.file LIKE :begin')->setParameter('begin', $begin . '%')->getQuery()->getResult();
     }
-    /*
-    public function findOneBySomeField($value): ?File
+
+    public function add(File $entity, bool $flush = false): void
     {
-        return $this->createQueryBuilder('f')
-            ->andWhere('f.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        $this->getEntityManager()->persist($entity);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
     }
-    */
+
+    public function remove(File $entity, bool $flush = false): void
+    {
+        $this->getEntityManager()->remove($entity);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
 }

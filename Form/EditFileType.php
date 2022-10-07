@@ -3,7 +3,7 @@
 namespace Akyos\FileManagerBundle\Form;
 
 use Akyos\FileManagerBundle\Entity\File;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -13,16 +13,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class EditFileType extends AbstractType
 {
-    private ContainerInterface $container;
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
-    }
+    public function __construct(
+        private readonly ContainerInterface $parameterBag
+    ){}
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $roles = $this->container->getParameter('file_manager_spaces_roles');
+        $roles = $this->parameterBag->get('file_manager_spaces_roles');
         $roles = array_reverse($roles);
         $roles['Public (toute personne qui a le lien peut voir le fichier)'] = 'ANONYMOUS';
         $roles = array_reverse($roles);

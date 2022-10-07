@@ -1,9 +1,0 @@
-body #file-manager-access-denied {
-    height: 100vh;
-}
-
-body #file-manager-access-denied img {
-    width: auto;
-    height: 80px;
-    display: block;
-}
