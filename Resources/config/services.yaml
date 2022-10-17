@@ -14,7 +14,7 @@ services:
     # please note that last definitions always *replace* previous ones
 
     Akyos\FileManagerBundle\:
-        resource: '../../../../lib/FileManagerBundle/*'
+        resource: './../../*'
         tags: [ 'controller.service_arguments' ]
         public: true
 
