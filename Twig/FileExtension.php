@@ -6,6 +6,7 @@ use Akyos\FileManagerBundle\Entity\File;
 use Akyos\FileManagerBundle\Repository\FileRepository;
 use Akyos\FileManagerBundle\Service\UploadsService;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Environment;
 use Twig\Error\LoaderError;
@@ -27,15 +28,16 @@ class FileExtension extends AbstractExtension
 
     private Environment $twig;
 
-    private string $rootPath = __DIR__ . '/../../..';
+    private RequestStack $requestStack;
 
-    public function __construct(FileRepository $fileRepository, ParameterBagInterface $parameterBag, UploadsService $uploadsService, UrlGeneratorInterface $urlGenerator, Environment $twig)
+    public function __construct(FileRepository $fileRepository, ParameterBagInterface $parameterBag, UploadsService $uploadsService, UrlGeneratorInterface $urlGenerator, Environment $twig, RequestStack $requestStack)
     {
         $this->fileRepository = $fileRepository;
         $this->parameterBag = $parameterBag;
         $this->uploadsService = $uploadsService;
         $this->urlGenerator = $urlGenerator;
         $this->twig = $twig;
+        $this->requestStack = $requestStack;
     }
 
     /**
@@ -163,13 +165,14 @@ class FileExtension extends AbstractExtension
         $file = null;
         $streamedValue = null;
         $streamedFile = null;
+        $rootPath = $this->parameterBag->get('root_path');
 
         if (preg_match($pathPattern, $value)) {
             if (strpos($value, $this->parameterBag->get('secured_dir')) !== false || strpos($value, $this->parameterBag->get('private_spaces_dir')) !== false) {
-                $pathToValue = $this->rootPath . $value;
+                $pathToValue = $rootPath . $value;
                 $streamedValue = $this->urlGenerator->generate('file_download_secured_file', ['path' => $value, 'display' => true]);
             } else {
-                $pathToValue = $this->rootPath . '/public' . $value;
+                $pathToValue = $rootPath . '/public' . $value;
             }
         }
 
@@ -180,10 +183,10 @@ class FileExtension extends AbstractExtension
                 return false;
             }
             if (strpos($file->getFile(), $this->parameterBag->get('secured_dir')) !== false || strpos($file->getFile(), $this->parameterBag->get('private_spaces_dir')) !== false) {
-                $pathToFile = $this->rootPath . $file->getFile();
+                $pathToFile = $rootPath . $file->getFile();
                 $streamedFile = $this->urlGenerator->generate('file_download_secured_file', ['path' => $file->getFile(), 'display' => true]);
             } else {
-                $pathToFile = $this->rootPath . '/public' . $file->getFile();
+                $pathToFile = $rootPath . '/public' . $file->getFile();
             }
         }
 
@@ -198,7 +201,8 @@ class FileExtension extends AbstractExtension
         } elseif (preg_match($pathPattern, $value)) {
             // FILE PATH
             if (isset($pathToValue) && file_exists($pathToValue)) {
-                $valueToDisplay = ($streamedValue ?: $value);
+                $valueToDisplay = ($streamedValue ?: $this->requestStack->getCurrentRequest()->getUriForPath($value));
+
                 if (explode("/", mime_content_type($pathToValue))[0] === 'image') {
                     // FILE TYPE IMAGE
                     $result = '<img class="' . ($lazy ? 'lazy-load not-loaded' : '') . ' aky-img" src="' . ($lazy ? '' : $valueToDisplay) . '" ' . ($lazy ? 'data-src="' . $valueToDisplay . '"' : '') . ' alt=""/>';

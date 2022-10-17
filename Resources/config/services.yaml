@@ -1,6 +1,7 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     web_dir: '/uploads'
+    root_path: '%kernel.project_dir%'
     secured_dir: '/secured_files'
     private_spaces_dir: '/private_spaces_files'
 
