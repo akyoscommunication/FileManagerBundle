@@ -225,7 +225,7 @@ class FileExtension extends AbstractExtension
                 }
             }
         } elseif ($file) {
-            $fileToDisplay = $streamedFile ?: $file->getFile();
+            $fileToDisplay = $streamedFile ?: $this->requestStack->getCurrentRequest()->getUriForPath($file->getFile());
             // FILE ID
             if (isset($pathToFile) && file_exists($pathToFile)) {
                 // SVG
