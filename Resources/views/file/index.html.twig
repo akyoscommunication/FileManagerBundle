@@ -41,28 +41,28 @@
 		{% if view =="public" %}
 			<div class="small mt-1">Les dossiers et fichiers de ce dossier sont visibles et modifiables par
 				<b>tous les
-					                    utilisateurs ayant accès au gestionnaire de fichiers</b>. Même s'ils ne sont affichés nulle part sur
-					                le site, toute personne qui connait le lien vers un de ces fichiers peut le voir.
+										                    utilisateurs ayant accès au gestionnaire de fichiers</b>. Même s'ils ne sont affichés nulle part sur
+										                le site, toute personne qui connait le lien vers un de ces fichiers peut le voir.
 			</div>
 		{% endif %}
 		{% if view =="private_space" %}
 			<div class="small mt-1">Les dossiers et fichiers de ce dossier sont visibles et modifiables
 				<b>uniquement
-					                    par les utilisateurs ayant accès à cet espace partagé</b>. Les fichiers de cet espace sont protégés:
+										                    par les utilisateurs ayant accès à cet espace partagé</b>. Les fichiers de cet espace sont protégés:
 				<b>seuls les utilisateurs ayant accès à cet espace partagé</b>
 				peuvent les voir, sauf si vous modifiez
-				                leur visibilité en éditant le fichier. Même avec le lien, quelqu'un qui n'est pas autorisé à accéder au
-				                fichier ne pourra pas le voir.
+								                leur visibilité en éditant le fichier. Même avec le lien, quelqu'un qui n'est pas autorisé à accéder au
+								                fichier ne pourra pas le voir.
 			</div>
 		{% endif %}
 		{% if view =="secured" %}
 			<div class="small mt-1">Les dossiers et fichiers de ce dossier sont visibles et modifiables
 				<b>uniquement
-					                    par vous et le super-admin du site</b>. Les fichiers de cet espace sont protégés:
+										                    par vous et le super-admin du site</b>. Les fichiers de cet espace sont protégés:
 				<b>seuls vous et
-					                    le super-admin du site</b>
+										                    le super-admin du site</b>
 				pouvez les voir, sauf si vous modifiez leur visibilité en éditant le
-				                fichier. Même avec le lien, quelqu'un qui n'est pas autorisé à accéder au fichier ne pourra pas le voir.
+								                fichier. Même avec le lien, quelqu'un qui n'est pas autorisé à accéder au fichier ne pourra pas le voir.
 			</div>
 		{% endif %}
 	</section>
@@ -78,12 +78,12 @@
 				Nouveaux fichiers
 			</button>
 			{% if app.request.get('order') and app.request.get('order') == '1' %}
-				<a href="{{ app.request.requestUri }}&order=0" class="btn btn-primary btn-sm ml-2">
+				<a href="{{ app.request.requestUri }}{{ app.request.request.all()|length == 0 ? '?' : '&' }}order=0" class="btn btn-primary btn-sm ml-2">
 					<i class="fas fa-file-upload"></i>
 					Enveler le Trie A - Z
 				</a>
 			{% else %}
-				<a href="{{ app.request.requestUri }}&order=1" class="btn btn-primary btn-sm ml-2">
+				<a href="{{ app.request.requestUri }}{{ app.request.request.all()|length == 0 ? '?' : '&' }}order=1" class="btn btn-primary btn-sm ml-2">
 					<i class="fas fa-file-upload"></i>
 					Triez A - Z
 				</a>
