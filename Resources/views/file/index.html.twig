@@ -157,64 +157,66 @@
     <section>
         <div class="small-title mb-2">Fichiers</div>
         <div class="aky-file-list">
-            {% for file in files|sort((a,b) => a.name <=> b.name) %}
-                <div class="aky-file-container">
-                    <div class="aky-file">
-                        <a href="#" class="aky-file-preview aky-file-addto-btn" data-path="{{ file.path }}"
-                           data-urltoget="{{ path('file_get_file_id') }}">
-                            {{ renderFileManager(file.path, false, true)|raw }}
-                        </a>
-                        <div class="aky-file-btnmanager">
-                            <div class="btn-group" role="group">
-                                {% if view != "public" %}
-                                    <a href="{{ path('file_download_secured_file', {'path': file.path}) }}"
-                                       class="btn btn-primary btn-sm" data-toggle="tooltip" title="Télécharger"><i
-                                                class="fas fa-file-download"></i></a>
-                                {% else %}
-                                    <a href="{{ renderFileManagerUrl(file.path) }}" class="btn btn-primary btn-sm"
-                                       target="_blank" rel="noopener noreferrer" data-toggle="tooltip"
-                                       title="Ouvrir dans un  nouvel onglet"><i
-                                                class="fas fa-external-link-alt"></i></a>
-                                {% endif %}
-                                <button type="button" class="btn btn-primary btn-sm aky-filemanager-modal-edit-file-btn"
-                                        data-toggle="modal" data-target="#aky-filemanager-modal-edit-file"
-                                        data-path="{{ file.path }}"
-                                        data-url="{{ path('file_edit', { 'path' : file.path, 'view': view, 'private_space': private_space ? private_space.id : null }) }}">
+            {% if files %}
+                {% for file in files|sort((a,b) => a.name <=> b.name) %}
+                    <div class="aky-file-container">
+                        <div class="aky-file">
+                            <a href="#" class="aky-file-preview aky-file-addto-btn" data-path="{{ file.path }}"
+                               data-urltoget="{{ path('file_get_file_id') }}">
+                                {{ renderFileManager(file.path, false, true)|raw }}
+                            </a>
+                            <div class="aky-file-btnmanager">
+                                <div class="btn-group" role="group">
+                                    {% if view != "public" %}
+                                        <a href="{{ path('file_download_secured_file', {'path': file.path}) }}"
+                                           class="btn btn-primary btn-sm" data-toggle="tooltip" title="Télécharger"><i
+                                                    class="fas fa-file-download"></i></a>
+                                    {% else %}
+                                        <a href="{{ renderFileManagerUrl(file.path) }}" class="btn btn-primary btn-sm"
+                                           target="_blank" rel="noopener noreferrer" data-toggle="tooltip"
+                                           title="Ouvrir dans un  nouvel onglet"><i
+                                                    class="fas fa-external-link-alt"></i></a>
+                                    {% endif %}
+                                    <button type="button" class="btn btn-primary btn-sm aky-filemanager-modal-edit-file-btn"
+                                            data-toggle="modal" data-target="#aky-filemanager-modal-edit-file"
+                                            data-path="{{ file.path }}"
+                                            data-url="{{ path('file_edit', { 'path' : file.path, 'view': view, 'private_space': private_space ? private_space.id : null }) }}">
                                     <span data-toggle="tooltip"
                                           title="Modifier la description ou la visibilité du fichier">
                                         <i class="fas fa-pen"></i>
                                     </span>
-                                </button>
-                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
-                                        data-target="#aky-filemanager-modal-move-manager"
-                                        data-file="{{ file.absolutePath }}" data-type="FILE">
+                                    </button>
+                                    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
+                                            data-target="#aky-filemanager-modal-move-manager"
+                                            data-file="{{ file.absolutePath }}" data-type="FILE">
                                     <span data-toggle="tooltip" title="Déplacer">
                                         <i class="fas fa-hand-point-right"></i>
                                     </span>
-                                </button>
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                        <div class="aky-file-collection-remove">
-                            <form method="post" class="not-submit index-delete"
-                                  action="{{ path('file_delete', {'path' : app.request.get('path'), 'view': view, 'private_space': private_space ? private_space.id : null}) }}"
-                                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce fichier ? Il sera définitivement perdu.');"
-                                  data-toggle="tooltip" title="Supprimer">
-                                <input type="hidden" name="_method" value="DELETE">
-                                <input type="hidden" name="_file" value="{{ file.path }}">
-                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ file.name) }}">
-                                <button class="btn btn-danger btn-sm"><i class="fas fa-times"></i></button>
-                            </form>
-                        </div>
+                            <div class="aky-file-collection-remove">
+                                <form method="post" class="not-submit index-delete"
+                                      action="{{ path('file_delete', {'path' : app.request.get('path'), 'view': view, 'private_space': private_space ? private_space.id : null}) }}"
+                                      onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce fichier ? Il sera définitivement perdu.');"
+                                      data-toggle="tooltip" title="Supprimer">
+                                    <input type="hidden" name="_method" value="DELETE">
+                                    <input type="hidden" name="_file" value="{{ file.path }}">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ file.name) }}">
+                                    <button class="btn btn-danger btn-sm"><i class="fas fa-times"></i></button>
+                                </form>
+                            </div>
 
+                        </div>
+                        <div class="aky-file-infos">
+                            <div class="aky-file-infos__name">{{ file.name|slice(0, 40) }}</div>
+                            <div class="aky-file-infos__size">{{ file.size|format_bytes|replace({' ': '&nbsp;'})|raw }}</div>
+                        </div>
                     </div>
-                    <div class="aky-file-infos">
-                        <div class="aky-file-infos__name">{{ file.name|slice(0, 40) }}</div>
-                        <div class="aky-file-infos__size">{{ file.size|format_bytes|replace({' ': '&nbsp;'})|raw }}</div>
-                    </div>
-                </div>
-            {% else %}
-                <i><small>Pas de fichiers</small></i>
-            {% endfor %}
+                {% else %}
+                    <i><small>Pas de fichiers</small></i>
+                {% endfor %}
+            {% endif %}
         </div>
     </section>
     {% include '@AkyosFileManager/file/_modal.html.twig' %}
