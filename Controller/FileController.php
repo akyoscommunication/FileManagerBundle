@@ -71,16 +71,16 @@ class FileController extends AbstractController
 		));
 		
 		if ($fileHandler->uploadFile($uploadFileForm, $request)) {
-			return $this->redirectToRoute('file_index', ['path' => $relativePath, 'view' => $view, 'private_space' => $privateSpaceId]);
+			return $this->redirectToRoute('file_index', ['path' => $relativePath, 'view' => $view, 'private_space' => $privateSpaceId, 'order' => $request->get('order') ?: 0]);
 		}
 		
 		if ($fileHandler->manageFolder($nameFolderFormType, $request)) {
 			$newFolderName = $uploadsService->fixName($nameFolderFormType->get('name')->getData());
-			return $this->redirectToRoute('file_index', ['path' => $relativePath . '/' . $newFolderName, 'view' => $view, 'private_space' => $privateSpaceId]);
+			return $this->redirectToRoute('file_index', ['path' => $relativePath . '/' . $newFolderName, 'view' => $view, 'private_space' => $privateSpaceId, 'order' => $request->get('order') ?: 0]);
 		}
 		
 		if ($fileHandler->moveManager($moveFormType, $request)) {
-			return $this->redirectToRoute('file_index', ['path' => $nameFolderFormType->get('name')->getData(), 'view' => $view, 'private_space' => $privateSpaceId]);
+			return $this->redirectToRoute('file_index', ['path' => $nameFolderFormType->get('name')->getData(), 'view' => $view, 'private_space' => $privateSpaceId, 'order' => $request->get('order') ?: 0]);
 		}
 		
 		$finder = new Finder();
@@ -92,6 +92,10 @@ class FileController extends AbstractController
 		}
 		
 		$finder->files()->in($rootFilesPath . $relativePath);
+
+		if($request->get('order') && $request->get('order') == '1'){
+			$finder->sortByName();
+		}
 		
 		foreach ($finder->depth(0) as $file) {
 			$files[] = (object)array(
