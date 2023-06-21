@@ -29,7 +29,7 @@ class UploadsService
 
     private AuthorizationCheckerInterface $authorizationChecker;
 
-    private string $rootPath = __DIR__ . '/../../..';
+    private string $rootPath = __DIR__ . '/../../../..';
 
     public function __construct(KernelInterface $kernel, ParameterBagInterface $parameterBag, Security $security, Filesystem $filesystem, FileRepository $fileRepository, PrivateSpaceRepository $privateSpaceRepository, AuthorizationCheckerInterface $authorizationChecker)
     {
