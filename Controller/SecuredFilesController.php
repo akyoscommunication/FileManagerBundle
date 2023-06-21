@@ -42,7 +42,13 @@ class SecuredFilesController extends AbstractController
                 $explodeOnSlashes = explode('/', $explodeOnPrivateSpacesFiles[count($explodeOnPrivateSpacesFiles) - 1]);
                 $privateSpaceSlug = $explodeOnSlashes[0];
                 $privateSpace = $privateSpaceRepository->findOneBy(['slug' => $privateSpaceSlug]);
-                if ($privateSpace && !$this->isGranted($privateSpace->getRoles()) && (empty($file->getVisibility()) || !$file->getVisibility() || !($this->isGranted($file->getVisibility()) || in_array('ANONYMOUS', is_array($file->getVisibility()) ? $file->getVisibility() : [], true)))) {
+                $isGranted = false;
+                foreach($privateSpace->getRoles() as $role) {
+                    if($this->isGranted($role)) {
+                        $isGranted = true;
+                    }
+                }
+                if ($privateSpace && !$isGranted && (empty($file->getVisibility()) || !$file->getVisibility() || !($this->isGranted($file->getVisibility()) || in_array('ANONYMOUS', is_array($file->getVisibility()) ? $file->getVisibility() : [], true)))) {
                     return $this->render('@AkyosFileManager/file/error.html.twig', ['message' => 'Vous n\'avez pas l\'autorisation d\'accéder à ce fichier.',]);
                 }
             }
