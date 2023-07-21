@@ -24,7 +24,11 @@
                            aria-expanded="false">{{ file_manager_options.privateSpacesTab ? file_manager_options.privateSpacesTab : 'Espaces partagés' }}</a>
                         <div class="dropdown-menu w-100">
                             {% for key, privateSpace in file_manager_options.privateSpaces %}
-                                {% if is_granted(privateSpace.roles) %}
+                                {% set isGrantedForThisPrivateSpace = false %}
+                                {% for role in privateSpace.roles %}
+                                    {% if is_granted(role) %}{% set isGrantedForThisPrivateSpace = true %}{% endif %}
+                                {% endfor %}
+                                {% if isGrantedForThisPrivateSpace %}
                                     <a class="dropdown-item {{ view == "private_space" and private_space ? private_space.id : null == privateSpace.id ? "active" : "" }}"
                                        href="{{ path('file_index', {'view': "private_space", 'private_space' : privateSpace.id }) }}">{{ privateSpace.name }}</a>
                                     {% if not loop.last %}
