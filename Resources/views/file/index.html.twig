@@ -13,7 +13,9 @@
             {% if file_manager_options.privateSpaces is defined and file_manager_options.privateSpaces|length %}
                 {% set isGrantedForAtLeastOnePrivateSpace = false %}
                 {% for privateSpace in file_manager_options.privateSpaces %}
-                    {% if is_granted(privateSpace.roles) %}{% set isGrantedForAtLeastOnePrivateSpace = true %}{% endif %}
+                    {% for role in privateSpace.roles %}
+                        {% if is_granted(role) %}{% set isGrantedForAtLeastOnePrivateSpace = true %}{% endif %}
+                    {% endfor %}
                 {% endfor %}
                 {% if isGrantedForAtLeastOnePrivateSpace %}
                     <li class="nav-item dropdown">
