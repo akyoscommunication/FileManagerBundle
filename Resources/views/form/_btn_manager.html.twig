@@ -5,7 +5,7 @@
     </a>
 {% endif %}
 
-{% if config == 'full' %}
+{% if config == 'full' or config == 'video_only' %}
     <button type="button" class="btn btn-secondary aky-filemanager-externaly btn-sm" data-toggle="modal"
             data-target="#aky-filemanager-modal-input-{{ form.vars.id }}" data-input="#{{ form.vars.id }}">
         <i class="fas fa-link"></i>
@@ -16,7 +16,9 @@
     <span class="fas fa-eraser"></span>
 </button>
 
-<button type="button" class="btn btn-primary aky-filemanager-open btn-sm" data-toggle="modal"
+{% if config != 'video_only' %}
+    <button type="button" class="btn btn-primary aky-filemanager-open btn-sm" data-toggle="modal"
         data-target="#aky-filemanager-modal-{{ id }}" data-input="#{{ form.vars.id }}">
-    <span class="far fa-folder-open"></span>
-</button>
+        <span class="far fa-folder-open"></span>
+    </button>
+{% endif %}
