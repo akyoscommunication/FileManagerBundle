@@ -11,6 +11,13 @@ use Gedmo\Timestampable\Traits\TimestampableEntity;
 #[ORM\Entity(repositoryClass: FileManagerOptionsRepository::class)]
 class FileManagerOptions
 {
+    // Selection de fichiers dans le manager uniquement
+    const FILE_TYPE_CONFIG_RESTRICT = 'restrict';
+    // Selection de fichiers dans le manager + ajout manuel d'un lien
+    const FILE_TYPE_CONFIG_FULL = 'full';
+    // Ajout manuel d'un lien uniquement
+    const FILE_TYPE_CONFIG_VIDEO_ONLY = 'video_only';
+    
     use TimestampableEntity;
 
     #[ORM\Id]
