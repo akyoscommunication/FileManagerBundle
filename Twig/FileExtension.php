@@ -187,6 +187,9 @@ class FileExtension extends AbstractExtension
                 } elseif (pathinfo($pathToValue)['extension'] === 'csv') {
                     // FILE TYPE PDF (NO EMBED = TRUE)
                     $result = $this->twig->render('@AkyosFileManager/svg/csv.html.twig', ['alt' => '']);
+                } elseif (in_array(pathinfo($pathToValue)['extension'], ['xlsx', 'xls'])) {
+                    // FILE TYPE EXCEL
+                    $result = $this->twig->render('@AkyosFileManager/svg/excel.html.twig', ['alt' => '']);
 				} else if (substr($value, 0, 5) === "video") {
 					// FILE TYPE VIDEO
 					$result = '<video controls width="100%">';
@@ -202,7 +205,7 @@ class FileExtension extends AbstractExtension
 		} elseif ($file) {
 			$fileToDisplay = $streamedFile ?: $file->getFile();
 			// FILE ID
-			if (file_exists($pathToFile)) {
+            if (file_exists($pathToFile)) {
 				// SVG
 				if (mime_content_type($pathToFile) === 'image/svg') {
 					$svg_file = file_get_contents($pathToFile);
@@ -223,8 +226,11 @@ class FileExtension extends AbstractExtension
                             'alt' => $file->getAlt(),
                         ]);
                     } elseif (pathinfo($pathToFile)['extension'] === 'csv') {
-                            // FILE TYPE PDF (NO EMBED = TRUE)
+                        // FILE TYPE PDF (NO EMBED = TRUE)
                         $result = $this->twig->render('@AkyosFileManager/svg/csv.html.twig', ['alt' => '']);
+                    } elseif (in_array(pathinfo($pathToFile)['extension'], ['xlsx', 'xls'])) {
+                            // FILE TYPE EXCEL
+                        $result = $this->twig->render('@AkyosFileManager/svg/excel.html.twig', ['alt' => '']);
 					} else {
 						$result = '<embed width="100%" height="100%" src="' . $fileToDisplay . '" type="' . mime_content_type($pathToFile) . '"">';
 						$result .= '<style type="text/css">video {width: 100%; height: 100%}</style>';
