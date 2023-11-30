@@ -118,7 +118,7 @@ class FileController extends AbstractController
      * @param FileHandler $fileHandler
      * @return Response
      */
-    #[Route(path: '/delete/file', name: 'delete', methods: ['DELETE'])]
+    #[Route(path: '/delete/file', name: 'delete', methods: ['DELETE', 'POST'])]
     public function delete(Request $request, FileRepository $fileRepository, FileHandler $fileHandler): Response
     {
         $privateSpaceId = $request->get('private_space');
