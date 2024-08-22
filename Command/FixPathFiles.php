@@ -5,6 +5,7 @@ namespace Akyos\FileManagerBundle\Command;
 use Akyos\FileManagerBundle\Entity\File;
 use Akyos\FileManagerBundle\Service\UploadsService;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -14,10 +15,11 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpKernel\KernelInterface;
 
+#[AsCommand(
+    name: 'file-manager:fix-path-file',
+)]
 class FixPathFiles extends Command
 {
-    protected static $defaultName = 'file-manager:fix-path-file';
-
     private EntityManagerInterface $em;
 
     public function __construct(EntityManagerInterface $em, ParameterBagInterface $parameterBag, KernelInterface $kernel, UploadsService $uploadsService)
