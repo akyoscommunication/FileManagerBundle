@@ -37,7 +37,7 @@ class FileManagerCollectionType extends AbstractType implements DataTransformerI
         return 'file_manager_collection';
     }
 
-    public function transform($value)
+    public function transform(mixed $value): mixed
     {
         return $value;
     }
@@ -50,7 +50,7 @@ class FileManagerCollectionType extends AbstractType implements DataTransformerI
     /**
      * @inheritDoc
      */
-    public function reverseTransform($value): ?array
+    public function reverseTransform(mixed $value): mixed
     {
         if (count($value) === 0) {
             return null;
