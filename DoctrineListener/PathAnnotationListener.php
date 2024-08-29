@@ -4,20 +4,26 @@ namespace Akyos\FileManagerBundle\DoctrineListener;
 
 use Akyos\FileManagerBundle\Annotations\PathAnnotation;
 use Akyos\FileManagerBundle\Entity\File;
+use Doctrine\Bundle\DoctrineBundle\Attribute\AsEntityListener;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\ORM\Event\PrePersistEventArgs;
+use Doctrine\ORM\Event\PostUpdateEventArgs;
+use Doctrine\ORM\Events;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use ReflectionObject;
 
+#[AsEntityListener(event: Events::prePersist, method: 'prePersist', lazy: true)]
+#[AsEntityListener(event: Events::postUpdate, method: 'postUpdate', lazy: true)]
 class PathAnnotationListener
 {
     /**
-     * @param LifecycleEventArgs $args
+     * @param PrePersistEventArgs $args
      * @return bool
      */
-    public function prePersist(LifecycleEventArgs $args): bool
+    public function prePersist(PrePersistEventArgs $args): bool
     {
         $entity = $args->getEntity();
 
@@ -55,12 +61,12 @@ class PathAnnotationListener
     }
 
     /**
-     * @param LifecycleEventArgs $args
+     * @param PostUpdateEventArgs $args
      * @return bool
      * @throws ORMException
      * @throws OptimisticLockException|\Doctrine\ORM\ORMException
      */
-    public function postUpdate(LifecycleEventArgs $args): bool
+    public function postUpdate(PostUpdateEventArgs $args): bool
     {
         $entity = $args->getEntity();
 
