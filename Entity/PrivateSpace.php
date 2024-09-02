@@ -27,9 +27,7 @@ class PrivateSpace
     #[ORM\JoinColumn(nullable: false)]
     private $fileManagerOptions;
 
-    /**
-     * @Gedmo\Slug(fields={"name"}, updatable=false)
-     */
+    #[Gedmo\Slug(fields: ['name'], updatable: false)]
     #[ORM\Column(type: 'string', length: 255)]
     private $slug;
 

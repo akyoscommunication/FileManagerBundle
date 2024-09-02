@@ -22,9 +22,7 @@ class File
     #[ORM\Column(type: 'string', length: 255)]
     private $name;
 
-    /**
-     * @Gedmo\Slug(fields={"name"})
-     */
+    #[Gedmo\Slug(fields: ['name'], updatable: false)]
     #[ORM\Column(type: 'string', length: 255)]
     private $slug;
 
