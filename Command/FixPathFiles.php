@@ -26,7 +26,7 @@ class FixPathFiles extends Command
 	/** @var UploadsService $uploadsService */
 	private $uploadsService;
 	
-	public function __construct(EntityManagerInterface $em, string $name = null, ParameterBagInterface $parameterBag, KernelInterface $kernel, UploadsService $uploadsService)
+	public function __construct(EntityManagerInterface $em, ParameterBagInterface $parameterBag, KernelInterface $kernel, UploadsService $uploadsService)
 	{
 		parent::__construct($name);
 		$this->em = $em;
