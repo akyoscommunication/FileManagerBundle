@@ -184,6 +184,7 @@ class FileController extends AbstractController
             $file->setFile($path);
             $name = explode('/', $path);
             $name = $name[count($name) - 1];
+            $file->setSlug($name);
             $file->setName($name);
             $em->persist($file);
             $em->flush();
