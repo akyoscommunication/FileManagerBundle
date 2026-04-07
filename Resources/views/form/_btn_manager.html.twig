@@ -1,9 +1,9 @@
-{% if form.vars.value %}
-    <a href="{{ getImagePathById(form.vars.value) }}" class="btn btn-secondary aky-filemanager-externaly btn-sm"
-       target="_blank">
-        <i class="fas fa-eye"></i>
-    </a>
-{% endif %}
+<a href="{{ form.vars.value ? getImagePathById(form.vars.value) : '#' }}"
+   class="btn btn-secondary aky-filemanager-eye btn-sm"
+   target="_blank"
+   {% if not form.vars.value %}style="display:none"{% endif %}>
+    <i class="fas fa-eye"></i>
+</a>
 
 {% if config == 'full' or config == 'video_only' %}
     <button type="button" class="btn btn-secondary aky-filemanager-externaly btn-sm" data-toggle="modal"

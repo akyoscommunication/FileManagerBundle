@@ -82,6 +82,7 @@ class IframeAdd {
                 })
                 $('.modal-backdrop').remove();
                 loadPreview.loadPreview($(input), pathFile);
+                $(input).parents('.aky-file').find('.aky-filemanager-eye').attr('href', pathFile).show();
             },
             error: function (er) {
                 console.log(er, 'error');

@@ -2,7 +2,9 @@ class RemoveFile {
     static init() {
         $(document).on('click', '.aky-filemanager-delete', function () {
             $($(this).data('input')).val('');
-            $(this).parents('.aky-file').find('.aky-file-preview').html('');
+            const $akyFile = $(this).parents('.aky-file');
+            $akyFile.find('.aky-file-preview').html('');
+            $akyFile.find('.aky-filemanager-eye').attr('href', '#').hide();
         });
     }
 }
