@@ -13,15 +13,12 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class MoveType extends AbstractType
 {
-    private PrivateSpaceRepository $privateSpaceRepository;
+    private readonly AuthorizationCheckerInterface $authorizationChecker;
 
-    private AuthorizationCheckerInterface $authorizationChecker;
+    private readonly KernelInterface $kernel;
 
-    private KernelInterface $kernel;
-
-    public function __construct(PrivateSpaceRepository $privateSpaceRepository, AuthorizationCheckerInterface $authorizationChecker, KernelInterface $kernel)
+    public function __construct(private readonly PrivateSpaceRepository $privateSpaceRepository, AuthorizationCheckerInterface $authorizationChecker, KernelInterface $kernel)
     {
-        $this->privateSpaceRepository = $privateSpaceRepository;
         $this->authorizationChecker = $authorizationChecker;
         $this->kernel = $kernel;
     }
@@ -30,13 +27,13 @@ class MoveType extends AbstractType
     {
         $tree = ['Non' => ''];
         $tree['Dossier racine'] = $options['racine'] . '/';
-        if (strpos($options['racine'], '/secured_files')) {
+        if (strpos((string) $options['racine'], '/secured_files')) {
             $view = "secured";
         }
-        if (strpos($options['racine'], '/private_spaces_files')) {
+        if (strpos((string) $options['racine'], '/private_spaces_files')) {
             $view = "private_space";
         }
-        if (strpos($options['racine'], '/public/uploads')) {
+        if (strpos((string) $options['racine'], '/public/uploads')) {
             $view = "public";
         }
 
@@ -58,7 +55,7 @@ class MoveType extends AbstractType
 
         $privateSpaces = ['Non' => ''];
         foreach ($this->privateSpaceRepository->findAll() as $privateSpace) {
-            if ($this->authorizationChecker->isGranted($privateSpace->getRoles()) && strpos($options['racine'], '/private_spaces_files/' . $privateSpace->getSlug()) === false) {
+            if ($this->authorizationChecker->isGranted($privateSpace->getRoles()) && !str_contains((string) $options['racine'], '/private_spaces_files/' . $privateSpace->getSlug())) {
                 $privateSpaces[$privateSpace->getName()] = $this->kernel->getProjectDir() . '/private_spaces_files/' . $privateSpace->getSlug() . '/';
             }
         }

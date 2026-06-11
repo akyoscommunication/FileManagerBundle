@@ -15,23 +15,17 @@ use Symfony\Component\HttpKernel\KernelInterface;
 
 class FileHandler extends AbstractController
 {
-    private EntityManagerInterface $em;
+    private readonly EntityManagerInterface $em;
 
-    private Filesystem $fs;
+    private readonly Filesystem $fs;
 
-    private KernelInterface $kernel;
+    private readonly KernelInterface $kernel;
 
-    private UploadsService $uploadsService;
-
-    private PrivateSpaceRepository $privateSpaceRepository;
-
-    public function __construct(EntityManagerInterface $em, KernelInterface $kernel, Filesystem $filesystem, UploadsService $uploadsService, PrivateSpaceRepository $privateSpaceRepository)
+    public function __construct(EntityManagerInterface $em, KernelInterface $kernel, Filesystem $filesystem, private readonly UploadsService $uploadsService, private readonly PrivateSpaceRepository $privateSpaceRepository)
     {
         $this->em = $em;
         $this->fs = $filesystem;
         $this->kernel = $kernel;
-        $this->uploadsService = $uploadsService;
-        $this->privateSpaceRepository = $privateSpaceRepository;
     }
 
     /**
@@ -46,7 +40,7 @@ class FileHandler extends AbstractController
         $privateSpace = $this->privateSpaceRepository->find($privateSpaceId ?: 0);
         $view = $request->get('view') ?: "public";
         $relativePath = $request->get('path');
-        if ($relativePath !== '' && strpos($relativePath, '/') !== 0) {
+        if ($relativePath !== '' && !str_starts_with($relativePath, '/')) {
             $relativePath = '/' . $relativePath;
         }
         $absoluteRootFilesPath = $this->uploadsService->getRootFilesPath($view, false, $privateSpace);
@@ -58,21 +52,21 @@ class FileHandler extends AbstractController
                 $file = new File();
 
                 if ($fileUploaded) {
-                    $originalFilename = pathinfo($fileUploaded->getClientOriginalName(), PATHINFO_FILENAME);
+                    $originalFilename = pathinfo((string) $fileUploaded->getClientOriginalName(), PATHINFO_FILENAME);
                     $safeFilename = $this->uploadsService->fixName($originalFilename);
                     $extension = $fileUploaded->guessExtension();
 
                     if ($fileUploaded->getMimeType() === 'image/svg') {
                         $extension = 'svg';
                     }
-                    if (explode('.', $fileUploaded->getClientOriginalName())[1] === 'csv') {
+                    if (explode('.', (string) $fileUploaded->getClientOriginalName())[1] === 'csv') {
                         $extension = 'csv';
                     }
                     $newFilename = $safeFilename . '.' . $extension;
 
                     try {
                         $fileUploaded->move($absoluteRootFilesPath . $relativePath, $newFilename);
-                    } catch (FileException $e) {
+                    } catch (FileException) {
 //						dd($e);
                     }
 
@@ -114,7 +108,7 @@ class FileHandler extends AbstractController
             }
 
             $pathOrigin = $form->getData()->getFile();
-            $newPath = explode('/', $pathOrigin);
+            $newPath = explode('/', (string) $pathOrigin);
             $newPath[count($newPath) - 1] = $form->get('name')->getData();
             $form->getData()->setFile(implode('/', $newPath));
             $this->em->flush();
@@ -195,25 +189,25 @@ class FileHandler extends AbstractController
             $type = $form->get('type')->getData();
 
             // GET SOURCE AS IT IS STORED IN DATABASE IF PUBLIC FILE ($file->getFile)
-            if (strpos($source, '/public') !== false) {
-                $sourceRelativeFilePath = explode('/public', $source);
+            if (str_contains((string) $source, '/public')) {
+                $sourceRelativeFilePath = explode('/public', (string) $source);
                 $sourceRelativeFilePath = $sourceRelativeFilePath[count($sourceRelativeFilePath) - 1];
             }
 
             // GET SOURCE AS IT IS STORED IN DATABASE IF SECURED FILE ($file->getFile)
-            if (strpos($source, '/secured_files') !== false) {
-                $sourceRelativeFilePath = explode('/secured_files', $source);
+            if (str_contains((string) $source, '/secured_files')) {
+                $sourceRelativeFilePath = explode('/secured_files', (string) $source);
                 $sourceRelativeFilePath = '/secured_files' . $sourceRelativeFilePath[count($sourceRelativeFilePath) - 1];
             }
 
             // GET SOURCE AS IT IS STORED IN DATABASE IF PRIVATE FILE ($file->getFile)
-            if (strpos($source, '/private_spaces_files') !== false) {
-                $sourceRelativeFilePath = explode('/private_spaces_files', $source);
+            if (str_contains((string) $source, '/private_spaces_files')) {
+                $sourceRelativeFilePath = explode('/private_spaces_files', (string) $source);
                 $sourceRelativeFilePath = '/private_spaces_files' . $sourceRelativeFilePath[count($sourceRelativeFilePath) - 1];
             }
 
             if ($type === 'FILE') {
-                $fileName = explode('/', $source);
+                $fileName = explode('/', (string) $source);
                 $fileName = $fileName[count($fileName) - 1];
 
                 $this->fs->copy($source, $destination . $fileName);
@@ -231,20 +225,20 @@ class FileHandler extends AbstractController
                 }
 
                 // GET NEW FILE PATH TO STORE IN DATABASE IF PUBLIC FILE ($file->setFile)
-                if (strpos($destination, '/public') !== false) {
-                    $destinationRelativeFilePath = explode('/public', $destination);
+                if (str_contains((string) $destination, '/public')) {
+                    $destinationRelativeFilePath = explode('/public', (string) $destination);
                     $destinationRelativeFilePath = $destinationRelativeFilePath[count($destinationRelativeFilePath) - 1] . $fileName;
                 }
 
                 // GET NEW FILE PATH TO STORE IN DATABASE IF SECURED FILE ($file->setFile)
-                if (strpos($destination, '/secured_files') !== false) {
-                    $destinationRelativeFilePath = explode('/secured_files', $destination);
+                if (str_contains((string) $destination, '/secured_files')) {
+                    $destinationRelativeFilePath = explode('/secured_files', (string) $destination);
                     $destinationRelativeFilePath = '/secured_files' . $destinationRelativeFilePath[count($destinationRelativeFilePath) - 1] . $fileName;
                 }
 
                 // GET NEW FILE PATH TO STORE IN DATABASE IF PRIVATE FILE ($file->setFile)
-                if (strpos($destination, '/private_spaces_files') !== false) {
-                    $destinationRelativeFilePath = explode('/private_spaces_files', $destination);
+                if (str_contains((string) $destination, '/private_spaces_files')) {
+                    $destinationRelativeFilePath = explode('/private_spaces_files', (string) $destination);
                     $destinationRelativeFilePath = '/private_spaces_files' . $destinationRelativeFilePath[count($destinationRelativeFilePath) - 1] . $fileName;
                 }
 
@@ -254,7 +248,7 @@ class FileHandler extends AbstractController
                 $this->em->persist($file);
                 $this->em->flush();
             } elseif ($type === 'FOLDER') {
-                $folderName = explode('/', $source);
+                $folderName = explode('/', (string) $source);
                 $folderName = $folderName[count($folderName) - 2] . '/';
 
                 $this->fs->mirror($source, $destination . $folderName);

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Akyos\FileManagerBundle\Twig;
 
 use Akyos\FileManagerBundle\Repository\FileManagerOptionsRepository;
@@ -8,11 +10,8 @@ use Twig\Extension\GlobalsInterface;
 
 class GlobalsExtension extends AbstractExtension implements GlobalsInterface
 {
-    protected FileManagerOptionsRepository $fileManagerOptionsRepository;
-
-    public function __construct(FileManagerOptionsRepository $fileManagerOptionsRepository)
+    public function __construct(protected FileManagerOptionsRepository $fileManagerOptionsRepository)
     {
-        $this->fileManagerOptionsRepository = $fileManagerOptionsRepository;
     }
 
     /**

@@ -7,6 +7,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ExtendAdminAccess
 {
+    /**
+     * @var \Doctrine\ORM\EntityManagerInterface
+     */
+    public $entityManager;
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
@@ -14,7 +18,7 @@ class ExtendAdminAccess
 
     public function setDefaults(): Response
     {
-        $entity = 'Akyos\\CmsBundle\\Entity\\AdminAccess';
+        $entity = \Akyos\CmsBundle\Entity\AdminAccess::class;
         if(class_exists($entity)) {
             if (!$this->entityManager->getRepository($entity)->findOneBy(['name' => 'Gestion des fichiers'])) {
                 $adminAccess = new $entity();

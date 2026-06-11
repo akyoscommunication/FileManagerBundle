@@ -8,7 +8,7 @@ use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Akyos\FileManagerBundle\Repository\FileRepository;
 
 #[ORM\Entity(repositoryClass: FileRepository::class)]
-class File
+class File implements \Stringable
 {
     use TimestampableEntity;
 
@@ -103,9 +103,9 @@ class File
         return $this;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
-        return $this->name;
+        return (string) $this->name;
     }
 
     public function getVisibility(): ?array

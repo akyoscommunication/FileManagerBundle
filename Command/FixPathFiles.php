@@ -20,7 +20,7 @@ use Symfony\Component\HttpKernel\KernelInterface;
 )]
 class FixPathFiles extends Command
 {
-    private EntityManagerInterface $em;
+    private readonly EntityManagerInterface $em;
 
     public function __construct(EntityManagerInterface $em, ParameterBagInterface $parameterBag, KernelInterface $kernel, UploadsService $uploadsService)
     {
@@ -28,8 +28,7 @@ class FixPathFiles extends Command
         parent::__construct();
     }
 
-    protected function configure()
-    {
+    protected function configure(): void    {
         $this->setDescription('Fix les path des files.');
     }
 
@@ -43,7 +42,7 @@ class FixPathFiles extends Command
         $fileRepository = $this->em->getRepository(File::class);
 
         foreach ($fileRepository->findAll() as $file) {
-            if ((strpos($file->getFile(), '//') !== false) || (strpos($file->getFile(), '///') !== false) || (strpos($file->getFile(), '////') !== false)) {
+            if ((str_contains((string) $file->getFile(), '//')) || (str_contains((string) $file->getFile(), '///')) || (str_contains((string) $file->getFile(), '////'))) {
                 /**
                  * Problème
                  *   - Il y a des entités qui on des files rattaché à ceux qu'on veut supprimer

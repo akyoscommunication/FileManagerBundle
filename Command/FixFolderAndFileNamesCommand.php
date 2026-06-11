@@ -20,28 +20,23 @@ use Symfony\Component\HttpKernel\KernelInterface;
 class FixFolderAndFileNamesCommand extends Command
 {
     /** @var EntityManagerInterface */
-    private EntityManagerInterface $em;
+    private readonly EntityManagerInterface $em;
 
     /** @var ParameterBagInterface $parameterBag */
-    private ParameterBagInterface $parameterBag;
+    private readonly ParameterBagInterface $parameterBag;
 
     /** @var KernelInterface $kernel */
-    private KernelInterface $kernel;
+    private readonly KernelInterface $kernel;
 
-    /** @var UploadsService $uploadsService */
-    private UploadsService $uploadsService;
-
-    public function __construct(EntityManagerInterface $em, ParameterBagInterface $parameterBag, KernelInterface $kernel, UploadsService $uploadsService)
+    public function __construct(EntityManagerInterface $em, ParameterBagInterface $parameterBag, KernelInterface $kernel, private readonly UploadsService $uploadsService)
     {
         $this->em = $em;
         $this->parameterBag = $parameterBag;
         $this->kernel = $kernel;
-        $this->uploadsService = $uploadsService;
         parent::__construct();
     }
 
-    protected function configure()
-    {
+    protected function configure(): void    {
         $this->setDescription('Fix les noms des dossiers et fichiers (enlève les espaces et caractères spéciaux).');
     }
 
@@ -78,7 +73,7 @@ class FixFolderAndFileNamesCommand extends Command
         return 0;
     }
 
-    private function fixNamesInDirectory(Finder $finder, $baseFolder): void
+    private function fixNamesInDirectory(Finder $finder, string $baseFolder): void
     {
         // TODO => Finir le code
         die();

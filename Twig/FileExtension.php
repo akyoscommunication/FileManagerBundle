@@ -18,23 +18,17 @@ use Twig\TwigFunction;
 
 class FileExtension extends AbstractExtension
 {
-    private FileRepository $fileRepository;
+    private readonly ParameterBagInterface $parameterBag;
 
-    private ParameterBagInterface $parameterBag;
+    private readonly UrlGeneratorInterface $urlGenerator;
 
-    private UploadsService $uploadsService;
+    private readonly Environment $twig;
 
-    private UrlGeneratorInterface $urlGenerator;
+    private readonly RequestStack $requestStack;
 
-    private Environment $twig;
-
-    private RequestStack $requestStack;
-
-    public function __construct(FileRepository $fileRepository, ParameterBagInterface $parameterBag, UploadsService $uploadsService, UrlGeneratorInterface $urlGenerator, Environment $twig, RequestStack $requestStack)
+    public function __construct(private readonly FileRepository $fileRepository, ParameterBagInterface $parameterBag, private readonly UploadsService $uploadsService, UrlGeneratorInterface $urlGenerator, Environment $twig, RequestStack $requestStack)
     {
-        $this->fileRepository = $fileRepository;
         $this->parameterBag = $parameterBag;
-        $this->uploadsService = $uploadsService;
         $this->urlGenerator = $urlGenerator;
         $this->twig = $twig;
         $this->requestStack = $requestStack;
@@ -45,7 +39,7 @@ class FileExtension extends AbstractExtension
      */
     public function getFilters(): array
     {
-        return [new TwigFilter('format_bytes', [$this, 'formatBytes']),];
+        return [new TwigFilter('format_bytes', $this->formatBytes(...)),];
     }
 
     /**
@@ -53,7 +47,7 @@ class FileExtension extends AbstractExtension
      */
     public function getFunctions(): array
     {
-        return [new TwigFunction('getImagePathById', [$this, 'getImagePathById']), new TwigFunction('getImageVisibilityById', [$this, 'getImageVisibilityById']), new TwigFunction('getImageAltById', [$this, 'getImageAltById']), new TwigFunction('getImageNameById', [$this, 'getImageNameById']), new TwigFunction('getImageDescById', [$this, 'getImageDescById']), new TwigFunction('isFileShared', [$this, 'isFileShared']), new TwigFunction('renderFileManager', [$this, 'renderFileManager']), new TwigFunction('renderFileManagerNotLazy', [$this, 'renderFileManagerNotLazy']), new TwigFunction('renderFileManagerUrl', [$this, 'renderFileManagerUrl']), new TwigFunction('hasFileAccessRight', [$this->uploadsService, 'hasFileAccessRight']),];
+        return [new TwigFunction('getImagePathById', $this->getImagePathById(...)), new TwigFunction('getImageVisibilityById', $this->getImageVisibilityById(...)), new TwigFunction('getImageAltById', $this->getImageAltById(...)), new TwigFunction('getImageNameById', $this->getImageNameById(...)), new TwigFunction('getImageDescById', $this->getImageDescById(...)), new TwigFunction('isFileShared', [$this, 'isFileShared']), new TwigFunction('renderFileManager', $this->renderFileManager(...)), new TwigFunction('renderFileManagerNotLazy', $this->renderFileManagerNotLazy(...)), new TwigFunction('renderFileManagerUrl', $this->renderFileManagerUrl(...)), new TwigFunction('hasFileAccessRight', $this->uploadsService->hasFileAccessRight(...)),];
     }
 
     /**
@@ -65,10 +59,8 @@ class FileExtension extends AbstractExtension
     {
         /* @var File|null $file */
         $file = $this->fileRepository->find($id);
-        if ($file) {
-            if (strpos($file->getFile(), $this->parameterBag->get('secured_dir')) !== false || strpos($file->getFile(), $this->parameterBag->get('private_spaces_dir')) !== false) {
-                return $this->urlGenerator->generate('file_download_secured_file', ['path' => $file->getFile(), 'display' => $display]);
-            }
+        if ($file && (str_contains((string) $file->getFile(), $this->parameterBag->get('secured_dir')) || str_contains((string) $file->getFile(), $this->parameterBag->get('private_spaces_dir')))) {
+            return $this->urlGenerator->generate('file_download_secured_file', ['path' => $file->getFile(), 'display' => $display]);
         }
         return $file ? $file->getFile() : false;
     }
@@ -77,7 +69,7 @@ class FileExtension extends AbstractExtension
      * @param int|null $id
      * @return array|false
      */
-    public function getImageVisibilityById(int $id = null)
+    public function getImageVisibilityById(?int $id = null)
     {
         if ($id) {
             /* @var File|null $file */
@@ -123,7 +115,6 @@ class FileExtension extends AbstractExtension
     /*
      * @deprecated use renderFileManager() instead with second parameter to false, to disable lazy load
      */
-
     /**
      * @param $value
      * @param null $height
@@ -133,8 +124,8 @@ class FileExtension extends AbstractExtension
      * @throws LoaderError
      * @throws RuntimeError
      * @throws SyntaxError
-     * @deprecated use renderFileManager() instead with second parameter to false, to disable lazy load
      */
+    #[\Deprecated(message: 'use renderFileManager() instead with second parameter to false, to disable lazy load')]
     public function renderFileManagerNotLazy($value, $height = null, $width = null, $noEmbed = false)
     {
         /*
@@ -167,8 +158,8 @@ class FileExtension extends AbstractExtension
         $streamedFile = null;
         $rootPath = $this->parameterBag->get('root_path');
 
-        if (preg_match($pathPattern, $value)) {
-            if (strpos($value, $this->parameterBag->get('secured_dir')) !== false || strpos($value, $this->parameterBag->get('private_spaces_dir')) !== false) {
+        if (preg_match($pathPattern, (string) $value)) {
+            if (str_contains((string) $value, $this->parameterBag->get('secured_dir')) || str_contains((string) $value, $this->parameterBag->get('private_spaces_dir'))) {
                 $pathToValue = $rootPath . $value;
                 $streamedValue = $this->urlGenerator->generate('file_download_secured_file', ['path' => $value, 'display' => true]);
             } else {
@@ -176,13 +167,13 @@ class FileExtension extends AbstractExtension
             }
         }
 
-        if (preg_match($intPattern, $value)) {
+        if (preg_match($intPattern, (string) $value)) {
             /* @var File|null $file */
             $file = $this->fileRepository->find($value);
             if (!$file) {
                 return false;
             }
-            if (strpos($file->getFile(), $this->parameterBag->get('secured_dir')) !== false || strpos($file->getFile(), $this->parameterBag->get('private_spaces_dir')) !== false) {
+            if (str_contains((string) $file->getFile(), $this->parameterBag->get('secured_dir')) || str_contains((string) $file->getFile(), $this->parameterBag->get('private_spaces_dir'))) {
                 $pathToFile = $rootPath . $file->getFile();
                 $streamedFile = $this->urlGenerator->generate('file_download_secured_file', ['path' => $file->getFile(), 'display' => true]);
             } else {
@@ -192,13 +183,13 @@ class FileExtension extends AbstractExtension
 
         $result = '';
 
-        if (preg_match($ytPattern, $value)) {
+        if (preg_match($ytPattern, (string) $value)) {
             // YOUTUBE LINK
             $result = '<iframe width="100%" height="100%" src="' . $value . '" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
-        } elseif (preg_match($urlPattern, $value)) {
+        } elseif (preg_match($urlPattern, (string) $value)) {
             // EXTERNAL IMAGE URL
             $result = '<img class="' . ($lazy ? 'lazy-load not-loaded' : '') . ' aky-img" src="' . ($lazy ? '' : $value) . '" ' . ($lazy ? 'data-src="' . $value . '"' : '') . ' alt=""/>';
-        } elseif (preg_match($pathPattern, $value)) {
+        } elseif (preg_match($pathPattern, (string) $value)) {
             // FILE PATH
             if (isset($pathToValue) && file_exists($pathToValue)) {
                 $valueToDisplay = ($streamedValue ?: $this->requestStack->getCurrentRequest()->getUriForPath($value));
@@ -212,7 +203,7 @@ class FileExtension extends AbstractExtension
                 } elseif (pathinfo($pathToValue)['extension'] === 'csv') {
                     // FILE TYPE PDF (NO EMBED = TRUE)
                     $result = $this->twig->render('@AkyosFileManager/svg/csv.html.twig', ['alt' => '']);
-                } elseif (strpos($value, "video") === 0) {
+                } elseif (str_starts_with((string) $value, "video")) {
                     // FILE TYPE VIDEO
                     $result = '<video controls width="100%">';
                     $result .= '<source src="' . $valueToDisplay . '" type="' . mime_content_type($pathToValue) . '">';
@@ -238,7 +229,7 @@ class FileExtension extends AbstractExtension
                 } // IMAGE
                 elseif (explode("/", mime_content_type($pathToFile))[0] === 'image') {
                     $result = '<img class="' . ($lazy ? 'lazy-load not-loaded' : '') . ' aky-img" src="' . ($lazy ? '' : $fileToDisplay) . '" ' . ($lazy ? 'data-src="' . $fileToDisplay . '"' : '') . ' alt="' . $file->getAlt() . '"/>';
-                } elseif (strpos(mime_content_type($pathToFile), "video") === 0) {
+                } elseif (str_starts_with(mime_content_type($pathToFile), "video")) {
                     $result = '<video controls width="100%">';
                     $result .= '<source src="' . $fileToDisplay . '" type="' . mime_content_type($pathToFile) . '">';
                     $result .= '</video>';
@@ -275,18 +266,18 @@ class FileExtension extends AbstractExtension
         $pathPattern = "/^\/" . substr($this->parameterBag->get('web_dir'), 1) . "|" . substr($this->parameterBag->get('secured_dir'), 1) . "|" . substr($this->parameterBag->get('private_spaces_dir'), 1) . "\//";
         $file = null;
 
-        if (preg_match($intPattern, $value)) {
+        if (preg_match($intPattern, (string) $value)) {
             /* @var File|null $file */
             $file = $this->fileRepository->find($value);
         }
 
         $result = '';
 
-        if (preg_match($ytPattern, $value)) {
+        if (preg_match($ytPattern, (string) $value)) {
             $result = '';
-        } elseif (preg_match($urlPattern, $value)) {
+        } elseif (preg_match($urlPattern, (string) $value)) {
             $result = $value;
-        } elseif (preg_match($pathPattern, $value)) {
+        } elseif (preg_match($pathPattern, (string) $value)) {
             $result = $value;
         } elseif ($file) {
             $result = $file->getFile();

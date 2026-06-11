@@ -15,30 +15,24 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class UploadsService
 {
-    private KernelInterface $kernel;
+    private readonly KernelInterface $kernel;
 
-    private ParameterBagInterface $parameterBag;
+    private readonly ParameterBagInterface $parameterBag;
 
-    private Security $security;
+    private readonly Security $security;
 
-    private Filesystem $filesystem;
+    private readonly Filesystem $filesystem;
 
-    private FileRepository $fileRepository;
-
-    private PrivateSpaceRepository $privateSpaceRepository;
-
-    private AuthorizationCheckerInterface $authorizationChecker;
+    private readonly AuthorizationCheckerInterface $authorizationChecker;
 
     private string $rootPath = __DIR__ . '/../../../..';
 
-    public function __construct(KernelInterface $kernel, ParameterBagInterface $parameterBag, Security $security, Filesystem $filesystem, FileRepository $fileRepository, PrivateSpaceRepository $privateSpaceRepository, AuthorizationCheckerInterface $authorizationChecker)
+    public function __construct(KernelInterface $kernel, ParameterBagInterface $parameterBag, Security $security, Filesystem $filesystem, private readonly FileRepository $fileRepository, private readonly PrivateSpaceRepository $privateSpaceRepository, AuthorizationCheckerInterface $authorizationChecker)
     {
         $this->kernel = $kernel;
         $this->parameterBag = $parameterBag;
         $this->security = $security;
         $this->filesystem = $filesystem;
-        $this->fileRepository = $fileRepository;
-        $this->privateSpaceRepository = $privateSpaceRepository;
         $this->authorizationChecker = $authorizationChecker;
     }
 
@@ -50,7 +44,7 @@ class UploadsService
      * @param null $privateSpace
      * @return array|bool|float|int|string|null
      */
-    public function getRootFilesPath($view = false, $relative = false, $privateSpace = null)
+    public function getRootFilesPath($view = false, $relative = false, ?\Akyos\FileManagerBundle\Entity\PrivateSpace $privateSpace = null)
     {
         if ($view === "secured") {
             $relativePath = $this->getUserSecuredRootPath();
@@ -112,7 +106,7 @@ class UploadsService
      * @param PrivateSpace $privateSpace
      * @return false|string
      */
-    public function getPrivateSpaceRootPath(PrivateSpace $privateSpace)
+    public function getPrivateSpaceRootPath(PrivateSpace $privateSpace): false|string
     {
         // IF IS GRANTED FOR FILE MANAGER
         if ($this->security->isGranted('ROLE_FILE_MANAGER') || $this->security->isGranted('ROLE_ADMIN')) {
@@ -133,7 +127,7 @@ class UploadsService
 
     // ABSOLUTE FILE PATH (IN /SECURED_FILES OR /PUBLIC_SPACES OR /PUBLIC)
 
-    public function getFilePathFromValue($value)
+    public function getFilePathFromValue($value): false|int|string
     {
         if (!is_string($value) && !is_int($value)) {
             return false;
@@ -143,11 +137,11 @@ class UploadsService
         $file = null;
         $pathToFile = $value;
 
-        if (preg_match($pathPattern, $value)) {
-            $pathToFile = $this->rootPath . (strpos($value, 'secured_files') || strpos($value, 'private_spaces_files') ? '' : '/public') . $value;
+        if (preg_match($pathPattern, (string) $value)) {
+            $pathToFile = $this->rootPath . (strpos((string) $value, 'secured_files') || strpos((string) $value, 'private_spaces_files') ? '' : '/public') . $value;
         }
 
-        if (preg_match($intPattern, $value)) {
+        if (preg_match($intPattern, (string) $value)) {
             $file = $this->fileRepository->find($value);
             if (!$file) {
                 return false;
@@ -166,7 +160,7 @@ class UploadsService
      */
     public function getFilePath(File $file): string
     {
-        return $this->rootPath . (strpos($file->getFile(), 'secured_files') || strpos($file->getFile(), 'private_spaces_files') ? '' : '/public') . $file->getFile();
+        return $this->rootPath . (strpos((string) $file->getFile(), 'secured_files') || strpos((string) $file->getFile(), 'private_spaces_files') ? '' : '/public') . $file->getFile();
     }
 
     //CHECK IF CURRENT USER HAS RIGHT TO ACCESS THE FILE
@@ -179,16 +173,16 @@ class UploadsService
     {
         $file = $this->fileRepository->find($fileId);
         if ($file) {
-            if (strpos($file->getFile(), $this->parameterBag->get('secured_dir')) !== false) {
-                return !(strpos(substr(base64_encode($this->security->getUser() ? $this->security->getUser()->getUserIdentifier() . $this->security->getUser()->getSalt() : 'null'), 0, -2), $file->getFile()) === false && !$this->authorizationChecker->isGranted('ROLE_SUPER_ADMIN') && (empty($file->getVisibility()) || !$file->getVisibility() || !($this->authorizationChecker->isGranted($file->getVisibility()) || in_array('ANONYMOUS', is_array($file->getVisibility()) ? $file->getVisibility() : [], true))));
+            if (str_contains((string) $file->getFile(), $this->parameterBag->get('secured_dir'))) {
+                return !(!str_contains(substr(base64_encode($this->security->getUser() ? $this->security->getUser()->getUserIdentifier() . $this->security->getUser()->getSalt() : 'null'), 0, -2), (string) $file->getFile()) && !$this->authorizationChecker->isGranted('ROLE_SUPER_ADMIN') && (empty($file->getVisibility()) || !$file->getVisibility() || !$this->authorizationChecker->isGranted($file->getVisibility()) && !in_array('ANONYMOUS', is_array($file->getVisibility()) ? $file->getVisibility() : [], true)));
             }
-            if (strpos($file->getFile(), $this->parameterBag->get('private_spaces_dir')) !== false) {
-                $explodeOnPrivateSpacesFiles = explode('/private_spaces_files/', $file->getFile());
+            if (str_contains((string) $file->getFile(), $this->parameterBag->get('private_spaces_dir'))) {
+                $explodeOnPrivateSpacesFiles = explode('/private_spaces_files/', (string) $file->getFile());
                 $explodeOnSlashes = explode('/', $explodeOnPrivateSpacesFiles[count($explodeOnPrivateSpacesFiles) - 1]);
                 $privateSpaceSlug = $explodeOnSlashes[0];
                 $privateSpace = $this->privateSpaceRepository->findOneBy(['slug' => $privateSpaceSlug]);
                 if ($privateSpace) {
-                    return !(!$this->authorizationChecker->isGranted($privateSpace->getRoles()) && (empty($file->getVisibility()) || !$file->getVisibility() || !($this->authorizationChecker->isGranted($file->getVisibility()) || in_array('ANONYMOUS', is_array($file->getVisibility()) ? $file->getVisibility() : [], true))));
+                    return !(!$this->authorizationChecker->isGranted($privateSpace->getRoles()) && (empty($file->getVisibility()) || !$file->getVisibility() || !$this->authorizationChecker->isGranted($file->getVisibility()) && !in_array('ANONYMOUS', is_array($file->getVisibility()) ? $file->getVisibility() : [], true)));
                 }
             }
             return true;
@@ -200,7 +194,7 @@ class UploadsService
      * @param string $name
      * @return false|string
      */
-    public function fixName(string $name)
+    public function fixName(string $name): string|false
     {
         $name = str_replace(' ', '_', $name);
         $name = transliterator_transliterate('Any-Latin; Latin-ASCII; [^A-Za-z0-9_-] remove;', $name);

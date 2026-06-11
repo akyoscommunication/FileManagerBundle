@@ -12,7 +12,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PrivateSpaceType extends AbstractType
 {
-    private ContainerInterface $container;
+    private readonly ContainerInterface $container;
 
     public function __construct(ContainerInterface $container)
     {

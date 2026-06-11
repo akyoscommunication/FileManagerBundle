@@ -13,7 +13,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class EditFileType extends AbstractType
 {
-    private ContainerInterface $container;
+    private readonly ContainerInterface $container;
 
     public function __construct(ContainerInterface $container)
     {
@@ -32,7 +32,7 @@ class EditFileType extends AbstractType
 
         $builder->add('name', TextType::class, ['label' => 'Nom du fichier', 'disabled' => true,])->add('alt', TextType::class, ['label' => 'Texte alternatif', 'required' => false, 'help' => 'Décrivez le but de l’image. Laissez vide si l’image est purement décorative ou si l\'information qu\'elle contient est déjà écrite ailleurs sur la page.',])->add('description', TextareaType::class, ['label' => 'Description du fichier', 'required' => false,]);
 
-        if (strpos($file->getFile(), '/secured_files') !== false || strpos($file->getFile(), '/private_spaces_files') !== false) {
+        if (str_contains((string) $file->getFile(), '/secured_files') || str_contains((string) $file->getFile(), '/private_spaces_files')) {
             $builder->add('visibility', ChoiceType::class, ['label' => 'Visibilité du fichier', 'choices' => $roles, 'multiple' => true, 'required' => false, 'help' => 'En dehors du gestionnaire de fichiers, par qui le fichier est-il visible ? Laissez vide pour qu\'il ait la même visibilité que l\'espace dans lequel il se trouve.',]);
         }
     }

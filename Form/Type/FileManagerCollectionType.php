@@ -25,7 +25,7 @@ class FileManagerCollectionType extends AbstractType implements DataTransformerI
         $resolver->setDefaults(['allow_add' => true, 'allow_delete' => true, 'prototype' => true, 'prototype_data' => null, 'prototype_name' => '__name__', 'entry_type' => FileManagerType::class, 'entry_options' => ['config' => 'restrict'], 'delete_empty' => false, 'by_reference' => false, 'required' => false, 'min' => 0, 'max' => 100, 'init_with_n_elements' => 1, 'add_at_the_end' => true, 'tree' => 0, 'error_bubbling' => false, 'view' => "public", 'private_space' => null,]);
     }
 
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         parent::buildView($view, $form, $options);
 
@@ -56,8 +56,6 @@ class FileManagerCollectionType extends AbstractType implements DataTransformerI
             return null;
         }
 
-        return array_filter(($value instanceof Collection) ? $value->toArray() : $value, static function ($path) {
-            return $path !== null;
-        });
+        return array_filter(($value instanceof Collection) ? $value->toArray() : $value, static fn($path) => $path !== null);
     }
 }

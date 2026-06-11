@@ -8,9 +8,9 @@ use Symfony\Bundle\SecurityBundle\Security;
 
 class ExtendSidebar
 {
-    private UrlGeneratorInterface $router;
+    private readonly UrlGeneratorInterface $router;
 
-    private Security $security;
+    private readonly Security $security;
 
     public function __construct(UrlGeneratorInterface $router, Security $security)
     {
@@ -22,7 +22,7 @@ class ExtendSidebar
     {
         $template = '';
         if ($this->security->isGranted('gestion-des-fichiers')) {
-            $template = '<li class="' . (strpos($route, "file_show") !== false ? "active" : "") . '">
+            $template = '<li class="' . (str_contains((string) $route, "file_show") ? "active" : "") . '">
                             <a href="' . $this->router->generate('file_show') . '">Gestion des fichiers</a>
                         </li>';
         }
@@ -33,7 +33,7 @@ class ExtendSidebar
     {
         $template = '';
         if ($this->security->isGranted('options-du-gestionnaire-de-fichier')) {
-            $template = '<li class="' . (strpos($route, "file_manager_options") !== false ? "active" : "") . '"><a href="' . $this->router->generate('file_manager_options') . '">FileManager</a></li>';
+            $template = '<li class="' . (str_contains((string) $route, "file_manager_options") ? "active" : "") . '"><a href="' . $this->router->generate('file_manager_options') . '">FileManager</a></li>';
         }
         return new Response($template);
     }
