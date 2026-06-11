@@ -14,13 +14,13 @@ use function count;
 
 class FileManagerCollectionType extends AbstractType implements DataTransformerInterface
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         parent::buildForm($builder, $options);
         $builder->addModelTransformer($this);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(['allow_add' => true, 'allow_delete' => true, 'prototype' => true, 'prototype_data' => null, 'prototype_name' => '__name__', 'entry_type' => FileManagerType::class, 'entry_options' => ['config' => 'restrict'], 'delete_empty' => false, 'by_reference' => false, 'required' => false, 'min' => 0, 'max' => 100, 'init_with_n_elements' => 1, 'add_at_the_end' => true, 'tree' => 0, 'error_bubbling' => false, 'view' => "public", 'private_space' => null,]);
     }

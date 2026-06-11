@@ -2,22 +2,17 @@
 
 namespace Akyos\FileManagerBundle\Annotations;
 
-use Doctrine\Common\Annotations\Annotation;
+use Attribute;
 
-/**
- * @Annotation
- * @Target("PROPERTY")
- */
+#[Attribute(Attribute::TARGET_PROPERTY)]
 class PathAnnotation
 {
-    private $field;
-
-    public function __construct(array $values)
-    {
-        $this->field = $values['field'];
+    public function __construct(
+        private readonly string $field = '',
+    ) {
     }
 
-    public function getField()
+    public function getField(): string
     {
         return $this->field;
     }

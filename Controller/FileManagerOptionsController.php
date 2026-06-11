@@ -6,11 +6,11 @@ use Akyos\FileManagerBundle\Entity\FileManagerOptions;
 use Akyos\FileManagerBundle\Form\Type\FileManagerOptionsType;
 use Akyos\FileManagerBundle\Repository\FileManagerOptionsRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 #[Route(path: '/admin/file_manager/options', name: 'file_manager_options')]
 #[IsGranted('options-du-gestionnaire-de-fichier')]

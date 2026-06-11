@@ -20,7 +20,7 @@ class EditFileType extends AbstractType
         $this->container = $container;
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $roles = $this->container->getParameter('file_manager_spaces_roles');
         $roles = array_reverse($roles);
@@ -37,7 +37,7 @@ class EditFileType extends AbstractType
         }
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(['data_class' => File::class,]);
     }

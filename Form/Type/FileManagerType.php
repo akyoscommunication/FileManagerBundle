@@ -10,7 +10,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class FileManagerType extends AbstractType
 {
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(['label' => '', 'config' => 'restrict', 'required' => false, 'view' => 'public', 'private_space' => null,]);
     }

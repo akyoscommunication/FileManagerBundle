@@ -9,12 +9,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class UploadType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('file', FileType::class, ['label' => false, 'multiple' => true, 'attr' => ['is' => 'drop-files', 'label' => 'Déposer vos fichiers ici', 'help' => 'ou cliquer pour ouvrir le gestionnaire de fichiers',]]);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
 

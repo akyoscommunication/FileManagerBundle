@@ -26,7 +26,7 @@ class MoveType extends AbstractType
         $this->kernel = $kernel;
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $tree = ['Non' => ''];
         $tree['Dossier racine'] = $options['racine'] . '/';
@@ -80,7 +80,7 @@ class MoveType extends AbstractType
         }
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(['directories' => null, 'racine' => null]);
     }

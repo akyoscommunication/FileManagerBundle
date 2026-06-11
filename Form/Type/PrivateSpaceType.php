@@ -19,14 +19,14 @@ class PrivateSpaceType extends AbstractType
         $this->container = $container;
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $roles = $this->container->getParameter('file_manager_spaces_roles');
 
         $builder->add('name', TextType::class, ['label' => 'Nom de l\'espace privé',])->add('roles', ChoiceType::class, ['label' => 'Utilisateurs qui y ont accès', 'choices' => $roles, 'multiple' => true, 'attr' => ['class' => 'js-select2',], 'required' => false, 'help' => 'Laissez vide pour que l\'espace soit accessible à tout ceux qui ont accès au gestionnaire de fichiers',]);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(['data_class' => PrivateSpace::class,]);
     }
